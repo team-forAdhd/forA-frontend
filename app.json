@@ -4,10 +4,10 @@
     "slug": "forA",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "public/assets/icon.png",
+    "icon": "public/assets/forA-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "public/assets/splash.png",
+      "image": "public/assets/forA-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
