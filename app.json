@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "forA-frontend",
-    "slug": "forA-frontend",
+    "name": "forA",
+    "slug": "forA",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "public/assets/forA-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "public/assets/forA-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,11 +15,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "ios.forA"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "public/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
