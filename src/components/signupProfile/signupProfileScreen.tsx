@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { styles, text } from './signupProfileStyle'
-import { ArrowIcon, TitleTextIcon } from '@/public/assets/SvgComponents'
+import { ArrowIcon } from '@/public/assets/SvgComponents'
 
 function SignupProfileScreen() {
     const { t } = useTranslation('signup-profile')
@@ -23,7 +23,7 @@ function SignupProfileScreen() {
         require('@/public/assets/defaultProfileImage.png'),
     )
     const uploadImage = async () => {
-        // 갤러리 접근 권한; 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
+        // 갤러리 접근 권한 - 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
         if (!status?.granted) {
             const permission = await requestPermission()
             if (!permission.granted) {
@@ -47,7 +47,7 @@ function SignupProfileScreen() {
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.header}
-                onPress={() => console.log('Home Button pressed')}
+                onPress={() => console.log('뒤로가기')}
             >
                 <ArrowIcon />
             </TouchableOpacity>
