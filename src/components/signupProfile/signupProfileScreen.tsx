@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
     TouchableOpacity,
@@ -11,17 +10,15 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import { styles, text } from './signupProfileStyle'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
+import { useProfileStore } from '@/state/signupState'
 
 function SignupProfileScreen() {
     const { t } = useTranslation('signup-profile')
     //권한 접근
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
-    //사용자가 설정한 닉네임
-    const [nickName, setNickName] = useState<string>('')
-    //현재 이미지 url
-    const [ImageUrl, setImageUrl] = useState<string>(
-        require('@/public/assets/defaultProfileImage.png'),
-    )
+
+    const store = useProfileStore()
+
     const uploadImage = async () => {
         // 갤러리 접근 권한 - 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
         if (!status?.granted) {
@@ -41,7 +38,7 @@ function SignupProfileScreen() {
             return null // 이미지 업로드 취소한 경우
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        setImageUrl(result.assets[0].uri)
+        store.setImageUrl(result.assets[0].uri)
     }
     return (
         <View style={styles.container}>
@@ -58,7 +55,7 @@ function SignupProfileScreen() {
                 <Pressable onPress={uploadImage}>
                     <Image
                         style={styles.ProfileImage}
-                        source={{ uri: ImageUrl }}
+                        source={{ uri: store.imageUrl }}
                     />
                     <Image
                         style={styles.cameraIcon}
@@ -75,8 +72,8 @@ function SignupProfileScreen() {
                         style={text.inputText}
                         placeholder={t('signup-nickname-input')}
                         caretHidden={true}
-                        value={nickName}
-                        onChangeText={setNickName}
+                        value={store.nickName}
+                        onChangeText={store.setNickName}
                     />
                     <View style={styles.inputBar} />
                 </View>
