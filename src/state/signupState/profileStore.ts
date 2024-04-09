@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 
 class ProfileStore {
     nickName: string = '' // default 작성
-    imageUrl: string = require('') // default 작성
+    imageUrl: string = '' // default 작성
 
     constructor() {
         makeAutoObservable(this)

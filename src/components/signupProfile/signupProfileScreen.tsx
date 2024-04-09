@@ -1,3 +1,4 @@
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
     TouchableOpacity,
@@ -10,15 +11,16 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import { styles, text } from './signupProfileStyle'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
-import { useProfileStore } from '@/state/signupState'
+import { ProfileStoreContext } from '@/state/signupState'
 
 function SignupProfileScreen() {
     const { t } = useTranslation('signup-profile')
     //권한 접근
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
 
-    const store = useProfileStore()
+    const store = useContext(ProfileStoreContext)
 
+    const [reRendering, setRerendering] = useState<boolean>(false)
     const uploadImage = async () => {
         // 갤러리 접근 권한 - 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
         if (!status?.granted) {
@@ -39,6 +41,7 @@ function SignupProfileScreen() {
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         store.setImageUrl(result.assets[0].uri)
+        setRerendering(!reRendering)
     }
     return (
         <View style={styles.container}>
@@ -55,8 +58,13 @@ function SignupProfileScreen() {
                 <Pressable onPress={uploadImage}>
                     <Image
                         style={styles.ProfileImage}
-                        source={{ uri: store.imageUrl }}
+                        source={
+                            store.imageUrl
+                                ? { uri: store.imageUrl }
+                                : require('@/public/assets/defaultProfileImage.png')
+                        }
                     />
+
                     <Image
                         style={styles.cameraIcon}
                         source={require('@/public/assets/camera.png')}
@@ -72,7 +80,6 @@ function SignupProfileScreen() {
                         style={text.inputText}
                         placeholder={t('signup-nickname-input')}
                         caretHidden={true}
-                        value={store.nickName}
                         onChangeText={store.setNickName}
                     />
                     <View style={styles.inputBar} />
@@ -81,7 +88,12 @@ function SignupProfileScreen() {
                     <TouchableOpacity
                         style={styles.nextButton}
                         onPress={() => {
-                            console.log('다음 페이지로 넘어갑니다')
+                            console.log(
+                                'nickname:',
+                                store.nickName,
+                                'imageL',
+                                store.imageUrl,
+                            )
                         }}
                     >
                         <Text style={text.buttonText}>다음</Text>
