@@ -49,7 +49,7 @@ async function googleSheet() {
       const fs = require("fs");
 
       try {
-        fs.writeFileSync(`public/locales/ko/${title}.json`, ko);
+        fs.writeFileSync(`src/public/locales/ko/${title}.json`, ko);
       } catch (err) {
         console.error(err);
       }

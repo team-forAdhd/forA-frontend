@@ -10,13 +10,15 @@ export default function LoginScreen() {
     const { t } = useTranslation('login-join')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
+    const [inputFocused, setInputFocused] = React.useState(false)
+    const [loginFailed, setLoginFailed] = React.useState(false)
 
     const navigation = useNavigation()
     const loginFinished = () => {
         // navigation.navigate('화면이름')
     }
     const gotoJoinScreen = () => {
-        // navigation.navigate('화면이름')
+        navigation.navigate('EmailDuplicateCheck' as never)
     }
     const gotoFindPasswordScreen = () => {
         // navigation.navigate('화면이름')
@@ -27,9 +29,15 @@ export default function LoginScreen() {
             if (response.success) {
                 // navigation.navigate('Home')
             } else {
+                setLoginFailed(true)
+                setEmail('')
+                setPassword('')
             }
         } catch (error) {
             console.error('Error while logging in:', error)
+            setLoginFailed(true)
+            setEmail('')
+            setPassword('')
         }
     }
     return (
@@ -48,25 +56,54 @@ export default function LoginScreen() {
                 <View style={styles.inputContainer}>
                     <Text style={text.inputTitleText}>{t('login-id')}</Text>
                     <TextInput
-                        style={text.inputText}
+                        style={[
+                            text.inputText,
+                            inputFocused ? text.inputUserText : text.inputText,
+                        ]}
                         placeholder={t('login-id-input')}
                         caretHidden={true}
                         value={email}
                         onChangeText={setEmail}
+                        onFocus={() => setInputFocused(true)}
+                        onBlur={() => setInputFocused(false)}
                     />
-                    <View style={styles.inputBar} />
+                    <View
+                        style={[
+                            styles.inputBar,
+                            inputFocused
+                                ? styles.inputUserBar
+                                : styles.inputBar,
+                        ]}
+                    />
                     <Text style={text.inputTitleText}>
                         {t('login-password')}
                     </Text>
                     <TextInput
-                        style={text.inputText}
+                        style={[
+                            text.inputText,
+                            inputFocused ? text.inputUserText : text.inputText,
+                        ]}
                         placeholder={t('login-password-input')}
                         secureTextEntry={true}
                         caretHidden={true}
                         value={password}
                         onChangeText={setPassword}
+                        onFocus={() => setInputFocused(true)}
+                        onBlur={() => setInputFocused(false)}
                     />
-                    <View style={styles.inputBar} />
+                    <View
+                        style={[
+                            styles.inputBar,
+                            inputFocused
+                                ? styles.inputUserBar
+                                : styles.inputBar,
+                        ]}
+                    />
+                    {loginFailed && (
+                        <Text style={text.loginFailedText}>
+                            {t('login-fail')}
+                        </Text>
+                    )}
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
@@ -78,7 +115,7 @@ export default function LoginScreen() {
                     <View style={styles.buttonRow}>
                         <TouchableOpacity
                             style={styles.joinButton}
-                            onPress={() => console.log('Join Button pressed')}
+                            onPress={gotoJoinScreen}
                         >
                             <Text style={text.bottomText}>
                                 {t('join-button')}
