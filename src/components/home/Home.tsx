@@ -4,19 +4,13 @@ import { styles, text } from './HomeStyle'
 import { useState } from 'react'
 
 import TabBar from '../common/tabBar/tabBar'
+import CarouselComponent from '../common/carousel/carousel'
 
 export default function Home() {
-    //검색어
-    const [searchInput, setSearchInput] = useState<string>('')
-
     //랭킹 클릭 상태
-    const [rankingClick, setRankingClick] = useState<boolean[]>([
-        false,
-        false,
-        false,
-        false,
-        false,
-    ])
+    const [rankingClick, setRankingClick] = useState<string>('realtime-tab')
+    //새로고침 리랜더링
+    const [reRender, setReRender] = useState(false)
     //랭킹 리스트 띄울 이름 키 값
     const rankingList = [
         'realtime-tab',
@@ -36,18 +30,10 @@ export default function Home() {
                     style={styles.ForAImage}
                     source={require('@/public/assets/forA.png')}
                 />
-                <View style={styles.baseContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder=""
-                        value={searchInput}
-                        onChangeText={(input) => {
-                            setSearchInput(input)
-                        }}
-                    />
+                <View style={styles.Flex}>
                     <TouchableOpacity
                         onPress={() => {
-                            console.log('검색어: ', searchInput)
+                            console.log('검색창')
                         }}
                     >
                         <Image
@@ -56,7 +42,6 @@ export default function Home() {
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.baseContainer}
                         onPress={() => {
                             console.log('알림창 열기')
                         }}
@@ -68,32 +53,29 @@ export default function Home() {
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* 랭킹 */}
-            <View style={styles.ranking}>
-                <Text style={text.clickText}>{t('ranking')}</Text>
-            </View>
+            {/* 광고 */}
+            <CarouselComponent />
             {/* 랭킹 리스트 */}
             <View style={styles.rankingListContainer}>
                 {rankingList.map((rankingName, index) => {
                     return (
                         <TouchableOpacity
+                            key={index}
                             style={
-                                rankingClick[index]
+                                rankingClick === rankingName
                                     ? styles.clickContainer
                                     : styles.baseContainer
                             }
                             onPress={() => {
-                                const newArray = new Array(5).fill(false)
-                                newArray[index] = true
-                                setRankingClick(newArray)
+                                setRankingClick(rankingName)
                                 console.log(rankingName)
                             }}
                         >
                             <Text
                                 style={
-                                    rankingClick[index]
+                                    rankingClick === rankingName
                                         ? text.clickText
-                                        : text.rankingText
+                                        : text.baseText
                                 }
                             >
                                 {t(rankingName)}
@@ -102,6 +84,22 @@ export default function Home() {
                     )
                 })}
             </View>
+            {/* 랭킹 */}
+            <View style={styles.ranking}>
+                <Text style={text.rankingText}>{t('ranking')}</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        console.log('새로고침하기')
+                        setReRender(!reRender)
+                    }}
+                >
+                    <Image
+                        style={styles.RefreshImage}
+                        source={require('@/public/assets/refresh.png')}
+                    />
+                </TouchableOpacity>
+            </View>
+
             {/* 탭바 */}
             <TabBar />
         </View>

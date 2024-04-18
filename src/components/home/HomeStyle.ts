@@ -9,13 +9,22 @@ export const styles = StyleSheet.create({
     },
     header: {
         position: 'absolute',
+        top: 52,
         width: '100%',
         height: 36,
         justifyContent: 'space-between',
         flexDirection: 'row',
-        top: 52,
         paddingRight: 16,
         paddingLeft: 16,
+    },
+    Flex: {
+        flex: 1,
+        width: 'auto',
+        height: 40,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginTop: 8,
     },
     ForAImage: {
         width: 87.4,
@@ -23,71 +32,58 @@ export const styles = StyleSheet.create({
         objectFit: 'contain',
         marginTop: 8,
     },
-    input: {
-        width: 200,
-        height: 40,
-        borderColor: 'transparent',
-        borderWidth: 0,
-        paddingLeft: 10,
-        backgroundColor: 'transparent',
-    },
     IconImage: {
-        width: 24,
-        height: 24,
+        width: 35,
+        height: 35,
         objectFit: 'contain',
-        marginLeft: 17,
+        marginLeft: 12,
     },
-    TabBar: {
-        position: 'absolute',
-        width: '100%',
-        height: 100,
-        bottom: 0,
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-        backgroundColor: 'white',
-        borderTopLeftRadius: 20, // 왼쪽 위 모서리에만 border-radius 적용
-        borderTopRightRadius: 20, // 오른쪽 위 모서리에만 border-radius 적용
-        shadowColor: 'f5f5f5', // 그림자 색상 설정
-        shadowOffset: { width: 0, height: -2 }, // 그림자 위치를 위쪽으로 설정
-        shadowOpacity: 0.25, // 그림자 투명도 설정
-        shadowRadius: 3.84, // 그림자의 blur 반경 설정
-    },
-    TabBarContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    TabBarImage: {
-        width: 32,
-        height: 32,
+    RefreshImage: {
+        width: 23,
+        height: 23,
         objectFit: 'contain',
-        marginTop: 12,
-        marginBottom: 5,
+        marginLeft: 8,
     },
     rankingListContainer: {
         position: 'absolute',
-        top: 100,
+        top: 400,
         width: '100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
-        paddingLeft: 16,
-        paddingRight: 16,
-        marginTop: 16,
-        marginBottom: 16,
+        paddingLeft: 14,
+        paddingRight: 14,
     },
     baseContainer: {
+        flexGrow: 1,
+        height: 31,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        backgroundColor: '#EEEEEE',
+        borderRadius: 12,
+        marginLeft: 2,
+        marginRight: 2,
     },
     clickContainer: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 4,
+        flexGrow: 1,
+        height: 31,
+        backgroundColor: 'white',
+        borderColor: '#52A55D',
+        borderRadius: 12,
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 2,
+        marginRight: 2,
     },
     ranking: {
         position: 'absolute',
-        top: 156,
-        paddingLeft: 16,
-        paddingRight: 16,
+        top: 447,
+        marginLeft: 16,
+        marginRight: 16,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 })
 
@@ -100,30 +96,26 @@ const baseText = {
 export const text = {
     tabBarText: {
         ...baseText,
-        color: 'black',
+        color: '#232323',
         fontSize: 16,
         letterSpacing: -1,
         flexGrow: 1,
         marginBottom: 23,
     },
-    rankingText: {
+    baseText: {
         ...baseText,
-        color: 'black',
-        fontSize: 16,
+        color: '#232323',
+        fontSize: 18,
         letterSpacing: -0.7,
     },
     clickText: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '500',
+        color: '#52A55D',
     },
-    inputText: {
-        ...baseText,
-        color: '#B1B1B1',
-        fontSize: 16,
-        lineHeight: 19.6,
-        letterSpacing: -0.8,
-        marginTop: 12,
-        marginBottom: 12,
+    rankingText: {
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 } as {
     [key: string]: StyleProp<TextStyle>
