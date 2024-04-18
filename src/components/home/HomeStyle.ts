@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
+        zIndex: 2, //ZIndex를 조정해서 터치 이벤트 문제 해소 , 캐러셀 컴포넌트가 터치이벤트를 가로채서 헤더에 있는 아이콘의 터치가 안먹고 있었음
     },
     Flex: {
         flex: 1,

@@ -13,6 +13,7 @@ export default function TabBar() {
     }
     // 클릭 상태
     const [tabClick, setTabClick] = useState<string>('home-tab')
+
     const clickTabIcons = [
         require('@/public/assets/clickHome.png'),
         require('@/public/assets/clickHospital.png'),
