@@ -1,30 +1,26 @@
 import 'intl-pluralrules'
-import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
-import i18n from '../public/locales/i18n'
+import i18n from './public/locales/i18n'
 import { useEffect } from 'react'
+import { useFonts } from 'expo-font'
+import { createStackNavigator } from '@react-navigation/stack'
+import AppNavigator from './components/navigation'
+import { Provider } from 'mobx-react'
+import profileStore from './state/signupState/profileStore'
+const Stack = createStackNavigator()
 
 export default function App() {
-    const { t } = useTranslation('login-join')
-
     useEffect(() => {
         i18n
     }, [])
+    const [fontsLoaded] = useFonts({
+        Pretendard: require('@/public/assets/font/PretendardVariable.ttf'),
+        Chab: require('@/public/assets/font/chab.ttf'),
+    })
 
     return (
-        <View style={styles.container}>
-            <Text>Open up App.tsx to start working on your app!</Text>
-            <StatusBar style="auto" />
-        </View>
+        <Provider profileStore={profileStore}>
+            <AppNavigator />
+        </Provider>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-})
