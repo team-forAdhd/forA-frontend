@@ -5,6 +5,8 @@ import { useEffect } from 'react'
 import { useFonts } from 'expo-font'
 import { createStackNavigator } from '@react-navigation/stack'
 import AppNavigator from './components/navigation'
+import { Provider } from 'mobx-react'
+import profileStore from './state/signupState/profileStore'
 
 const Stack = createStackNavigator()
 
@@ -17,5 +19,9 @@ export default function App() {
         Chab: require('@/public/assets/font/chab.ttf'),
     })
 
-    return <AppNavigator />
+    return (
+        <Provider profileStore={profileStore}>
+            <AppNavigator />
+        </Provider>
+    )
 }

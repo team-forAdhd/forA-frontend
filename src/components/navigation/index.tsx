@@ -19,7 +19,7 @@ const AppNavigator = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Login"
+                initialRouteName="Home"
             >
                 {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
