@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import AppNavigator from './components/navigation'
 import { Provider } from 'mobx-react'
 import profileStore from './state/signupState/profileStore'
+
 const Stack = createStackNavigator()
 
 export default function App() {

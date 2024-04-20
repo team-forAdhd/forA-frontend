@@ -17,11 +17,11 @@ i18n.use(initReactI18next).init({
     lng: 'ko',
     fallbackLng: 'ko',
     interpolation: {
-        escapeValue: false,
+      escapeValue: false,
     },
     react: {
-        useSuspense: false,
+      useSuspense: false,
     },
-})
+  });
 
-export default i18n
+export default i18n;
