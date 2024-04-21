@@ -9,6 +9,7 @@ import SetPassword from '../join/SetPassword'
 import SetProfile from '../join/SetProfile'
 import JoinLast from '../join/JoinLast'
 import JoinDone from '../join/JoinDone'
+import NotificationScreen from '../notification/notificationScreen'
 
 const Stack = createStackNavigator()
 
@@ -35,6 +36,10 @@ const AppNavigator = () => {
                 <Stack.Screen name="SetProfile" component={SetProfile} />
                 <Stack.Screen name="JoinLast" component={JoinLast} />
                 <Stack.Screen name="JoinDone" component={JoinDone} />
+                <Stack.Screen
+                    name="Notifications"
+                    component={NotificationScreen}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )
