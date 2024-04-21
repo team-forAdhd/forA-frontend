@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { styles, text } from './HomeStyle'
 import { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 
 import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
@@ -21,6 +22,8 @@ export default function Home() {
     ]
 
     const { t } = useTranslation('home')
+
+    const navigation = useNavigation()
 
     return (
         <View style={styles.container}>
@@ -43,6 +46,7 @@ export default function Home() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
+                            navigation.navigate('Notifications' as never)
                             console.log('알림창 열기')
                         }}
                     >
