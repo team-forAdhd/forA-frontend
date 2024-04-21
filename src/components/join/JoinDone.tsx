@@ -40,8 +40,8 @@ export default function JoinDone() {
         <View style={styles.JoinDone}>
             <View style={styles.JoinDoneContents}>
                 <Image
-                    source={require('@/public/assets/image.png')}
-                    style={styles.photoPlaceholder}
+                    source={require('@/public/assets/join-last/join-last.png')}
+                    style={styles.JoinDoneIcon}
                 />
                 <Text style={text.joinDoneText}>{t('join-finished')}</Text>
                 <Text style={text.enjoyText}>{t('finished-enjoy-1')}</Text>

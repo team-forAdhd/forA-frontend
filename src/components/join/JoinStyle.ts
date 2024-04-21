@@ -201,6 +201,12 @@ export const styles = StyleSheet.create({
         top: 267,
         left: 100,
         alignItems: 'center',
+    },
+    JoinDoneIcon: {
+        width: 193.789,
+        height: 161.22,
+        flexShrink: 0,
+        marginBottom: 19.78
     }
 })
 

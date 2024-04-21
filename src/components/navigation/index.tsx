@@ -24,6 +24,8 @@ const AppNavigator = () => {
                 {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="Login" component={LoginScreen} />
+
+                {/* 일반 회원가입 */}
                 <Stack.Screen
                     name="EmailDuplicateCheck"
                     component={EmailDuplicateCheck}
