@@ -10,6 +10,7 @@ import SetProfile from '../join/SetProfile'
 import JoinLast from '../join/JoinLast'
 import JoinDone from '../join/JoinDone'
 import NotificationScreen from '../notification/notificationScreen'
+import SearchScreen from '../search/searchScreen'
 
 const Stack = createStackNavigator()
 
@@ -40,6 +41,7 @@ const AppNavigator = () => {
                     name="Notifications"
                     component={NotificationScreen}
                 />
+                <Stack.Screen name="Search" component={SearchScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     )

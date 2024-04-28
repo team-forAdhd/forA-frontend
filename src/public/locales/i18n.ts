@@ -4,6 +4,7 @@ import homeLocale from './ko/home.json'
 import loginjoinLocale from './ko/login-join.json'
 import signupProfile from './ko/signup-profile.json'
 import notificationLocale from './ko/notification.json'
+import searchLocale from './ko/search.json'
 
 const resources = {
     ko: {
@@ -11,6 +12,7 @@ const resources = {
         'login-join': loginjoinLocale,
         'signup-profile': signupProfile,
         notification: notificationLocale,
+        search: searchLocale,
     },
 }
 
