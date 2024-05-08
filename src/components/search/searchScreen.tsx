@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
-import { Text, TouchableOpacity, View, Image } from 'react-native'
+import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
 import { searchStoreContext } from '@/state/searchState'
 import { styles, text } from './searchStyle'
 import { TextInput } from 'react-native-gesture-handler'
@@ -119,7 +119,7 @@ export default function SearchScreen() {
                     <View style={styles.searchHistory}>
                         <Observer>
                             {() => (
-                                <>
+                                <View>
                                     {store.recentSearchTerm.map(
                                         (search, index) => (
                                             <View
@@ -135,10 +135,25 @@ export default function SearchScreen() {
                                                 >
                                                     {search}
                                                 </Text>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        //누르면 삭제 되게끔
+                                                        store.deleteSearchTerm(
+                                                            search,
+                                                        )
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={require('@/public/assets/searchHistory_cancel.png')}
+                                                        style={
+                                                            styles.searchHistiryCancel
+                                                        }
+                                                    />
+                                                </TouchableOpacity>
                                             </View>
                                         ),
                                     )}
-                                </>
+                                </View>
                             )}
                         </Observer>
                     </View>
