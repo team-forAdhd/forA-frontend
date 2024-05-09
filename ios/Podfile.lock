@@ -10,6 +10,8 @@ PODS:
     - React-Core
   - Expo (50.0.11):
     - ExpoModulesCore
+  - ExpoClipboard (5.0.1):
+    - ExpoModulesCore
   - ExpoFileSystem (16.0.8):
     - ExpoModulesCore
   - ExpoImagePicker (14.7.1):
@@ -1114,6 +1116,7 @@ DEPENDENCIES:
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - Expo (from `../node_modules/expo`)
+  - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
@@ -1196,6 +1199,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-image-loader/ios"
   Expo:
     :path: "../node_modules/expo"
+  ExpoClipboard:
+    :path: "../node_modules/expo-clipboard/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoImagePicker:
@@ -1323,6 +1328,7 @@ SPEC CHECKSUMS:
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   Expo: bbffa600c41f904151a925e5a214d1f4c5a79794
+  ExpoClipboard: b597982124f067ff9f5b89093eb3d97898d5d877
   ExpoFileSystem: eecaf6796aed0f4dd20042dc2ca2cac6c4bc1185
   ExpoImagePicker: 66970181d1c838f444e5e1f81b804ab2d5ff49bd
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c

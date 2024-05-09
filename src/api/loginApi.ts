@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 interface ApiResponse {
   success: boolean;
+  nickname: string;
 }
 
 export const loginApi = async (email: string, password: string): Promise<ApiResponse> => {
