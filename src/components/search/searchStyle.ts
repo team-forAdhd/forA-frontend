@@ -66,15 +66,15 @@ export const styles = StyleSheet.create({
         marginTop: 24,
     },
     recentSearchTermContainer: {
-        width: 'auto',
-        height: 31,
-        justifyContent: 'center',
+        width: '100%',
+        height: 42,
+        justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
-        backgroundColor: '#EDEDEA',
-        borderRadius: 30,
-        marginRight: 6,
-        paddingHorizontal: 8,
+    },
+    searchHistiryCancel: {
+        width: 26,
+        height: 26,
     },
     recentSearchContainer: {
         //최근 검색어와 모두 지우기를 담고 있는 컨테이너
@@ -115,7 +115,6 @@ export const text = {
     recentSearchValue: {
         ...baseText,
         fontSize: 16,
-        color: '#52A55D',
     },
     deleteText: {
         fontSize: 18,
