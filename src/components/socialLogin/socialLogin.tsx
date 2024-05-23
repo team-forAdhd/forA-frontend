@@ -1,14 +1,27 @@
-import { useContext } from 'react'
+import { useContext, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
-import { TouchableOpacity, Text, View, Image } from 'react-native'
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    Image,
+    Animated,
+    Dimensions,
+} from 'react-native'
 import { styles, text } from './socialLoginStyle'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
 import { SocialJoinStoresContext } from '@/state/socialJoinState'
 import { Observer } from 'mobx-react'
 import ConsentComponent from '../common/consentComponent/consentComponent'
+import BottomSheet from '../common/bottomsheet/bottomsheet'
 
 export default function SiocialLoginScreen() {
+    //바텀시트 컴포넌트 렌더링에 쓰일 boolean 배열
+    const [bottomSheet, setBottomSheet] = useState<boolean[]>([false, false])
+    //위의 배열에 쓰일 인덱스
+    const [bottomIndex, setBottomIndex] = useState<number>(0)
+
     const { t } = useTranslation('socialLogin')
 
     const store = useContext(SocialJoinStoresContext)
@@ -43,6 +56,9 @@ export default function SiocialLoginScreen() {
     ]
     return (
         <View style={styles.container}>
+            {(bottomSheet[0] || bottomSheet[1]) && (
+                <View style={styles.bottomActivatedContainer}></View>
+            )}
             <TouchableOpacity
                 style={styles.header}
                 onPress={() => {
@@ -89,23 +105,41 @@ export default function SiocialLoginScreen() {
                     essential={item.essential}
                     ViewContent={item.viewContent}
                     index={item.index}
+                    bottomSheet={bottomSheet}
+                    setBottomSheet={setBottomSheet}
+                    setBottomIndex={setBottomIndex}
                 />
             ))}
-            <TouchableOpacity
-                style={styles.nextButton}
-                onPress={() => {
-                    console.log('다음으로 가자')
-                    if (
-                        store.agreeCheckList
-                            .slice(0, 3)
-                            .every((x) => x === true) //필수 질문들만 true이면 다음화면으로 넘어갈 수 있도록
-                    ) {
-                        //navigation
-                    }
-                }}
-            >
-                <Text style={text.buttonText}>다음</Text>
-            </TouchableOpacity>
+            {bottomSheet[bottomIndex] && (
+                <BottomSheet
+                    index={bottomIndex}
+                    setBottomSheet={setBottomSheet}
+                />
+            )}
+            <Observer>
+                {() => (
+                    <TouchableOpacity
+                        style={
+                            store.agreeCheckList
+                                .slice(0, 3)
+                                .every((x) => x === true)
+                                ? styles.nextButton
+                                : styles.disabledNextButton
+                        }
+                        onPress={() => {
+                            if (
+                                store.agreeCheckList
+                                    .slice(0, 3)
+                                    .every((x) => x === true) //필수 질문들만 true이면 다음화면으로 넘어갈 수 있도록
+                            ) {
+                                //navigation
+                            }
+                        }}
+                    >
+                        <Text style={text.buttonText}>다음</Text>
+                    </TouchableOpacity>
+                )}
+            </Observer>
         </View>
     )
 }

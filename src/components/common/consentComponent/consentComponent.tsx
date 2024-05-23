@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, Dispatch, SetStateAction } from 'react'
 import { TouchableOpacity, Text, View, Image } from 'react-native'
 import { styles, text } from './consentStyle'
 import { SocialJoinStoresContext } from '@/state/socialJoinState'
@@ -9,12 +9,18 @@ interface ConsentType {
     essential: string
     ViewContent: string
     index: number
+    bottomSheet: boolean[]
+    setBottomSheet: Dispatch<SetStateAction<boolean[]>>
+    setBottomIndex: Dispatch<SetStateAction<number>>
 }
 export default function ConsentComponent({
     title,
     essential,
     ViewContent,
     index,
+    bottomSheet,
+    setBottomSheet,
+    setBottomIndex,
 }: ConsentType) {
     const store = useContext(SocialJoinStoresContext)
 
@@ -53,7 +59,14 @@ export default function ConsentComponent({
                 )}
             </Observer>
             {ViewContent && (
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        const newBottomSheet = Array.from(bottomSheet)
+                        newBottomSheet[index] = !bottomSheet[index]
+                        setBottomSheet(newBottomSheet)
+                        setBottomIndex(index)
+                    }}
+                >
                     <Text style={text.viewContentText}>{ViewContent}</Text>
                 </TouchableOpacity>
             )}
