@@ -51,6 +51,7 @@ export default function Home() {
                 <View style={styles.Flex}>
                     <TouchableOpacity
                         onPress={() => {
+                            navigation.navigate('Search' as never)
                             console.log('검색창')
                         }}
                     >

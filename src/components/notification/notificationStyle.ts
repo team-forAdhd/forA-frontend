@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
         zIndex: 2,
     },
     notificationContainer: {
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#EDEDEA',
         flex: 1,
         width: '100%',
         height: '100%',

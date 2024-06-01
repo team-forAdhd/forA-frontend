@@ -13,6 +13,8 @@ import NotificationScreen from '../notification/notificationScreen'
 import NewPost from '../newPost/NewPost'
 import PostDetail from '../home/postDetail/PostDetail'
 import EditPost from '../editPost/EditPost'
+import SearchScreen from '../search/searchScreen'
+import SiocialLoginScreen from '../socialLogin/socialLogin'
 
 const Stack = createStackNavigator()
 
@@ -47,6 +49,11 @@ const AppNavigator = () => {
                 />
                 <Stack.Screen name="PostDetail" component={PostDetail} />
                 <Stack.Screen name="EditPost" component={EditPost} />
+                <Stack.Screen name="Search" component={SearchScreen} />
+                <Stack.Screen
+                    name="SocialLoginAgree"
+                    component={SiocialLoginScreen}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )
