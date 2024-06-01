@@ -10,6 +10,9 @@ import SetProfile from '../join/SetProfile'
 import JoinLast from '../join/JoinLast'
 import JoinDone from '../join/JoinDone'
 import NotificationScreen from '../notification/notificationScreen'
+import NewPost from '../newPost/NewPost'
+import PostDetail from '../home/postDetail/PostDetail'
+import EditPost from '../editPost/EditPost'
 import SearchScreen from '../search/searchScreen'
 import SiocialLoginScreen from '../socialLogin/socialLogin'
 
@@ -22,10 +25,12 @@ const AppNavigator = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Home"
+                initialRouteName="EditPost"
             >
                 {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="NewPost" component={NewPost} />
+
                 <Stack.Screen name="Login" component={LoginScreen} />
 
                 {/* 일반 회원가입 */}
@@ -42,6 +47,8 @@ const AppNavigator = () => {
                     name="Notifications"
                     component={NotificationScreen}
                 />
+                <Stack.Screen name="PostDetail" component={PostDetail} />
+                <Stack.Screen name="EditPost" component={EditPost} />
                 <Stack.Screen name="Search" component={SearchScreen} />
                 <Stack.Screen
                     name="SocialLoginAgree"

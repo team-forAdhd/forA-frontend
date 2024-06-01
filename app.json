@@ -4,10 +4,10 @@
     "slug": "forA",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "public/assets/forA-icon.png",
+    "icon": "src/public/assets/forA-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "public/assets/forA-icon.png",
+      "image": "src/public/assets/forA-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,12 +20,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "public/assets/adaptive-icon.png",
+        "foregroundImage": "src/public/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "public/assets/favicon.png"
+      "favicon": "src/public/assets/favicon.png"
     }
   }
 }
