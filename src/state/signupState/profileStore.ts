@@ -1,14 +1,16 @@
 import { makeAutoObservable } from 'mobx'
 
 class ProfileStore {
-    nickName: string = '' // default 작성
-    imageUrl: string = '' // default 작성
+    nickName: string = ''
+    imageUrl: string = ''
     name: string = ''
     birthYearMonth: string = ''
     gender: string = ''
     email: string = ''
     password: string = ''
     isAdhd: string = ''
+    isPushNotiOn = false
+    isLocationAllowed = false
 
     constructor() {
         makeAutoObservable(this)
@@ -21,30 +23,38 @@ class ProfileStore {
     setImageUrl = (url: string) => {
         this.imageUrl = url
     }
+
     setName(name: string) {
-        this.name = name;
-      }
-    
+        this.name = name
+    }
+
     setBirthYearMonth(birthYearMonth: string) {
-        this.birthYearMonth = birthYearMonth;
+        this.birthYearMonth = birthYearMonth
     }
-    
+
     setGender(gender: string) {
-        this.gender = gender;
+        this.gender = gender
     }
-    
+
     setEmail(email: string) {
-        this.email = email;
+        this.email = email
     }
-    
+
     setPassword(password: string) {
-       this.password = password;
+        this.password = password
     }
 
     setIsAdhd(isAdhd: string) {
-        this.isAdhd = isAdhd;
+        this.isAdhd = isAdhd
     }
-    
+
+    setIsPushNotiOn() {
+        this.isPushNotiOn = !this.isPushNotiOn
+    }
+
+    setIsLocationAllowed() {
+        this.isLocationAllowed = !this.isLocationAllowed
+    }
 }
 
 const profileStore = new ProfileStore()

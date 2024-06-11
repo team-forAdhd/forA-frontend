@@ -1,0 +1,17 @@
+{
+    "header-title": "계정 설정",
+    "profile-title": "내 정보",
+    "nickname": "닉네임",
+    "birthdate": "생년월일",
+    "email": "이메일",
+    "change-password": "비밀번호 변경",
+    "current-password": "현재 비밀번호",
+    "new-password": "새 비밀번호",
+    "password-confirm": "새 비밀번호 확인",
+    "change-nickname": "닉네임 변경",
+    "input-prompt": "변경하실 닉네임을 입력해주세요",
+    "label-nickname": "닉네임",
+    "button-next": "다음",
+    "logOut-question": "정말 로그아웃하시겠어요?",
+    "Account-question": "회원탈퇴 시 계정 복구가 불가합니다.\n그래도 삭제하시겠습니까?"
+}

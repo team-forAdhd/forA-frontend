@@ -6,6 +6,8 @@ import signupProfile from './ko/signup-profile.json'
 import notificationLocale from './ko/notification.json'
 import searchLocale from './ko/search.json'
 import socialLogin from './ko/socialLogin.json'
+import MyPage from './ko/myPage.json'
+import AccountSettings from './ko/accountSettings.json'
 
 const resources = {
     ko: {
@@ -15,6 +17,8 @@ const resources = {
         notification: notificationLocale,
         search: searchLocale,
         socialLogin: socialLogin,
+        MyPage: MyPage,
+        AccountSettings: AccountSettings,
     },
 }
 
