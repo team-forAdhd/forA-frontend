@@ -13,6 +13,7 @@ import { ArrowIcon, TitleTextIcon } from '@/public/assets/SvgComponents'
 import { useNavigation } from '@react-navigation/native'
 import { loginApi } from '@/api/loginApi'
 import { WebView } from 'react-native-webview'
+import userStore from '@/store/userStore/userStore'
 
 export default function LoginScreen() {
     const { t } = useTranslation('login-join')
@@ -38,6 +39,7 @@ export default function LoginScreen() {
         try {
             const response = await loginApi(email, password)
             if (response.success) {
+                userStore.login(response.nickname)
                 loginFinished()
             } else {
                 setLoginFailed(true)
