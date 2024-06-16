@@ -39,7 +39,7 @@ export default function LoginScreen() {
         try {
             const response = await loginApi(email, password)
             if (response.success) {
-                userStore.login(response.nickname)
+                userStore.login(response.nickname, response.nickname)
                 loginFinished()
             } else {
                 setLoginFailed(true)

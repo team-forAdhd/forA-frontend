@@ -15,6 +15,7 @@ import PostDetail from '../home/postDetail/PostDetail'
 import EditPost from '../editPost/EditPost'
 import SearchScreen from '../search/searchScreen'
 import SiocialLoginScreen from '../socialLogin/socialLogin'
+import OnboardScreen from '../splash-n-onboard/onboard/OnboardScreen'
 
 const Stack = createStackNavigator()
 
@@ -25,9 +26,10 @@ const AppNavigator = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="EditPost"
+                initialRouteName="Onboard"
             >
                 {/* 구현한 화면 추가 */}
+                <Stack.Screen name="Onboard" component={OnboardScreen} />
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="NewPost" component={NewPost} />
 
