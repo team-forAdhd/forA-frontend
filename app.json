@@ -1,31 +1,32 @@
 {
-  "expo": {
-    "name": "forA",
-    "slug": "forA",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "public/assets/forA-icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "public/assets/forA-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "ios.forA"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "public/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "favicon": "public/assets/favicon.png"
+    "expo": {
+        "name": "forA",
+        "slug": "forA",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "public/assets/forA-icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "public/assets/forA-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "config": {
+                "googleMapsApiKey": "AIzaSyAVFYlhpKrrolHgInFPjziSEUs_TJlbx28"
+            },
+            "supportsTablet": true,
+            "bundleIdentifier": "ios.forA"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "public/assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            }
+        },
+        "web": {
+            "favicon": "public/assets/favicon.png"
+        }
     }
-  }
 }
