@@ -40,8 +40,6 @@ export default function MyPage() {
             t('push-noti'),
             t('allow-locationInfo'),
         ],
-        allowButtons: [store.isPushNotiOn, store.isLocationAllowed],
-        setAllowButtons: [store.setIsPushNotiOn, store.setIsLocationAllowed],
     }
 
     const navigation = useNavigation()
@@ -136,28 +134,34 @@ export default function MyPage() {
                         >
                             <Text style={text.commonText}>{setting}</Text>
 
-                            {setting !== '계정 설정' && ( //계정 설정이 아닌 경우에만 동의 버튼이 뜨게끔
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        user.setAllowButtons[index - 1]()
-                                        console.log(
-                                            user.allowButtons[index - 1],
-                                        )
-                                    }}
-                                >
-                                    <Observer>
-                                        {() => (
+                             {setting !== '계정 설정' && ( // 계정 설정이 아닌 경우에만 동의 버튼이 뜨게끔
+                                <Observer>
+                                    {() => (
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                if (index === 1) {
+                                                    store.setIsPushNotiOn();
+                                                } else if (index === 2) {
+                                                    store.setIsLocationAllowed();
+                                                }
+                                                console.log(store.isPushNotiOn, store.isLocationAllowed);
+                                            }}
+                                        >
                                             <Image
                                                 source={
-                                                    user.allowButtons[index - 1]
-                                                        ? require('@/public/assets/allowButton.png')
-                                                        : require('@/public/assets/notAllowButton.png')
+                                                    index === 1
+                                                        ? (store.isPushNotiOn
+                                                            ? require('@/public/assets/allowButton.png')
+                                                            : require('@/public/assets/notAllowButton.png'))
+                                                        : (store.isLocationAllowed
+                                                            ? require('@/public/assets/allowButton.png')
+                                                            : require('@/public/assets/notAllowButton.png'))
                                                 }
                                                 style={styles.allowIconImage}
                                             />
-                                        )}
-                                    </Observer>
-                                </TouchableOpacity>
+                                        </TouchableOpacity>
+                                    )}
+                                </Observer>
                             )}
                         </View>{' '}
                     </TouchableOpacity>
