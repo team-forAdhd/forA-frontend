@@ -15,8 +15,34 @@ import PostDetail from '../home/postDetail/PostDetail'
 import EditPost from '../editPost/EditPost'
 import SearchScreen from '../search/searchScreen'
 import SiocialLoginScreen from '../socialLogin/socialLogin'
+import MyPage from '../myPage/myPage'
+import MyPost from '../myPage/myPost'
+import AccountSettings from '../accountSettings/accountSettings'
+import ChangeNickName from '../changeNickName/changeNickName'
 
-const Stack = createStackNavigator()
+export type RootStackParamList = {
+    Home: undefined
+    Login: undefined
+    EmailDuplicateCheck: undefined
+    AuthCheck: undefined
+    SetPassword: undefined
+    SetProfile: undefined
+    JoinLast: undefined
+    JoinDone: undefined
+    Notifications: undefined
+    Search: undefined
+    SocialLoginAgree: undefined
+    MyPage: undefined
+    AccountSettings: undefined
+    MyPosts: { postType: 'myPosts' }
+    MyComments: { postType: 'myComments' }
+    MyReviews: { postType: 'myReviews' }
+    SavedPosts: { postType: 'savedPosts' }
+    ChangeNickname: undefined
+    NewPost: undefined
+} //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 const AppNavigator = () => {
     return (
@@ -25,7 +51,7 @@ const AppNavigator = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="EditPost"
+                initialRouteName="Home"
             >
                 {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
@@ -47,12 +73,41 @@ const AppNavigator = () => {
                     name="Notifications"
                     component={NotificationScreen}
                 />
-                <Stack.Screen name="PostDetail" component={PostDetail} />
-                <Stack.Screen name="EditPost" component={EditPost} />
+                {/*<Stack.Screen name="PostDetail" component={PostDetail} />
+                <Stack.Screen name="EditPost" component={EditPost} />*/}
                 <Stack.Screen name="Search" component={SearchScreen} />
                 <Stack.Screen
                     name="SocialLoginAgree"
                     component={SiocialLoginScreen}
+                />
+                <Stack.Screen name="MyPage" component={MyPage} />
+                <Stack.Screen
+                    name="AccountSettings"
+                    component={AccountSettings}
+                />
+                <Stack.Screen
+                    name="MyPosts"
+                    component={MyPost}
+                    initialParams={{ postType: 'myPosts' }}
+                />
+                <Stack.Screen
+                    name="MyComments"
+                    component={MyPost}
+                    initialParams={{ postType: 'myComments' }}
+                />
+                <Stack.Screen
+                    name="MyReviews"
+                    component={MyPost}
+                    initialParams={{ postType: 'myReviews' }}
+                />
+                <Stack.Screen
+                    name="SavedPosts"
+                    component={MyPost}
+                    initialParams={{ postType: 'savedPosts' }}
+                />
+                <Stack.Screen
+                    name="ChangeNickname"
+                    component={ChangeNickName}
                 />
             </Stack.Navigator>
         </NavigationContainer>

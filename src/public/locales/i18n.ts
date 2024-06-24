@@ -7,6 +7,8 @@ import notificationLocale from './ko/notification.json'
 import boardLocale from './ko/board.json'
 import searchLocale from './ko/search.json'
 import socialLogin from './ko/socialLogin.json'
+import MyPage from './ko/myPage.json'
+import AccountSettings from './ko/accountSettings.json'
 
 const resources = {
     ko: {
@@ -17,6 +19,8 @@ const resources = {
         'board': boardLocale,
         search: searchLocale,
         socialLogin: socialLogin,
+        MyPage: MyPage,
+        AccountSettings: AccountSettings,
     },
 }
 
