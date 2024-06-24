@@ -12,6 +12,7 @@ import JoinDone from '../join/JoinDone'
 import NotificationScreen from '../notification/notificationScreen'
 import SearchScreen from '../search/searchScreen'
 import SiocialLoginScreen from '../socialLogin/socialLogin'
+import HospitalDetail from '../hospital/HospitalDetail'
 
 const Stack = createStackNavigator()
 
@@ -22,7 +23,7 @@ const AppNavigator = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Home"
+                initialRouteName="HospitalDatail"
             >
                 {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
@@ -46,6 +47,10 @@ const AppNavigator = () => {
                 <Stack.Screen
                     name="SocialLoginAgree"
                     component={SiocialLoginScreen}
+                />
+                <Stack.Screen
+                    name="HospitalDatail"
+                    component={HospitalDetail}
                 />
             </Stack.Navigator>
         </NavigationContainer>
