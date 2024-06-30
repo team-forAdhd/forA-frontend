@@ -4,24 +4,19 @@
     "slug": "forA-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "@/resources/assets/forA-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "@/resources/assets/forA-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.forA-frontend"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "@/resources/assets/favicon.png"
     }
   }
 }

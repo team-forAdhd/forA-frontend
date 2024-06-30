@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 interface ApiResponse {
   success: boolean;
+  userId: number;
   nickname: string;
 }
 
