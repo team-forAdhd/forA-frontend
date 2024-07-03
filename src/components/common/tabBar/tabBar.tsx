@@ -1,8 +1,22 @@
 import { useTranslation } from 'react-i18next'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { styles, text } from './tabBarStyle'
-import { useState } from 'react'
+import { useContext } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { TabBarStoreContext } from '@/state/tabBarState'
+
+interface NavigationList {
+    [key: string]: string
+    'home-tab': string
+    'hospital-tab': string
+    'meds-tab': string
+    'selfCheck-tab': string
+    'MY-tab': string
+}
 export default function TabBar() {
+    // 클릭 상태 전역으로 관리 - 이전에는 state로 해서 리랜더링시 현재 클릭 상태 반영 X
+    const store = useContext(TabBarStoreContext)
+
     //t함수에 전달할 키 값과 아이콘 이미지 경로
     const tabBarList = {
         'home-tab': require('@/public/assets/home.png'),
@@ -11,8 +25,14 @@ export default function TabBar() {
         'selfCheck-tab': require('@/public/assets/self-check.png'),
         'MY-tab': require('@/public/assets/MY.png'),
     }
-    // 클릭 상태
-    const [tabClick, setTabClick] = useState<string>('home-tab')
+
+    const navigationList: NavigationList = {
+        'home-tab': 'Home',
+        'hospital-tab': 'HospitalDetail',
+        'meds-tab': 'MyPage',
+        'selfCheck-tab': 'MyPage',
+        'MY-tab': 'MyPage',
+    }
 
     const clickTabIcons = [
         require('@/public/assets/clickHome.png'),
@@ -24,6 +44,7 @@ export default function TabBar() {
 
     const { t } = useTranslation('home')
 
+    const navigation = useNavigation()
     return (
         <View style={styles.TabBar}>
             {Object.entries(tabBarList).map(([tab, tabImage], index) => {
@@ -31,14 +52,15 @@ export default function TabBar() {
                     <TouchableOpacity
                         style={styles.TabBarContainer}
                         onPress={() => {
-                            setTabClick(tab)
+                            store.setClickTab(tab)
                             console.log(tab)
+                            navigation.navigate(navigationList[tab] as never) //모바일에서 확인
                         }}
                         key={index}
                     >
                         <Image
                             source={
-                                tabClick === tab
+                                store.clickTab === tab
                                     ? clickTabIcons[index]
                                     : tabImage
                             }
@@ -46,7 +68,7 @@ export default function TabBar() {
                         />
                         <Text
                             style={
-                                tabClick === tab
+                                store.clickTab === tab
                                     ? text.clickTabBarText
                                     : text.tabBarText
                             }

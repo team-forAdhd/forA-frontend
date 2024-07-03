@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: -2 }, // 그림자 위치를 위쪽으로 설정
         shadowOpacity: 0.25, // 그림자 투명도 설정
         shadowRadius: 3.84, // 그림자의 blur 반경 설정
+        zIndex: 30,
     },
     TabBarContainer: {
         justifyContent: 'center',

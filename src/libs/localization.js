@@ -4,7 +4,7 @@ const doc = new GoogleSpreadsheet(
   "1I-Fsu0BOrlNBRsWyo9VPXCDtrdWVsF-5pYcuuokK1TY",
 );
 async function googleSheet() {
-  const sheetNumbers = 2; // 가지고 올 sheet 갯수
+  const sheetNumbers = 4; // 가지고 올 sheet 갯수
   await doc.useServiceAccountAuth(gs_creds);
   await doc.loadInfo();
   for (let step = 0; step < sheetNumbers; step++) {
