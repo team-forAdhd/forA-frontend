@@ -28,7 +28,7 @@ export default function TabBar() {
 
     const navigationList: NavigationList = {
         'home-tab': 'Home',
-        'hospital-tab': 'MyPage',
+        'hospital-tab': 'HospitalDetail',
         'meds-tab': 'MyPage',
         'selfCheck-tab': 'MyPage',
         'MY-tab': 'MyPage',

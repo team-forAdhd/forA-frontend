@@ -7,8 +7,10 @@ import notificationLocale from './ko/notification.json'
 import boardLocale from './ko/board.json'
 import searchLocale from './ko/search.json'
 import socialLogin from './ko/socialLogin.json'
+import hospitalDetail from './ko/hospitalDetail.json'
 import MyPage from './ko/myPage.json'
 import AccountSettings from './ko/accountSettings.json'
+import ribbonEvaluation from './ko/ribbonEvaluation.json'
 
 const resources = {
     ko: {
@@ -16,11 +18,13 @@ const resources = {
         'login-join': loginjoinLocale,
         'signup-profile': signupProfile,
         notification: notificationLocale,
-        'board': boardLocale,
+        board: boardLocale,
         search: searchLocale,
         socialLogin: socialLogin,
+        hospitalDetail: hospitalDetail,
         MyPage: MyPage,
         AccountSettings: AccountSettings,
+        ribbonEvaluation: ribbonEvaluation,
     },
 }
 

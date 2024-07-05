@@ -15,10 +15,12 @@ import PostDetail from '../home/postDetail/PostDetail'
 import EditPost from '../editPost/EditPost'
 import SearchScreen from '../search/searchScreen'
 import SiocialLoginScreen from '../socialLogin/socialLogin'
+import HospitalDetail from '../hospital/HospitalDetail'
 import MyPage from '../myPage/myPage'
 import MyPost from '../myPage/myPost'
 import AccountSettings from '../accountSettings/accountSettings'
 import ChangeNickName from '../changeNickName/changeNickName'
+import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
 
 export type RootStackParamList = {
     Home: undefined
@@ -40,6 +42,7 @@ export type RootStackParamList = {
     SavedPosts: { postType: 'savedPosts' }
     ChangeNickname: undefined
     NewPost: undefined
+    HospitalDetail: undefined
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -80,6 +83,11 @@ const AppNavigator = () => {
                     name="SocialLoginAgree"
                     component={SiocialLoginScreen}
                 />
+                <Stack.Screen
+                    name="HospitalDetail"
+                    component={HospitalDetail}
+                />
+
                 <Stack.Screen name="MyPage" component={MyPage} />
                 <Stack.Screen
                     name="AccountSettings"

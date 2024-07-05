@@ -95,8 +95,7 @@ export const styles = StyleSheet.create({
     },
     myWrittingContainer: {
         position: 'absolute',
-        top: 277,
-        left: 16,
+        top: 0,
         width: 382,
         height: 114,
         justifyContent: 'space-around',
@@ -121,8 +120,7 @@ export const styles = StyleSheet.create({
     },
     scrabContainer: {
         position: 'absolute',
-        top: 399,
-        left: 16,
+        top: 122,
         width: 382,
         height: 152,
         justifyContent: 'space-around',
@@ -135,8 +133,7 @@ export const styles = StyleSheet.create({
     },
     bottomContainer: {
         position: 'absolute',
-        top: 559,
-        left: 16,
+        top: 282,
         width: 382,
         height: 152,
         justifyContent: 'space-around',

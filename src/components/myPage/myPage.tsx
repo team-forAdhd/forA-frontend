@@ -75,97 +75,114 @@ export default function MyPage() {
                 </View>
             </View>
             {/*내가 쓴 게시물들*/}
-            <View style={styles.myWrittingContainer}>
-                {Object.entries(myWrittings).map((my) => (
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate(my[1].navigator as never)
-                        }}
-                    >
-                        <View style={styles.myInnerContainer}>
-                            <Image
-                                source={my[1].icon}
-                                style={styles.myIconImage}
-                            />
-                            <Text style={text.myText}>{my[0]}</Text>
-                        </View>
-                    </TouchableOpacity>
-                ))}
-            </View>
-            {/*내가 저장한 내용 컨테이너  */}
-            <View style={styles.scrabContainer}>
-                {user.myScrab.map((scrab, index) => (
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate(
-                                user.myScrabNavigation[index] as never,
-                            )
-                        }}
-                    >
-                        <View
-                            style={{
-                                justifyContent: 'space-between',
-                                flexDirection: 'row',
+            <View
+                style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    zIndex: 3,
+                    position: 'absolute',
+                    top: 277,
+                }}
+            >
+                <View style={styles.myWrittingContainer}>
+                    {Object.entries(myWrittings).map((my) => (
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate(my[1].navigator as never)
                             }}
                         >
-                            <Text style={text.commonText}>{scrab}</Text>
-                            <Image
-                                source={require('@/public/assets/next.png')}
-                                style={styles.scrabImage}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                ))}
-            </View>
-            {/*내가 저장한 내용 컨테이너  */}
-            <View style={styles.bottomContainer}>
-                {user.settings.map((setting, index) => (
-                    <TouchableOpacity
-                        onPress={() => {
-                            setting === '계정 설정' &&
-                                navigation.navigate('AccountSettings' as never)
-                        }}
-                    >
-                        <View
-                            style={{
-                                justifyContent: 'space-between',
-                                flexDirection: 'row',
+                            <View style={styles.myInnerContainer}>
+                                <Image
+                                    source={my[1].icon}
+                                    style={styles.myIconImage}
+                                />
+                                <Text style={text.myText}>{my[0]}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+                {/*내가 저장한 내용 컨테이너  */}
+                <View style={styles.scrabContainer}>
+                    {user.myScrab.map((scrab, index) => (
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate(
+                                    user.myScrabNavigation[index] as never,
+                                )
                             }}
                         >
-                            <Text style={text.commonText}>{setting}</Text>
+                            <View
+                                style={{
+                                    justifyContent: 'space-between',
+                                    flexDirection: 'row',
+                                }}
+                            >
+                                <Text style={text.commonText}>{scrab}</Text>
+                                <Image
+                                    source={require('@/public/assets/next.png')}
+                                    style={styles.scrabImage}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+                {/*내가 저장한 내용 컨테이너  */}
+                <View style={styles.bottomContainer}>
+                    {user.settings.map((setting, index) => (
+                        <TouchableOpacity
+                            onPress={() => {
+                                setting === '계정 설정' &&
+                                    navigation.navigate(
+                                        'AccountSettings' as never,
+                                    )
+                            }}
+                        >
+                            <View
+                                style={{
+                                    justifyContent: 'space-between',
+                                    flexDirection: 'row',
+                                }}
+                            >
+                                <Text style={text.commonText}>{setting}</Text>
 
-                             {setting !== '계정 설정' && ( // 계정 설정이 아닌 경우에만 동의 버튼이 뜨게끔
-                                <Observer>
-                                    {() => (
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                if (index === 1) {
-                                                    store.setIsPushNotiOn();
-                                                } else if (index === 2) {
-                                                    store.setIsLocationAllowed();
-                                                }
-                                                console.log(store.isPushNotiOn, store.isLocationAllowed);
-                                            }}
-                                        >
-                                            <Image
-                                                source={
-                                                    index === 1
-                                                        ? (store.isPushNotiOn
-                                                            ? require('@/public/assets/allowButton.png')
-                                                            : require('@/public/assets/notAllowButton.png'))
-                                                        : (store.isLocationAllowed
-                                                            ? require('@/public/assets/allowButton.png')
-                                                            : require('@/public/assets/notAllowButton.png'))
-                                                }
-                                                style={styles.allowIconImage}
-                                            />
-                                        </TouchableOpacity>
-                                    )}
-                                </Observer>
-                            )}
-                        </View>{' '}
-                    </TouchableOpacity>
-                ))}
+                                {setting !== '계정 설정' && ( // 계정 설정이 아닌 경우에만 동의 버튼이 뜨게끔
+                                    <Observer>
+                                        {() => (
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    if (index === 1) {
+                                                        store.setIsPushNotiOn()
+                                                    } else if (index === 2) {
+                                                        store.setIsLocationAllowed()
+                                                    }
+                                                    console.log(
+                                                        store.isPushNotiOn,
+                                                        store.isLocationAllowed,
+                                                    )
+                                                }}
+                                            >
+                                                <Image
+                                                    source={
+                                                        index === 1
+                                                            ? store.isPushNotiOn
+                                                                ? require('@/public/assets/allowButton.png')
+                                                                : require('@/public/assets/notAllowButton.png')
+                                                            : store.isLocationAllowed
+                                                              ? require('@/public/assets/allowButton.png')
+                                                              : require('@/public/assets/notAllowButton.png')
+                                                    }
+                                                    style={
+                                                        styles.allowIconImage
+                                                    }
+                                                />
+                                            </TouchableOpacity>
+                                        )}
+                                    </Observer>
+                                )}
+                            </View>{' '}
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
             <TabBar />
         </View>

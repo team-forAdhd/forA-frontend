@@ -1,31 +1,29 @@
 {
-  "expo": {
-    "name": "forA",
-    "slug": "forA",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "src/public/assets/forA-icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "src/public/assets/forA-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "ios.forA"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "src/public/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "favicon": "src/public/assets/favicon.png"
+    "expo": {
+        "name": "forA",
+        "slug": "forA",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "src/public/assets/forA-icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "src/public/assets/forA-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "ios.forA"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "src/public/assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            }
+        },
+        "web": {
+            "favicon": "src/public/assets/favicon.png"
+        }
     }
-  }
 }

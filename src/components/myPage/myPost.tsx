@@ -77,6 +77,7 @@ export default function MyPost({ route }: PostProps) {
                             ?.title //게시판의 타입이 루트에서 받아온 이니셜 파라미터와 같은 경우 해당 객체의 타이틀을 띄우기
                     }
                 </Text>
+                <View style={styles.IconImage} />
             </View>
             {dummy.length > 0 ? ( //게시물의 길이가 0 이상인 경우
                 <>

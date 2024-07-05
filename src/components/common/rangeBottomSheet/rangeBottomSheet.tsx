@@ -21,9 +21,6 @@ export default function RangeBottomSheet({
     range,
     setRange,
 }: BottomSheetProps) {
-    // 폰 스크린 높이
-    const screenHeight = Dimensions.get('window').height
-
     // 현재 해당 컴포넌트의 y축 위치
     const translateY = useRef(new Animated.Value(566)).current
     //스크롤해서 내려간 마지막 위치 기억
