@@ -21,6 +21,8 @@ import MyPost from '../myPage/myPost'
 import AccountSettings from '../accountSettings/accountSettings'
 import ChangeNickName from '../changeNickName/changeNickName'
 import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
+import GoogleMap from '../hospital/Maps'
+import HospitalMaps from '../hospital/HospitalMaps'
 
 export type RootStackParamList = {
     Home: undefined
@@ -43,6 +45,8 @@ export type RootStackParamList = {
     ChangeNickname: undefined
     NewPost: undefined
     HospitalDetail: undefined
+    Maps: undefined
+    HospitalMaps: undefined
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -117,6 +121,8 @@ const AppNavigator = () => {
                     name="ChangeNickname"
                     component={ChangeNickName}
                 />
+                <Stack.Screen name="Maps" component={GoogleMap} />
+                <Stack.Screen name="HospitalMaps" component={HospitalMaps} />
             </Stack.Navigator>
         </NavigationContainer>
     )

@@ -14,13 +14,17 @@
         "assetBundlePatterns": ["**/*"],
         "ios": {
             "supportsTablet": true,
-            "bundleIdentifier": "ios.forA"
+            "bundleIdentifier": "ios.forA",
+            "config": {
+                "googleMapsApiKey": ""
+            }
         },
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "src/public/assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
-            }
+            },
+            "permissions": ["ACCESS_FINE_LOCATION"]
         },
         "web": {
             "favicon": "src/public/assets/favicon.png"

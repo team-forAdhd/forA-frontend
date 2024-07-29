@@ -11,6 +11,8 @@ import hospitalDetail from './ko/hospitalDetail.json'
 import MyPage from './ko/myPage.json'
 import AccountSettings from './ko/accountSettings.json'
 import ribbonEvaluation from './ko/ribbonEvaluation.json'
+import ribbonDescription from './ko/ribbonDescription.json'
+import HospitalModal from './ko/hospitalModal.json'
 
 const resources = {
     ko: {
@@ -25,6 +27,8 @@ const resources = {
         MyPage: MyPage,
         AccountSettings: AccountSettings,
         ribbonEvaluation: ribbonEvaluation,
+        ribbonDescription: ribbonDescription,
+        HospitalModal: HospitalModal,
     },
 }
 
