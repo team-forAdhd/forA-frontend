@@ -4,7 +4,6 @@ import { styles, text } from './HomeStyle'
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { DummyPost, generateDummyPosts } from './dummydata'
-import { getPostsApi } from '@/api/home/getPostsApi'
 
 import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
@@ -124,7 +123,7 @@ export default function Home() {
                 </View>
 
                 {/* 게시글 목록 */}
-                <View style={styles.postListContainer}>
+                <ScrollView style={styles.postListContainer}>
                     {posts.slice(0, visiblePostsCount).map((post, index) => (
                         <PostListItem
                             key={post.postId}
@@ -145,7 +144,7 @@ export default function Home() {
                             </TouchableOpacity>
                         )}
                     </View>
-                </View>
+                </ScrollView>
             </ScrollView>
 
             {/* FAB */}

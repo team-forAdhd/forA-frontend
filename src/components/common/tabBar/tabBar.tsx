@@ -4,7 +4,7 @@ import { styles, text } from './tabBarStyle'
 import { useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { TabBarStoreContext } from '@/state/tabBarState'
-
+import { Observer } from 'mobx-react'
 interface NavigationList {
     [key: string]: string
     'home-tab': string
@@ -28,10 +28,10 @@ export default function TabBar() {
 
     const navigationList: NavigationList = {
         'home-tab': 'Home',
-        'hospital-tab': 'HospitalDetail',
-        'meds-tab': 'MyPage',
-        'selfCheck-tab': 'MyPage',
-        'MY-tab': 'MyPage',
+        'hospital-tab': 'HospitalMaps',
+        'meds-tab': 'Home',
+        'selfCheck-tab': 'Home',
+        'MY-tab': 'Home',
     }
 
     const clickTabIcons = [
@@ -49,33 +49,38 @@ export default function TabBar() {
         <View style={styles.TabBar}>
             {Object.entries(tabBarList).map(([tab, tabImage], index) => {
                 return (
-                    <TouchableOpacity
-                        style={styles.TabBarContainer}
-                        onPress={() => {
-                            store.setClickTab(tab)
-                            console.log(tab)
-                            navigation.navigate(navigationList[tab] as never) //모바일에서 확인
-                        }}
-                        key={index}
-                    >
-                        <Image
-                            source={
-                                store.clickTab === tab
-                                    ? clickTabIcons[index]
-                                    : tabImage
-                            }
-                            style={styles.TabBarImage}
-                        />
-                        <Text
-                            style={
-                                store.clickTab === tab
-                                    ? text.clickTabBarText
-                                    : text.tabBarText
-                            }
-                        >
-                            {t(tab)}
-                        </Text>
-                    </TouchableOpacity>
+                    <Observer>
+                        {() => (
+                            <TouchableOpacity
+                                style={styles.TabBarContainer}
+                                onPress={() => {
+                                    store.setClickTab(tab)
+                                    navigation.navigate(
+                                        navigationList[tab] as never,
+                                    ) //모바일에서 확인
+                                }}
+                                key={index}
+                            >
+                                <Image
+                                    source={
+                                        store.clickTab === tab
+                                            ? clickTabIcons[index]
+                                            : tabImage
+                                    }
+                                    style={styles.TabBarImage}
+                                />
+                                <Text
+                                    style={
+                                        store.clickTab === tab
+                                            ? text.clickTabBarText
+                                            : text.tabBarText
+                                    }
+                                >
+                                    {t(tab)}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </Observer>
                 )
             })}
         </View>

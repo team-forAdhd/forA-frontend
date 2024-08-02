@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
+import GoogleMap from './Maps'
 
 export default function HospitalDetail() {
     const ribbonCount = 1
@@ -27,7 +28,6 @@ export default function HospitalDetail() {
     const { t } = useTranslation('hospitalDetail')
     return !ribbonOpen ? ( //병원 이름을 내려줘야해서 네비게이션으로 이동 안하고 state변화를 통해 뜨게끔 함
         <View style={styles.container}>
-            {' '}
             {profileOpen && ( // 제출 버튼을 누른 경우 배경 변화와 모달
                 <View style={styles.profileOpenContainer}>
                     <View style={styles.openProfileContainer}>
@@ -108,6 +108,9 @@ export default function HospitalDetail() {
                     </TouchableOpacity>
                 </View>
                 {/* 지도 들어갈 부분 */}
+                <View style={{ width: 382, height: 208 }}>
+                    <GoogleMap />
+                </View>
                 <View
                     style={[
                         styles.columnContainer,
