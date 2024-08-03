@@ -23,6 +23,7 @@ import ChangeNickName from '../changeNickName/changeNickName'
 import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
 import GoogleMap from '../hospital/Maps'
 import HospitalMaps from '../hospital/HospitalMaps'
+import OnboardingScreen from '../splash-n-onboard/onboard/Onboard'
 
 export type RootStackParamList = {
     Home: undefined
@@ -47,24 +48,33 @@ export type RootStackParamList = {
     HospitalDetail: undefined
     Maps: undefined
     HospitalMaps: undefined
+    Onboard: undefined
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
 
-const AppNavigator = () => {
+interface AppNavigatorProps {
+    initialRoute: string
+}
+
+const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
     return (
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Home"
+                initialRouteName="Onboard"
             >
-                {/* 구현한 화면 추가 */}
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="NewPost" component={NewPost} />
 
                 <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen
+                    name="Onboard"
+                    component={OnboardingScreen}
+                    options={{ headerShown: false }}
+                />
 
                 {/* 일반 회원가입 */}
                 <Stack.Screen

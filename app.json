@@ -7,9 +7,9 @@
         "icon": "src/public/assets/forA-icon.png",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "src/public/assets/forA-icon.png",
+            "image": "src/public/assets/splash-n-onboard/splash.png",
             "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+            "backgroundColor": "#52A55D"
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
