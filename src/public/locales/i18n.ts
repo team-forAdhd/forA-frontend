@@ -13,7 +13,9 @@ import AccountSettings from './ko/accountSettings.json'
 import ribbonEvaluation from './ko/ribbonEvaluation.json'
 import ribbonDescription from './ko/ribbonDescription.json'
 import HospitalModal from './ko/hospitalModal.json'
+import medLocale from './ko/medicine.json'
 import onboard from './ko/onboard.json'
+import medDetail from './ko/medDetail.json'
 
 const resources = {
     ko: {
@@ -30,7 +32,9 @@ const resources = {
         ribbonEvaluation: ribbonEvaluation,
         ribbonDescription: ribbonDescription,
         HospitalModal: HospitalModal,
+        medicine: medLocale,
         Onboard: onboard,
+        medDetail: medDetail
     },
 }
 

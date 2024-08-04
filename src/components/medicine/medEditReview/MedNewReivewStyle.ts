@@ -1,0 +1,361 @@
+import { TitleTextIcon } from '@/public/assets/SvgComponents'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+      },
+    scrollStyle: {
+        paddingBottom: 300,
+        flex:1,
+    },
+    gobackIcon: {
+        position: 'absolute',
+        marginTop: 55,
+        marginLeft: 12,
+    },
+    gobackSize: {
+        width: 24,
+        height: 24,
+    },
+      header: {
+        top: 0,
+        height: 90,
+        width: '100%',
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 2,
+        zIndex: 1,
+      },
+      titleStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+      },
+      contentBox1: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        top: 37,
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 1,
+      },
+      imageContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 16,
+      },
+      pillImage: {
+        marginTop: 10,
+        marginBottom: 25,
+        width: 258,
+        height: 143,
+        borderRadius: 12,
+      },
+      contentBox2: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        top: 37,
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 1,
+        marginVertical: 20,
+      },
+      rating: {
+        paddingVertical: 10,
+      },
+      buttonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+       marginTop: 5,
+       marginBottom: 20,
+      },
+      contentBox3: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        top: 37,
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 1,
+        marginVertical: 20,
+      },
+      searchBar: {
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#52A55D',
+        borderRadius: 50,
+        width: 271,
+        height: 48,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 20
+    },
+      IconImage: {
+        position: 'absolute',
+        width: 28,
+        height: 28,
+        left: 8,
+    },
+    coMedClick:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 38,
+    },
+    checkboxIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 8,
+    },
+    contentBox4: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        top: 37,
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 1,
+        marginVertical: 20,
+      },
+      revivewButtonContainer:{
+        flexDirection: 'row',
+        position: 'absolute',
+        width: '100%',
+        height: 100,
+        bottom: 0,
+        justifyContent: 'space-around',
+        backgroundColor: 'white',
+        shadowColor: '#eeeeee', // 그림자 색상 설정
+        shadowOffset: { width: 0, height: -1 }, // 그림자 위치를 위쪽으로 설정
+        shadowOpacity: 1, // 그림자 투명도 설정
+        zIndex: 30,
+      },
+      cancelButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 16,
+        width: 123,
+        height: 60,
+        borderRadius: 8,
+        backgroundColor: '#eeeeee',
+    },
+      reviewButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 16,
+        width: 248,
+        height: 60,
+        borderRadius: 8,
+        backgroundColor: '#52A55D',
+    },
+    reviewDisabledButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      top: 16,
+      width: 248,
+      height: 60,
+      borderRadius: 8,
+      backgroundColor: '#949494',
+  },
+    inputContainer: {
+        position: 'relative',
+    },
+    input: {
+        width: 365,
+        height: 179,
+        borderWidth: 1,
+        borderColor: '#CCCCCC',
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
+        color: '#232323',
+    },
+    inputFocused: {
+        borderColor: '#52A55D',
+    },
+    photoUploadContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+  },
+  photoPreview: {
+      width: 70,
+      height: 70,
+      borderRadius: 12,
+      backgroundColor: '#FFF',
+      marginRight: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: 'rgba(0, 0, 0, 0.15)',
+      shadowOffset: {
+          width: 0,
+          height: 0,
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 3,
+      elevation: 2,
+  },
+  deleteIcon: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      borderRadius: 10,
+      padding: 5,
+  },
+  contentBox5: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    top: 17,
+    backgroundColor: '#EDEDEA',
+    paddingBottom: 130,
+  },
+  optionButtonContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+   marginTop: 5,
+   marginBottom: 20,
+  },
+  clickedButton: {
+    borderColor: '#52A35D',
+    backgroundColor: '#F4F9D9',
+    borderWidth: 1,
+    width: '30%',
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  generalButton: {
+    borderColor: '#949494',
+    borderWidth: 1,
+    width: '30%',
+    height: 55,
+    backgroundColor: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+},
+closeModalButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: '#FFF',
+    padding: 10,
+    borderRadius: 20,
+},
+})
+
+export const text = {
+    fontFamily: 'Pretendard',
+    fontStyle: 'normal',
+    titleText: {
+        color: '#000',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 22.4,
+        marginTop: 50,
+    },
+    medTitleText: {
+        color: '#232323',
+        fontSize: 20,
+        fontWeight: '600',
+        lineHeight: 20,
+    },
+    subTitleText: {
+        color: '#232323',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 22.4,
+        marginTop: 38,
+        textAlign: 'center'
+    },
+    rateNumText: {
+        color: '#52A55D',
+        fontSize: 16,
+        fontWeight: '400',
+        lineHeight: 20.4,
+        letterSpacing: -0.8,
+        marginBottom: 45,
+    },
+    noneText: {
+        color: '#000',
+        fontSize: 14,
+        fontWeight: '400',
+        lineHeight: 30,
+    },
+    descripText: {
+        color: '#232323',
+        fontSize: 14,
+        fontWeight: '400',
+        lineHeight: 30,
+        marginBottom: 20,
+    },
+    inputText: {
+        color: '#232323',
+        fontSize: 15,
+        fontWeight: '400',
+        lineHeight: 30,
+        letterSpacing: -0.75,
+    },
+    inputNumText: {
+        color: '#52A55D',
+        fontSize: 14,
+        fontWeight: '400',
+        lineHeight: 30,
+        textAlign: 'right'
+    },
+    cancelButtonText:{
+        color: '#232323',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 24
+    },
+    submitButtonText:{
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 24
+    },
+    coMedText:{
+      color: '#52A55D',
+      fontSize: 18,
+      fontWeight: '500',
+      lineHeight: 26,
+      letterSpacing: -0.9,
+
+  },
+    optionText:{
+      color: '#555',
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 30,
+      marginBottom: 20,
+  },
+  activeButtonText:{
+    color: '#52A55D',
+    fontSize: 18,
+    fontWeight: '500',
+    lineHeight: 24,
+    letterSpacing: -0.9
+},
+inactiveButtonText:{
+    color: '#555',
+    fontSize: 18,
+    fontWeight: '500',
+    lineHeight: 24,
+    letterSpacing: -0.9
+},
+} as {
+    [key: string]: StyleProp<TextStyle>
+}

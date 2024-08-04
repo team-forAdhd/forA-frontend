@@ -25,8 +25,14 @@ import GoogleMap from '../hospital/Maps'
 import HospitalMaps from '../hospital/HospitalMaps'
 import CameraScreen from '../review/CameraScreen'
 import ChooseDoctor from '../review/ChooseDoctor'
+import MedScreen from '../medicine/medicineScreen/MedicineScreen'
 import OnboardingScreen from '../splash-n-onboard/onboard/Onboard'
 import HospitalReview from '../hospital/HospitalReview'
+import MedSearchScreen from '../medicine/medSearch/MedSearchScreen'
+import ShapeSearchScreen from '../medicine/medSearch/ShapeSearchScreen'
+import MedDetail from '../medicine/medetails/MedDetail'
+import NewMedReview from '../medicine/medNewReview/MedNewReview'
+import MedReview from '../medicine/medetails/MedReview'
 
 export type RootStackParamList = {
     Home: undefined
@@ -55,8 +61,14 @@ export type RootStackParamList = {
     HospitalMaps: undefined
     CameraScreen: undefined
     ChooseDoctor: undefined
+    MedicineMain: undefined
     Onboard: undefined
     HospitalReview: undefined
+    MedSearch: undefined
+    ShapeSearch: undefined
+    MedDetail: { medId: number }
+    NewMedReview: { medId: number }
+    MedReview: { medId: number }
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -123,6 +135,38 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="HospitalDetail"
                     component={HospitalDetail}
                 />
+
+                {/* 약탭 */}
+                <Stack.Screen name="MedicineMain" component={MedScreen} />
+                <Stack.Screen name="MedSearch" component={MedSearchScreen} />
+                <Stack.Screen
+                    name="ShapeSearch"
+                    component={ShapeSearchScreen}
+                />
+                <Stack.Screen name="MedDetail">
+                    {(props) => (
+                        <MedDetail
+                            {...props}
+                            medId={props.route.params.medId}
+                        />
+                    )}
+                </Stack.Screen>
+                <Stack.Screen name="MedReview">
+                    {(props) => (
+                        <MedReview
+                            {...props}
+                            medId={props.route.params.medId}
+                        />
+                    )}
+                </Stack.Screen>
+                <Stack.Screen name="NewMedReview">
+                    {(props) => (
+                        <NewMedReview
+                            {...props}
+                            medId={props.route.params.medId}
+                        />
+                    )}
+                </Stack.Screen>
 
                 <Stack.Screen name="MyPage" component={MyPage} />
                 <Stack.Screen
