@@ -12,34 +12,90 @@ import { styles, text } from './LoginStyle'
 import { ArrowIcon, TitleTextIcon } from '@/public/assets/SvgComponents'
 import { useNavigation } from '@react-navigation/native'
 import { loginApi } from '@/api/loginApi'
-import { WebView } from 'react-native-webview'
+import { getUserProfileApi } from '@/api/getUserProfileApi'
+import {
+    naverLoginApi,
+    kakaoLoginApi,
+    googleLoginApi,
+    appleLoginApi,
+    ApiResponse,
+} from '@/api/socialLoginApi'
+import { WebView, WebViewNavigation } from 'react-native-webview'
 import userStore from '@/store/userStore/userStore'
 
 export default function LoginScreen() {
     const { t } = useTranslation('login-join')
     const navigation = useNavigation()
+
     const webViewRef = useRef(null)
     const [showWebView, setShowWebView] = useState(false)
+    const [webViewUrl, setWebViewUrl] = useState('')
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [inputFocused, setInputFocused] = useState(false)
     const [loginFailed, setLoginFailed] = useState(false)
 
-    const loginFinished = () => {
-        navigation.navigate('Home' as never)
+    const handleSocialLogin = async (
+        socialLoginApi: () => Promise<ApiResponse>,
+    ) => {
+        try {
+            const response = await socialLoginApi()
+            if (response.accessToken) {
+                const userProfile = await getUserProfileApi(
+                    response.accessToken,
+                )
+                userStore.login(
+                    userProfile.userId,
+                    userProfile.nickname,
+                    userProfile.profileImageUrl,
+                )
+                setShowWebView(false)
+                loginFinished()
+            } else {
+                setLoginFailed(true)
+            }
+        } catch (error) {
+            console.error('Error during social login:', error)
+            setLoginFailed(true)
+        }
     }
-    const gotoJoinScreen = () => {
-        navigation.navigate('EmailDuplicateCheck' as never)
-    }
-    const gotoFindPasswordScreen = () => {
-        //  navigation.navigate('화면이름')
+    const handleWebViewNavigationStateChange = (
+        navState: WebViewNavigation,
+    ) => {
+        if (navState.url.includes('callback')) {
+            // 네비게이션 상태 변경 처리
+            fetch(navState.url)
+                .then((response) => response.json())
+                .then((data) => {
+                    const {
+                        accessToken,
+                        refreshToken,
+                        hasVerifiedEmail,
+                        hasProfile,
+                    } = data
+                    // 토큰 및 사용자 정보 처리
+                    setShowWebView(false)
+                })
+                .catch((error) => {
+                    console.error('Error:', error)
+                    setShowWebView(false)
+                })
+        }
     }
 
     const handleLogin = async () => {
         try {
             const response = await loginApi(email, password)
-            if (response.success) {
-                userStore.login(response.nickname)
+            if (response.accessToken) {
+                const userProfile = await getUserProfileApi(
+                    response.accessToken,
+                )
+                userStore.login(
+                    userProfile.userId,
+                    userProfile.nickname,
+                    userProfile.profileImageUrl,
+                )
                 loginFinished()
             } else {
                 setLoginFailed(true)
@@ -54,15 +110,14 @@ export default function LoginScreen() {
         }
     }
 
-    const handleAppleLoginClicked = () => {
-        setShowWebView(true)
+    const loginFinished = () => {
+        navigation.navigate('Home' as never)
     }
-    const handleWebViewNavigationStateChange = (newState: {
-        url: string | string[]
-    }) => {
-        if (newState.url.includes('apple-login-callbck-url')) {
-            loginFinished()
-        }
+    const gotoJoinScreen = () => {
+        navigation.navigate('EmailDuplicateCheck' as never)
+    }
+    const gotoFindPasswordScreen = () => {
+        //  navigation.navigate('화면이름')
     }
 
     return (
@@ -169,7 +224,7 @@ export default function LoginScreen() {
                 <View style={styles.iconRow}>
                     <TouchableOpacity
                         style={styles.icon}
-                        onPress={() => console.log('Kakao Icon pressed')}
+                        onPress={() => handleSocialLogin(kakaoLoginApi)}
                     >
                         <Image
                             source={require('@/public/assets/sns-kakao.png')}
@@ -178,7 +233,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.icon}
-                        onPress={() => console.log('Naver Icon pressed')}
+                        onPress={() => handleSocialLogin(naverLoginApi)}
                     >
                         <Image
                             source={require('@/public/assets/sns-naver.png')}
@@ -187,37 +242,48 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.icon}
-                        onPress={() => console.log('Facebook Icon pressed')}
+                        onPress={() => handleSocialLogin(googleLoginApi)}
                     >
                         <Image
-                            source={require('@/public/assets/sns-facebook.png')}
+                            source={require('@/public/assets/sns-google.png')}
                             style={styles.icon}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.icon}
-                        onPress={handleAppleLoginClicked}
+                        onPress={() => handleSocialLogin(appleLoginApi)}
                     >
                         <Image
                             source={require('@/public/assets/sns-apple.png')}
                             style={styles.icon}
                         />
                     </TouchableOpacity>
-
-                    {/* 간편로그인 웹뷰 */}
-                    <Modal
-                        visible={showWebView}
-                        onRequestClose={() => setShowWebView(false)}
-                    >
-                        <WebView
-                            ref={webViewRef}
-                            source={{ uri: 'apple-login-page-url' }}
-                            onNavigationStateChange={
-                                handleWebViewNavigationStateChange
-                            }
-                        />
-                    </Modal>
                 </View>
+                {/* 간편로그인 웹뷰 */}
+                <Modal
+                    visible={showWebView}
+                    onRequestClose={() => setShowWebView(false)}
+                    animationType="slide" // 모달 애니메이션 추가
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <View style={{ width: '100%', maxHeight: '80%' }}>
+                            <WebView
+                                ref={webViewRef}
+                                source={{ uri: webViewUrl }}
+                                onNavigationStateChange={
+                                    handleWebViewNavigationStateChange
+                                }
+                                style={{ flex: 1 }} // 웹뷰가 부모 뷰의 크기에 맞게 늘어나도록
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </View>
     )

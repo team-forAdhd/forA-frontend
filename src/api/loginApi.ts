@@ -1,15 +1,22 @@
 import axios, { AxiosError } from 'axios';
+import { API_URL } from '@env'
 
 interface ApiResponse {
-  success: boolean;
-  nickname: string;
+  accessToken: string;
+  refreshToken: string;
+  hasVerifiedEmail: boolean;
 }
 
-export const loginApi = async (email: string, password: string): Promise<ApiResponse> => {
+export const loginApi = async (username: string, password: string): Promise<ApiResponse> => {
   try {
-    const response = await axios.post<ApiResponse>('api address', {
-      email,
+    const response = await axios.post<ApiResponse>(`${API_URL}/api/v1/auth/login`, {
+      username,
       password,
+    }, {
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      timeout: 5000, // 5초 타임아웃
     });
 
     return response.data;
