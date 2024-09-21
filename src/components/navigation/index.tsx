@@ -70,7 +70,7 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Login"
+                initialRouteName="Home"
             >
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="NewPost" component={NewPost} />

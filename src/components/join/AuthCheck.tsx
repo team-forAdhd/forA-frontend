@@ -6,6 +6,7 @@ import { TouchableOpacity, Text, View, TextInput } from 'react-native'
 import { styles, text } from './JoinStyle'
 import { sendAuthApi } from '@/api/join/sendAuthApi'
 import { checkAuthApi } from '@/api/join/checkAuthApi'
+import profileStore from '@/state/signupState/profileStore'
 
 export default function AuthCheck() {
     const { t } = useTranslation('login-join')
@@ -17,6 +18,7 @@ export default function AuthCheck() {
     const gotoNextScreen = () => {
         navigation.navigate('SetPassword' as never)
     }
+    const email = profileStore.email
     const [authcode, setAuthCode] = useState('')
     const [timer, setTimer] = useState(180)
     const [inputFocused, setInputFocused] = useState(false)
@@ -25,7 +27,7 @@ export default function AuthCheck() {
 
     const handleGetAuthAgainButton = async () => {
         try {
-            sendAuthApi()
+            sendAuthApi(email)
         } catch (error) {
             console.error('Error while sending authCode again in: ', error)
         }
@@ -35,8 +37,9 @@ export default function AuthCheck() {
 
     const handleCheckAuth = async () => {
         try {
-            const isValid = await checkAuthApi(authcode)
-            if (isValid) {
+            const response = await checkAuthApi(email, authcode)
+            if (response && response.accessToken) {
+                setAuthConfirmed(true)
                 gotoNextScreen
             } else {
                 setAuthConfirmed(false)

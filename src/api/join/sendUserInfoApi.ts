@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
+import { API_URL } from '@env';
 
 export const sendUserInfoApi = async (userInfo: any): Promise<void> => {
   try {
-    const apiUrl = 'api address';
-    await axios.post(apiUrl);
+    await axios.post(`${API_URL}/api/v1/user/sign-up`, userInfo);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;

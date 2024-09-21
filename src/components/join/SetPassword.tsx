@@ -40,7 +40,7 @@ export default function SetPassword() {
     }
 
     const saveUserdInfo = () => {
-        profileStore.setPassword(password)
+        profileStore.setPassword(password, confirmPassword)
     }
 
     return (

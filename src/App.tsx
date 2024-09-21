@@ -42,8 +42,7 @@ export default function App() {
     return (
         <Provider profileStore={profileStore}>
             <AppNavigator
-                initialRoute="Login"
-                // initialRoute={isFirstLaunch ? 'Onboarding' : 'Home'}
+                initialRoute={isFirstLaunch ? 'Onboarding' : 'Home'}
             />
         </Provider>
     )
