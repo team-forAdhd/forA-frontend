@@ -101,7 +101,7 @@ const takePictureHandler = async () => {
 /* 의사 선택 화면으로 넘기는 함수 */
 const pressModalButton = () => {
   setIsModalVisible(false)
-  // navigation.navigate('ChooseDoctor' as never)
+  navigation.navigate('ChooseDoctor' as never)
 }
 
 
