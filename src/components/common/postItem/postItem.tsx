@@ -93,7 +93,9 @@ export default function PostItem({ post, page }: PostProps) {
                 <Image source={images[0]} style={styles.picture} />
                 {images.length > 1 && (
                     <View style={styles.imagesLength}>
-                        {'+' + images.length}
+                        <Text style={text.iamgesLength}>
+                            {'+' + images.length}
+                        </Text>
                     </View>
                 )}
             </View>

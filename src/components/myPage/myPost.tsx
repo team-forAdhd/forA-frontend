@@ -1,12 +1,14 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './myPostStyle'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import TabBar from '../common/tabBar/tabBar'
 import PostItem from '../common/postItem/postItem'
 import RangeBottomSheet from '../common/rangeBottomSheet/rangeBottomSheet'
 import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '../navigation'
+import { getMyComment } from '@/api/myPage/mycommentApi'
+import { Login } from '@/api/login/loginApi'
 
 interface PostProps {
     route:
@@ -15,10 +17,12 @@ interface PostProps {
         | RouteProp<RootStackParamList, 'MyReviews'>
         | RouteProp<RootStackParamList, 'SavedPosts'>
 }
+
 export default function MyPost({ route }: PostProps) {
-    //내가 쓴 글인지 저장한 글인지 댓글인지 등의 정보를 받아오기
+    // 내가 쓴 글인지 저장한 글인지 댓글인지 등의 정보를 받아오기
     const { postType } = route.params
-    //받아온 파라미터를 활용해 렌더링
+
+    // 받아온 파라미터를 활용해 렌더링
     const postTypeList = [
         {
             postType: 'myPosts',
@@ -40,16 +44,40 @@ export default function MyPost({ route }: PostProps) {
         },
     ]
 
-    const categories = dummy.map((post) => post.category) //데이터에서 카테고리만 따로 모은 배열
-    const tabList: string[] = ['10대', '20대', '30대', '학부모'] //게시판 리스트 순서대로 표시하기 위해
-    const categoryList: string[] = Array.from(new Set(categories)) //게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
-    //게시판 선택
-    const [boardClick, setBoardClick] = useState<string>(categoryList[0])
-    //정렬 선택 _ 기본 최신순
-    const [range, setRange] = useState<string>('최신순')
+    const categories = dummy.map((post) => post.category) // 데이터에서 카테고리만 따로 모은 배열
+    const tabList: string[] = ['10대', '20대', '30대', '학부모'] // 게시판 리스트 순서대로 표시하기 위해
+    const categoryList: string[] = Array.from(new Set(categories)) // 게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
 
-    //정렬 클릭시 나올 바텀시트 상태
+    // 게시판 선택
+    const [boardClick, setBoardClick] = useState<string>(categoryList[0])
+    // 정렬 선택 _ 기본 최신순
+    const [range, setRange] = useState<string>('최신순')
+    // 정렬 클릭시 나올 바텀시트 상태
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
+
+    const [commentSort, setCommentSort] = useState<
+        'NEWEST_FIRST' | 'OLDEST_FIRST'
+    >('NEWEST_FIRST')
+
+    const [token, setToken] = useState<string>('')
+    //내 댓글
+    const [myComment, setMyComment] = useState()
+    //내가 쓴 게시글
+    const [myPost, getMyPost] = useState()
+
+    useEffect(() => {
+        const fetchMyComment = async () => {
+            try {
+                const commentData = await getMyComment(1, commentSort)
+                setMyComment(commentData)
+                console.log(commentData)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        // fetchToken()
+        fetchMyComment()
+    }, [token, commentSort])
 
     const navigation = useNavigation()
 
@@ -74,12 +102,12 @@ export default function MyPost({ route }: PostProps) {
                 <Text style={text.headerText}>
                     {
                         postTypeList.find((post) => post.postType === postType)
-                            ?.title //게시판의 타입이 루트에서 받아온 이니셜 파라미터와 같은 경우 해당 객체의 타이틀을 띄우기
+                            ?.title // 게시판의 타입이 루트에서 받아온 이니셜 파라미터와 같은 경우 해당 객체의 타이틀을 띄우기
                     }
                 </Text>
                 <View style={styles.IconImage} />
             </View>
-            {dummy.length > 0 ? ( //게시물의 길이가 0 이상인 경우
+            {dummy.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
                 <>
                     {/* 게시판 리스트 */}
                     <View style={styles.topContainer}>
@@ -146,7 +174,7 @@ export default function MyPost({ route }: PostProps) {
                     )}
                 </>
             ) : (
-                //아무것도 없는 경우에 띄울 화면
+                // 아무것도 없는 경우에 띄울 화면
                 <View style={styles.emptyContainer}>
                     <Image
                         style={styles.emptyIcon}

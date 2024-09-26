@@ -29,9 +29,9 @@ export default function TabBar() {
     const navigationList: NavigationList = {
         'home-tab': 'Home',
         'hospital-tab': 'HospitalMaps',
-        'meds-tab': 'Home',
+        'meds-tab': 'HospitalReview',
         'selfCheck-tab': 'Home',
-        'MY-tab': 'Home',
+        'MY-tab': 'MyPage',
     }
 
     const clickTabIcons = [

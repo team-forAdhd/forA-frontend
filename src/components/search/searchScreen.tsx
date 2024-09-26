@@ -6,6 +6,7 @@ import { searchStoreContext } from '@/state/searchState'
 import { styles, text } from './searchStyle'
 import { TextInput } from 'react-native-gesture-handler'
 import { Observer } from 'mobx-react'
+import { getSearch } from '@/api/myPage/mycommentApi'
 
 export default function SearchScreen() {
     //텍스트 인풋에서 받을 검색어
@@ -29,6 +30,18 @@ export default function SearchScreen() {
 
     const navigation = useNavigation()
 
+    useEffect(() => {
+        const fetchMyComment = async () => {
+            try {
+                const commentData = await getSearch()
+                console.log(commentData)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        // fetchToken()
+        fetchMyComment()
+    }, [])
     useEffect(() => {
         submit && setSearchResultList([])
     }, [submit]) //제출 여부 변경시에 api호출

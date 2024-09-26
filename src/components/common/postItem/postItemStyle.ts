@@ -85,6 +85,11 @@ export const text = {
         letterSpacing: -0.5,
         alignItems: 'center',
     },
+    iamgesLength: {
+        ...baseText,
+        color: 'white',
+        fontSize: 14,
+    },
 } as {
     [key: string]: StyleProp<TextStyle>
 }
