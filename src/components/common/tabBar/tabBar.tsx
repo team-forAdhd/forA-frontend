@@ -29,7 +29,7 @@ export default function TabBar() {
     const navigationList: NavigationList = {
         'home-tab': 'Home',
         'hospital-tab': 'HospitalMaps',
-        'meds-tab': 'HospitalReview',
+        'meds-tab': 'Home',
         'selfCheck-tab': 'Home',
         'MY-tab': 'MyPage',
     }

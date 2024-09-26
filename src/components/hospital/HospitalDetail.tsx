@@ -45,7 +45,7 @@ export default function HospitalDetail() {
                                     style={styles.IconImage}
                                 />
                             </TouchableOpacity>
-                        </View>{' '}
+                        </View>
                         <Text style={text.normalText}>의사 약력</Text>
                     </View>
                 </View>
@@ -108,9 +108,6 @@ export default function HospitalDetail() {
                     </TouchableOpacity>
                 </View>
                 {/* 지도 들어갈 부분 */}
-                <View style={{ width: 382, height: 208 }}>
-                    <GoogleMap />
-                </View>
                 <View
                     style={[
                         styles.columnContainer,
@@ -251,7 +248,7 @@ export default function HospitalDetail() {
                                 <Text style={text.activeText}>
                                     {t('write-review')}
                                 </Text>
-                            </TouchableOpacity>{' '}
+                            </TouchableOpacity>
                             <View style={{ height: 33 }} />
                         </View>
                     ) : (
@@ -280,7 +277,7 @@ export default function HospitalDetail() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        setRibbonOpen(true) //포에이 리본 평가하기 화면이 뜨도록
+                        //navigation.navigate('CameraScreen' as never)
                     }}
                     style={styles.forARibbonContainer}
                 >

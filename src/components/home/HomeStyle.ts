@@ -88,7 +88,7 @@ export const styles = StyleSheet.create({
     ranking: {
         marginLeft: 16,
         marginRight: 16,
-        marginBottom: 8,
+        marginBottom: 10,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -97,8 +97,9 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     postItemContainer: {
+        flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         width: 360,
         height: 92,
         marginBottom: 10,
@@ -114,19 +115,18 @@ export const styles = StyleSheet.create({
         width: 30,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        // backgroundColor: 'red',
     },
     postContentContainer: {
         flex: 1,
-        width: 340,
+        width: 1,
+        // width: 340,
         flexDirection: 'column',
         paddingHorizontal: 11,
-        // backgroundColor: 'blue',
     },
     postInfo: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         marginTop: 7,
         marginBottom: 3,
     },
@@ -200,7 +200,7 @@ export const text = {
         color: '#232323',
         lineHeight: 25.2,
         letterSpacing: -0.9,
-        marginTop: -38,
+        marginTop: 10,
         marginLeft: 12,
     },
     postListTitleText: {
@@ -215,6 +215,7 @@ export const text = {
         fontWeight: '400',
         color: '#52A55D',
         lineHeight: 19.6,
+        marginLeft: 2,
     },
     postListOthersText: {
         fontSize: 14,
@@ -222,6 +223,7 @@ export const text = {
         color: '#555',
         lineHeight: 19.6,
         marginRight: 8,
+        marginLeft: 3,
     },
     postListDateText: {
         fontSize: 12,
