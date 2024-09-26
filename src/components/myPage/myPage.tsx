@@ -179,7 +179,7 @@ export default function MyPage() {
                                         )}
                                     </Observer>
                                 )}
-                            </View>{' '}
+                            </View>
                         </TouchableOpacity>
                     ))}
                 </View>

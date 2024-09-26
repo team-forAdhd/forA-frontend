@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { styles, text } from './hospitalListItmeStyle'
 import { set } from 'date-fns'
+import { useNavigation } from '@react-navigation/native'
 
 interface Hospital {
     hospitalName: string
@@ -22,8 +23,14 @@ export default function HospitalListItem({
 }: HospitalProps) {
     const { hospitalName, distance, open, forA, reviewCount, bookmark } =
         hospital
+    const navigation = useNavigation()
     return (
-        <View style={styles.container}>
+        <TouchableOpacity
+            style={styles.container}
+            onPress={() => {
+                navigation.navigate('CameraScreen' as never)
+            }}
+        >
             <View style={styles.columnContainer}>
                 <View style={styles.flexContainer}>
                     <Text style={text.titleText}>{hospitalName}</Text>
@@ -62,6 +69,6 @@ export default function HospitalListItem({
                     style={styles.bookmark}
                 />
             </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     )
 }

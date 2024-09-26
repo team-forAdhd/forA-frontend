@@ -9,6 +9,7 @@ import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
 import PostListItem from './postListItem/PostListItem'
 import FloatingButton from './FloatingButton'
+import { postLogin } from '@/api/myPage/mycommentApi'
 
 export default function Home() {
     //랭킹 클릭 상태
@@ -38,6 +39,18 @@ export default function Home() {
     const handleLoadMore = () => {
         setVisiblePostsCount((prevCount) => prevCount + 5)
     }
+
+    useEffect(() => {
+        const login = async () => {
+            try {
+                const fetchedToken = await postLogin()
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        login()
+    }, [])
 
     return (
         <View style={styles.container}>

@@ -164,6 +164,7 @@ export default function EvaluationFinish({
                         style={styles.InputStyles}
                         selectionColor="#FF5D5D"
                         placeholderTextColor="#949494"
+                        maxLength={500}
                     />
                     <Text style={text.inputCountText}>
                         {inputValue.length + '/500'}

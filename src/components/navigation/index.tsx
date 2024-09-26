@@ -26,6 +26,7 @@ import HospitalMaps from '../hospital/HospitalMaps'
 import CameraScreen from '../review/CameraScreen'
 import ChooseDoctor from '../review/ChooseDoctor'
 import OnboardingScreen from '../splash-n-onboard/onboard/Onboard'
+import HospitalReview from '../hospital/HospitalReview'
 
 export type RootStackParamList = {
     Home: undefined
@@ -53,6 +54,7 @@ export type RootStackParamList = {
     CameraScreen: undefined
     ChooseDoctor: undefined
     Onboard: undefined
+    HospitalReview: undefined
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -137,7 +139,10 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 />
                 <Stack.Screen name="Maps" component={GoogleMap} />
                 <Stack.Screen name="HospitalMaps" component={HospitalMaps} />
-
+                <Stack.Screen
+                    name="HospitalReview"
+                    component={HospitalReview}
+                />
                 <Stack.Screen name="CameraScreen" component={CameraScreen} />
                 <Stack.Screen name="ChooseDoctor" component={ChooseDoctor} />
             </Stack.Navigator>

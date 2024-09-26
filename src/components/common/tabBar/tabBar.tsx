@@ -31,7 +31,7 @@ export default function TabBar() {
         'hospital-tab': 'HospitalMaps',
         'meds-tab': 'Home',
         'selfCheck-tab': 'Home',
-        'MY-tab': 'Home',
+        'MY-tab': 'MyPage',
     }
 
     const clickTabIcons = [
