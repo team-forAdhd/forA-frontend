@@ -217,8 +217,9 @@ export default function LoginScreen() {
                     </View>
                 </View>
             </View>
+            {/* 간편로그인 */}
             <View style={styles.social}>
-                <View style={styles.socialRow}>
+                {/* <View style={styles.socialRow}>
                     <View style={styles.socialBar} />
                     <Text style={text.socialText}>{t('login-social')}</Text>
                     <View style={styles.socialBar} />
@@ -260,7 +261,7 @@ export default function LoginScreen() {
                             style={styles.icon}
                         />
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 {/* 간편로그인 웹뷰 */}
                 <Modal
                     visible={showWebView}

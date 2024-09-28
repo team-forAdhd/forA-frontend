@@ -72,7 +72,7 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Home" //테스트시 교체
+                initialRouteName="Home" //테스트시 교체, default = Home
             >
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="NewPost" component={NewPost} />

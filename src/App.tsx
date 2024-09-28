@@ -42,7 +42,7 @@ export default function App() {
     return (
         <Provider profileStore={profileStore}>
             <AppNavigator
-                // initialRoute="EditPost" // 테스트용
+                // initialRoute="Login" // 테스트용
                 initialRoute={isFirstLaunch ? 'Onboarding' : 'Home'}
             />
         </Provider>
