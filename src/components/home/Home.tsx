@@ -8,15 +8,12 @@ import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
 import PostListItem from './postListItem/PostListItem'
 import FloatingButton from './FloatingButton'
-<<<<<<< HEAD
 import { postLogin } from '@/api/myPage/mycommentApi'
-=======
 import {
     getMainCategoryApi,
     getMainRealtimeApi,
     Post,
 } from '@/api/home/getPostsApi'
->>>>>>> f2b9918 ([feat] integrate post API & navigation)
 
 export default function Home() {
     //랭킹 클릭 상태
