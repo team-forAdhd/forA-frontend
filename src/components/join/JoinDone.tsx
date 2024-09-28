@@ -19,14 +19,27 @@ export default function JoinDone() {
     const handleSendUserInfo = async () => {
         try {
             const userInfo = {
-                nickName: profileStore.nickName,
-                imageUrl: profileStore.imageUrl,
                 name: profileStore.name,
-                birthYearMonth: profileStore.birthYearMonth,
+                birth: profileStore.birthYearMonth,
                 gender: profileStore.gender,
                 email: profileStore.email,
-                password: profileStore.password,
-                isAdhd: profileStore.isAdhd,
+                password: {
+                    password: profileStore.password,
+                    passwordConfirm: profileStore.passwordConfirm, // 비밀번호 확인 필드
+                },
+                nickname: profileStore.nickname,
+                profileImage: profileStore.imageUrl,
+                forAdhdType: profileStore.forAdhdType,
+                termsApprovals: profileStore.termsApprovals.map((term) => ({
+                    termsId: term.termsId,
+                    approved: term.approved,
+                })),
+                pushNotificationApprovals:
+                    profileStore.pushNotificationApprovals.map((push) => ({
+                        pushNotificationApprovalId:
+                            push.pushNotificationApprovalId,
+                        approved: push.approved,
+                    })),
             }
 
             await sendUserInfoApi(userInfo)

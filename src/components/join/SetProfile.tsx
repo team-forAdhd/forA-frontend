@@ -23,7 +23,7 @@ export default function SetProfile() {
     const [selectedImage, setSelectedImage] = useState(null)
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
 
-    const store = useContext(ProfileStoreContext)
+    const profileStore = useContext(ProfileStoreContext)
 
     const [reRendering, setRerendering] = useState<boolean>(false)
     const uploadImage = async () => {
@@ -45,7 +45,7 @@ export default function SetProfile() {
             return null // 이미지 업로드 취소한 경우
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        store.setImageUrl(result.assets[0].uri)
+        profileStore.setImageUrl(result.assets[0].uri)
         setRerendering(!reRendering)
     }
 
@@ -69,7 +69,7 @@ export default function SetProfile() {
                         />
                     ) : (
                         <Image
-                            source={require('@/public/assets/image.png')}
+                            source={require('@/public/assets/profile-default.png')}
                             style={styles.photoPlaceholder}
                         />
                     )}

@@ -22,22 +22,10 @@ import { getPostDetail } from '@/api/home/getPostsDetailsApi'
 import { updatePostApi } from '@/api/home/updatePostApi'
 import userStore from '@/store/userStore/userStore'
 
-const mockPostDetail = {
-    postId: 1,
-    category: '10대',
-    images: null,
-    authorProfile: null,
-    authorNickname: '작성자',
-    isAnonymous: true,
-    createdAt: '2023-05-01T12:00:00Z',
-    title: '아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아',
-    content:
-        '나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어.',
-}
-
 interface EditPostProps {
     postId: number
 }
+
 export default function EditPost({ postId }: EditPostProps) {
     const { t: t } = useTranslation('board')
     const { t: tabT } = useTranslation('home')
@@ -49,28 +37,27 @@ export default function EditPost({ postId }: EditPostProps) {
     const [isAnonymous, setIsAnonymous] = useState(false)
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
     const [selectedCategory, setSelectedCategory] = useState<string>('')
+    const [createdAt, setCreatedAt] = useState(0)
     const [showAlert, setShowAlert] = useState(false)
 
     useEffect(() => {
         const fetchPostDetail = async () => {
             try {
-                // const data = await getPostDetail(postId)
-                // setTitle(data.title)
-                // setContent(data.content)
-                // setSelectedCategory(data.category)
-                // setIsAnonymous(data.isAnonymous)
-                // setAttachedPhotos(data.images)
-                setTitle(mockPostDetail.title)
-                setContent(mockPostDetail.content)
-                setSelectedCategory(mockPostDetail.category)
-                setIsAnonymous(mockPostDetail.isAnonymous)
-                // setAttachedPhotos(mockPostDetail.images)
+                const data = await getPostDetail(postId)
+                // 받아온 값을 useState의 기본값으로 설정
+                setTitle(data.title)
+                setContent(data.content)
+                setAttachedPhotos(data.images || [])
+                setIsAnonymous(data.anonymous)
+                setSelectedCategory(data.category)
+                setCreatedAt(data.createdAt)
             } catch (error) {
-                console.error('Error fetching post detail for Edit:', error)
+                console.error(error)
             }
         }
+
         fetchPostDetail()
-    }, [])
+    }, [postId])
 
     const handleLeftArrowPress = () => {
         setShowAlert(true)
@@ -134,9 +121,8 @@ export default function EditPost({ postId }: EditPostProps) {
                 content: content,
                 images: attachedPhotos.join(','),
                 anonymous: isAnonymous,
-                createdAt: mockPostDetail.createdAt,
             }
-            await updatePostApi(postInfo)
+            await updatePostApi(postInfo, postId)
             console.log('PostInfo sent successfully:', postInfo)
         } catch (error) {
             console.error('Error sending PostInfo:', error)
@@ -144,7 +130,7 @@ export default function EditPost({ postId }: EditPostProps) {
     }
 
     const handleUploadButton = () => {
-        handlePostInfo
+        handlePostInfo()
         navigation.navigate('Home' as never)
     }
 

@@ -29,7 +29,7 @@ export default function EmailDuplicateCheck() {
     const gotoNextScreen = () => {
         saveUserdInfo()
         navigation.navigate('AuthCheck' as never)
-        sendAuthApi()
+        sendAuthApi(email)
     }
     const genderInputRef = useRef<TextInput>(null)
 
@@ -51,8 +51,8 @@ export default function EmailDuplicateCheck() {
             }
         } catch (error) {
             console.error('Error while checking email in: ', error)
-            setEmailChecked(false)
-            // setEmailConfirmed(true) // test용
+            // setEmailChecked(false)
+            setEmailConfirmed(true) // test용
         }
     }
 

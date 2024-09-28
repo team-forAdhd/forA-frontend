@@ -48,6 +48,8 @@ export type RootStackParamList = {
     SavedPosts: { postType: 'savedPosts' }
     ChangeNickname: undefined
     NewPost: undefined
+    PostDetail: { postId: number }
+    EditPost: { postId: number }
     HospitalDetail: undefined
     Maps: undefined
     HospitalMaps: undefined
@@ -70,7 +72,7 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="Onboard"
+                initialRouteName="Home" //테스트시 교체, default = Home
             >
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="NewPost" component={NewPost} />
@@ -96,8 +98,22 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="Notifications"
                     component={NotificationScreen}
                 />
-                {/*<Stack.Screen name="PostDetail" component={PostDetail} />
-                <Stack.Screen name="EditPost" component={EditPost} />*/}
+                <Stack.Screen name="PostDetail">
+                    {(props) => (
+                        <PostDetail
+                            {...props}
+                            postId={props.route.params.postId}
+                        />
+                    )}
+                </Stack.Screen>
+                <Stack.Screen name="EditPost">
+                    {(props) => (
+                        <EditPost
+                            {...props}
+                            postId={props.route.params.postId} //
+                        />
+                    )}
+                </Stack.Screen>
                 <Stack.Screen name="Search" component={SearchScreen} />
                 <Stack.Screen
                     name="SocialLoginAgree"

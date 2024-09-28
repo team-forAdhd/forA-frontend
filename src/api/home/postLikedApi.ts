@@ -1,11 +1,21 @@
-import axios from 'axios'
+import axios from 'axios';
+import { API_URL } from '@env';
 
-export const getPostLikedCount = async (postId: number) => {
-  const response = await axios.get(`/api/posts/${postId}/likedCount`)
+export const getPostLikedCount = async () => { //postId: number
+  const response = await axios.get(`/api/posts//likedCount`)
   return response.data.likedCount
 }
 
-export const togglePostLike = async (postId: number, currentLiked: boolean) => {
-  const response = await axios.post(`/api/posts/${postId}/toggleLike`, { liked: !currentLiked })
-  return response.data.likedCount
+export const sendPostLike = async (postId: number, writerId: number, writerName: string, content: string, anonymous: boolean, likeCount: number, createdAt: string, lastModifiedAt: string) => {
+  const response = await axios.post(`${API_URL}/api/v1/posts/${postId}/like`, {
+    writerId,
+    writerName,
+    postId,
+    content,
+    anonymous,
+    likeCount,
+    createdAt,
+    lastModifiedAt
+  });
+  return response.data.likedCount;
 }

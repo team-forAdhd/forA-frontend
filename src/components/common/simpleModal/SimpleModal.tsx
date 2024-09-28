@@ -19,7 +19,7 @@ const SimpleModal: React.FC<Props> = ({ visible, baseText, highlightText }) => {
     const parts = baseText.split(highlightText)
     return (
         <View style={styles.modalContainer}>
-            <Text style={text.baseText}>
+            <Text style={text.generalText}>
                 {parts.map((part, index) => (
                     <Text key={index}>
                         {index > 0 && (

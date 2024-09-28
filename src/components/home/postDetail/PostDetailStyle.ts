@@ -47,6 +47,7 @@ export const styles = StyleSheet.create({
     },
     scrollViewContainer: {
         flexGrow: 1,
+        paddingBottom: 0,
     },
     imageBox: {
         width: '100%',

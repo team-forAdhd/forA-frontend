@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
+    TouchableWithoutFeedback,
 } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect, Key } from 'react'
@@ -12,7 +13,7 @@ import { useNavigation } from '@react-navigation/native'
 import { styles, text } from './PostDetailStyle'
 import { getPostDetail } from '@/api/home/getPostsDetailsApi'
 import { sendCommentApi } from '@/api/home/sendCommentApi'
-import { getCommentApi } from '@/api/home/getCommentApi'
+import { getCommentsApi } from '@/api/home/getCommentApi'
 import { formatDate } from '@/common/formatDate'
 import SimpleModal from '@/components/common/simpleModal/SimpleModal'
 import AlertModal from '@/components/common/alertModal/AlertModal'
@@ -29,167 +30,99 @@ import {
 } from '@/public/assets/SvgComponents'
 import userStore from '@/store/userStore/userStore'
 import * as Clipboard from 'expo-clipboard'
-import { getPostLikedCount, togglePostLike } from '@/api/home/postLikedApi'
+import { sendPostLike } from '@/api/home/postLikedApi'
 import { deletePostApi } from '@/api/home/deletePostApi'
-
-const mockData = {
-    postId: 1,
-    categoryName: '10대',
-    images: null,
-    authorProfile: null,
-    authorNickname: '작성자',
-    isAnonymous: false,
-    createdAt: '2023-05-01T12:00:00Z',
-    title: '아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아',
-    content:
-        '나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어. 나도 동아리 선후배들이랑 친해지고 싶어.',
-    likedCount: 10, // 좋아요 개수 (API에서 받아올 것) getPostLikedApi.ts, getCommentLikedApi.ts
-    scrapCount: 5, // 스크랩 개수 (API에서 받아올 것) getPostScrappedApi.ts
-}
-
-const mockComments = [
-    {
-        commentId: 1,
-        userId: '이야얍',
-        userProfilePicture: 'http://example.com/user1.jpg',
-        content: '첫 번째 댓글입니다.',
-        createdAt: '2024-05-23T12:00:00Z',
-        anonymous: true,
-        likes: 5,
-        replies: [], // 답글이 없는 경우 빈 배열로 표시
-    },
-    {
-        commentId: 2,
-        userId: '헤이',
-        userProfilePicture: '',
-        content: '두 번째 댓글입니다.',
-        createdAt: '2024-05-23T12:15:00Z',
-        anonymous: true,
-        likes: 3,
-        replies: [], // 답글이 없는 경우 빈 배열로 표시
-    },
-    {
-        commentId: 1,
-        userId: '와웅',
-        userProfilePicture: '',
-        content: '첫 번째 댓글입니다.',
-        createdAt: '2024-05-23T12:00:00Z',
-        anonymous: true,
-        likes: 5,
-        replies: [
-            {
-                replyId: 101,
-                userId: '예예',
-                userProfilePicture: 'http://example.com/user3.jpg',
-                content: '첫 번째 댓글에 대한 답글입니다.',
-                createdAt: '2024-05-23T12:10:00Z',
-                anonymous: true,
-                likes: 2,
-            },
-        ],
-    },
-    {
-        commentId: 2,
-        userId: 456,
-        userProfilePicture: 'http://example.com/user2.jpg',
-        content: '두 번째 댓글입니다.',
-        createdAt: '2024-05-23T12:15:00Z',
-        anonymous: true,
-        likes: 3,
-        replies: [
-            {
-                replyId: 102,
-                userId: 987,
-                userProfilePicture: 'http://example.com/user4.jpg',
-                content: '두 번째 댓글에 대한 답글입니다.',
-                createdAt: '2024-05-23T12:20:00Z',
-                anonymous: true,
-                likes: 1,
-            },
-        ],
-    },
-    // 추가 코멘트 데이터
-]
+import { handleScrapApi } from '@/api/home/postScrappedApi'
+import { API_URL } from '@env'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { RootStackParamList } from '@/components/navigation'
 
 interface PostDetailProps {
     postId: number
 }
 
+type PostDetailNavigationProp = StackNavigationProp<
+    RootStackParamList,
+    'PostDetail'
+>
+
 export default function PostDetail({ postId }: PostDetailProps) {
     const { t } = useTranslation('board')
     const navigation = useNavigation()
+    const postNavigation = useNavigation<PostDetailNavigationProp>()
+
+    const handleEdit = async () => {
+        postNavigation.navigate('EditPost', { postId })
+    }
 
     const [showSharedAlert, setShowSharedAlert] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [showDeleteDoneAlert, setShowDeleteDoneAlert] = useState(false)
-    const [postDetail, setPostDetail] = useState<any>(mockData)
+    const [postDetail, setPostDetail] = useState<any>(null)
     const [liked, setIsLiked] = useState(false)
-    const [scrapped, setIsScrapped] = useState(false)
-    const [comments, setComments] = useState<any>(mockComments)
+    const [scrapped, setIsScrapped] = useState(0)
+    const [comments, setComments] = useState<any>('')
     const [commentIsAnonymous, setCommentIsAnonymous] = useState<boolean>(true)
     const [commentContent, setCommentContent] = useState<string>('')
     const [isAuthor, setIsAuthor] = useState(false)
 
-    // useEffect(() => {
-    //     const fetchPostDetail = async () => {
-    //         try {
-    //             const data = await getPostDetail(postId) // 실제 postId 사용
-    //             setPostDetail(data)
-    //             setIsAuthor(data.authorNickname === userStore.nickname)
-    //         } catch (error) {
-    //             console.error(error)
-    //             setPostDetail(mockData) // API 실패 시 mock 데이터 사용
-    //         }
-    //     }
+    useEffect(() => {
+        const fetchPostDetail = async () => {
+            try {
+                const data = await getPostDetail(postId)
+                setPostDetail(data)
+                setIsAuthor(data.userId === userStore.nickname)
+            } catch (error) {
+                console.error(error)
+            }
+        }
 
-    //     fetchPostDetail()
+        const fetchComments = async () => {
+            try {
+                const data = await getCommentsApi(postId)
+                setComments(data.commentList)
+            } catch (error) {
+                console.error(error)
+            }
+        }
 
-    //     const fetchComments = async () => {
-    //         try {
-    //             const data = await getCommentApi(postId)
-    //             setComments(data)
-    //         } catch (error) {
-    //             console.error(error)
-    //             setComments([mockComments])
-    //         }
-    //     }
-
-    //     fetchComments()
-    // }, [postId])
+        fetchPostDetail()
+        fetchComments()
+    }, [postId])
 
     const {
-        categoryName,
+        category,
         images,
-        authorProfile,
-        authorNickname,
-        isAnonymous,
+        profileImage,
+        nickname,
+        anonymous,
         createdAt,
         title,
         content,
-        likedCount,
+        likeCount,
         scrapCount,
-    } = postDetail
+    } = postDetail || {}
 
     const toggleCommentAnonymous = () => {
         setCommentIsAnonymous((prevState) => !prevState)
     }
 
-    const sendComment = (commentId: any) => {
-        const postData = {
+    const handleSendComment = (commentId: any) => {
+        const commentData = {
             postId: postId,
             content: commentContent,
             isAnonymous: commentIsAnonymous,
             reply: commentId ? commentId : null, // 답글인 경우, 답글의 ID
         }
-        sendCommentApi(postData)
+        sendCommentApi(commentData)
     }
 
     const handleReply = (commentId: any) => {
-        sendComment(commentId)
+        handleSendComment(commentId)
     }
 
     const handleShare = () => {
-        const postLink = `https://example.com/posts/${postId}` // postId에 따라 실제 주소 생성
+        const postLink = `${API_URL}posts/${postId}` // postId에 따라 실제 주소 생성
         Clipboard.setString(postLink)
         setShowSharedAlert(true)
     }
@@ -206,19 +139,27 @@ export default function PostDetail({ postId }: PostDetailProps) {
             console.error(error)
         }
     }
+
     const handleNothing = () => {
         setShowAlert(false)
     }
 
     const handleLike = async () => {
         try {
-            const newLikedCount = await togglePostLike(
+            const newLikedCount = await sendPostLike(
                 postId,
+                postDetail.id,
+                postDetail.nickname,
+                postDetail.content,
+                postDetail.anonymous,
                 postDetail.likedCount,
+                postDetail.createdAt,
+                new Date().toISOString(), // lastModifiedAt
             )
             setPostDetail((prevPostDetail: any) => ({
                 ...prevPostDetail,
-                likedCount: newLikedCount,
+                likedCount: liked ? newLikedCount + 1 : newLikedCount,
+                lastModifiedAt: new Date().toISOString(), // 업데이트된 시간 설정
             }))
             setIsLiked(!liked)
         } catch (error) {
@@ -226,12 +167,33 @@ export default function PostDetail({ postId }: PostDetailProps) {
         }
     }
 
+    const handleScrap = async () => {
+        try {
+            const newScrapCount = await handleScrapApi(
+                postDetail.id,
+                userStore.userId,
+                scrapped,
+            )
+            setPostDetail((prevPostDetail: any) => ({
+                ...prevPostDetail,
+                scrapCount: scrapped ? newScrapCount + 1 : newScrapCount,
+            }))
+            setIsScrapped(scrapped ? 0 : 1)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleGoback = () => {
+        navigation.goBack()
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.gobackIcon}
-                    onPress={() => navigation.goBack()}
+                    onPress={handleGoback}
                 >
                     <LeftArrowIcon />
                 </TouchableOpacity>
@@ -244,11 +206,11 @@ export default function PostDetail({ postId }: PostDetailProps) {
                             null,
                     ]}
                 >
-                    {categoryName}
+                    {category}
                 </Text>
                 {isAuthor && (
                     <View style={styles.isAuthorButtonBox}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={handleEdit}>
                             <EditIcon />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onDelete}>
@@ -279,16 +241,20 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 <View style={styles.bodyConatiner}>
                     {/* 작성자 정보 */}
                     <View style={styles.userInfoContainer}>
-                        <Image
-                            source={
-                                require('@/public/assets/defaultProfile.png')
-                                // authorProfile ? { uri: authorProfile } : require('@/public/assets/defaultProfile.png')
-                            }
-                            style={styles.icon}
-                        />
+                        {postDetail && postDetail.profileImage ? (
+                            <Image
+                                source={{ uri: postDetail.profileImage }}
+                                style={styles.icon}
+                            />
+                        ) : (
+                            <Image
+                                source={require('@/public/assets/defaultProfile.png')}
+                                style={styles.icon}
+                            />
+                        )}
                         <View style={styles.userInfoTextContainer}>
                             <Text style={text.userText}>
-                                {commentIsAnonymous ? '익명' : authorNickname}
+                                {anonymous ? '익명' : nickname}
                             </Text>
                             {/* 작성 날짜 및 시간 */}
                             <Text style={text.createdAt}>
@@ -313,16 +279,29 @@ export default function PostDetail({ postId }: PostDetailProps) {
                                             liked && { color: '#52A55D' },
                                         ]}
                                     >
-                                        {likedCount}
+                                        {/* {likeCount} */}
+                                        {liked ? likeCount + 1 : likeCount}
                                     </Text>
                                 </View>
                             </TouchableOpacity>
                             {/* 스크랩 버튼 */}
-                            <TouchableOpacity style={styles.actionButton}>
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                onPress={handleScrap}
+                            >
                                 <View style={styles.marginBox}>
                                     <ScrapIcon />
-                                    <Text style={text.countText}>
-                                        {scrapCount}
+                                    <Text
+                                        style={[
+                                            text.countText,
+                                            scrapped === 1 && {
+                                                color: '#52A55D',
+                                            },
+                                        ]}
+                                    >
+                                        {scrapped === 1
+                                            ? scrapCount + 1
+                                            : scrapCount}
                                     </Text>
                                 </View>
                             </TouchableOpacity>
@@ -353,13 +332,17 @@ export default function PostDetail({ postId }: PostDetailProps) {
                         {t('comment')} {comments.length}
                     </Text>
                 </View>
-                {comments.map((comment: any) => (
-                    <Comment
-                        key={comment.commentId}
-                        comment={comment}
-                        onReply={handleReply}
-                    />
-                ))}
+                {postDetail &&
+                    (comments && Array.isArray(comments) ? comments : []).map(
+                        (comment: any) => (
+                            <Comment
+                                key={comment.commentId}
+                                comment={comment}
+                                postId={postDetail.id}
+                                onReply={handleReply}
+                            />
+                        ),
+                    )}
                 <View style={styles.endOfCommentBox} />
             </ScrollView>
             {/* 댓글 작성 */}
@@ -392,7 +375,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 />
                 <TouchableOpacity
                     style={styles.commentButton}
-                    onPress={sendComment}
+                    onPress={handleSendComment}
                 >
                     <Image
                         source={require('@/public/assets/comment.png')}
@@ -402,7 +385,12 @@ export default function PostDetail({ postId }: PostDetailProps) {
             </View>
 
             {/* 게시글 삭제 모달-alert */}
-            <Modal visible={showAlert} transparent animationType="fade">
+            <Modal
+                visible={showAlert}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowSharedAlert(false)}
+            >
                 <View style={styles.overlay}>
                     <View style={styles.modalContainer}>
                         <AlertModal
@@ -420,28 +408,42 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 visible={showDeleteDoneAlert}
                 transparent
                 animationType="fade"
+                onRequestClose={() => setShowSharedAlert(false)}
             >
-                <View style={styles.overlay}>
-                    <View style={styles.modalContainer}>
-                        <SimpleModal
-                            visible={false}
-                            baseText={t('post-delete')}
-                            highlightText={t('common-delete')}
-                        />
+                <TouchableWithoutFeedback
+                    onPress={() => setShowSharedAlert(false)}
+                >
+                    <View style={styles.overlay}>
+                        <View style={styles.modalContainer}>
+                            <SimpleModal
+                                visible={false}
+                                baseText={t('post-delete')}
+                                highlightText={t('common-delete')}
+                            />
+                        </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </Modal>
             {/* 공유하기 완료 모달 */}
-            <Modal visible={showSharedAlert} transparent animationType="fade">
-                <View style={styles.overlay}>
-                    <View style={styles.modalContainer}>
-                        <SimpleModal
-                            visible={false}
-                            baseText={t('post-copied')}
-                            highlightText={t('post-url')}
-                        />
+            <Modal
+                visible={showSharedAlert}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowSharedAlert(false)}
+            >
+                <TouchableWithoutFeedback
+                    onPress={() => setShowSharedAlert(false)}
+                >
+                    <View style={styles.overlay}>
+                        <View style={styles.modalContainer}>
+                            <SimpleModal
+                                visible={false}
+                                baseText={t('post-copied')}
+                                highlightText={t('post-url')}
+                            />
+                        </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </Modal>
         </View>
     )

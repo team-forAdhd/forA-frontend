@@ -10,29 +10,29 @@ import { useNavigation, NavigationProp } from '@react-navigation/native'
 
 interface Props {
     post: {
-        postId: string
+        id: number
+        userId: string | null
         title: string
-        views: number
-        recommend: number
         category: string
-        createdAt: string
-        imageUrl?: string
+        viewCount: number
+        likeCount: number
+        formattedCreatedAt: string
+        images?: string[] | null
     }
     index: number
 }
 
 type PostDetailParams = {
-    postId: number
+    PostDetail: { postId: number } //postId: number
 }
 
 const PostListItem: React.FC<Props> = ({ post, index }) => {
     const navigation = useNavigation<NavigationProp<PostDetailParams>>()
 
     const handlePostItemClick = () => {
-        // TODO 해당 게시글로 페이지 이동
-        navigation.navigate('Home' as never)
+        navigation.navigate('PostDetail', { postId: post.id })
     }
-    const maxTitleLength = post.imageUrl ? 19 : 23
+    const maxTitleLength = post.images ? 19 : 23
     const displayedTitle =
         post.title.length > maxTitleLength
             ? `${post.title.slice(0, maxTitleLength)}...`
@@ -57,17 +57,21 @@ const PostListItem: React.FC<Props> = ({ post, index }) => {
                     </Text>
                     <View style={{ width: 8 }} />
                     <ViewIcon />
-                    <Text style={text.postListOthersText}>{post.views}</Text>
+                    <Text style={text.postListOthersText}>
+                        {post.viewCount}
+                    </Text>
                     <View style={{ width: 8 }} />
                     <ThumbsUpIcon />
                     <Text style={text.postListOthersText}>
-                        {post.recommend}
+                        {post.likeCount}
                     </Text>
                 </View>
-                <Text style={text.postListDateText}>{post.createdAt}</Text>
-                {post.imageUrl && (
+                <Text style={text.postListDateText}>
+                    {post.formattedCreatedAt}
+                </Text>
+                {post.images && (
                     <Image
-                        source={{ uri: post.imageUrl }}
+                        source={{ uri: post.images[0] }}
                         style={styles.thumbnailImage}
                     />
                 )}

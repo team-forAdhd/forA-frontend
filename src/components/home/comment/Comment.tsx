@@ -2,64 +2,63 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, Image, TouchableOpacity, Modal } from 'react-native'
 import { styles, text } from './CommentStyle'
-import { deleteCommentApi } from '@/api/home/deleteCommentApi'
+import { deleteCommentApi, deleteReplyApi } from '@/api/home/deleteCommentApi'
 import { Timestamp } from 'react-native-reanimated/lib/typescript/reanimated2/commonTypes'
 import { formatDate } from '@/common/formatDate'
 import SimpleModal from '@/components/common/simpleModal/SimpleModal'
 import AlertModal from '@/components/common/alertModal/AlertModal'
 import userStore from '@/store/userStore/userStore'
 import { LikedIcon, ClikedLikedIcon } from '@/public/assets/SvgComponents'
-import {
-    getCommentLikedCount,
-    toggleCommentLike,
-} from '@/api/home/commentLikedApi'
+import { toggleCommentLike } from '@/api/home/commentLikedApi'
 interface Reply {
-    replyId: number
+    id: number
     userId: string
     userProfileUrl: string
     content: string
-    createdAt: Timestamp
+    createdAt: number
     anonymous: boolean
-    likes: number
+    likeCount: number
 }
+
 interface CommentProps {
     comment: {
-        commentId: number
+        id: number
         userId: string
         userProfileUrl: string
         content: string
-        createdAt: string
+        createdAt: number
         anonymous: boolean
-        likes: number
-        replies: Reply[]
+        likeCount: number
+        children: Reply[]
+        nickname: string
+        profileImage: string
     }
+    postId: number
     onReply: (commentId: number) => void
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
+const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
     const { t } = useTranslation('board')
     const [showAlert, setShowAlert] = useState(false)
     const [liked, setLiked] = useState(false)
-    const [likedCount, setLikedCount] = useState(0)
+    const [likedCount, setLikedCount] = useState(comment.likeCount)
+    const [replyLiked, setReplyLiked] = useState<boolean[]>([])
+    const [replyLikedCount, setReplyLikedCount] = useState<number[]>([])
+    const [deleteId, setDeleteId] = useState<number | null>(null)
+    const [isReply, setIsReply] = useState(false)
 
     useEffect(() => {
-        const fetchLikedCount = async () => {
-            try {
-                const count = await getCommentLikedCount(comment.commentId)
-                setLikedCount(count)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-
-        fetchLikedCount()
-    }, [comment.commentId])
+        setReplyLiked(comment.children.map(() => false))
+        setReplyLikedCount(comment.children.map((reply) => reply.likeCount))
+    }, [comment.children])
 
     const handleLike = async () => {
         try {
             const newLikedCount = await toggleCommentLike(
-                comment.commentId,
-                liked,
+                comment.id,
+                postId,
+                comment.content,
+                comment.anonymous,
             )
             setLikedCount(newLikedCount)
             setLiked(!liked)
@@ -68,18 +67,49 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
         }
     }
 
+    const handleReplyLike = async (index: number, replyId: number) => {
+        try {
+            const newReplyLikedCount = await toggleCommentLike(
+                comment.id,
+                postId,
+                comment.content,
+                comment.anonymous,
+            )
+            setReplyLikedCount((prev) => {
+                const newCounts = [...prev]
+                newCounts[index] = newReplyLikedCount
+                return newCounts
+            })
+            setReplyLiked((prev) => {
+                const newLikes = [...prev]
+                newLikes[index] = !newLikes[index]
+                return newLikes
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const isLoggedInUser =
         userStore.isLoggedIn && userStore.userId === comment.userId
 
-    const onDelete = () => {
+    const onDelete = (id: number, isReply: boolean) => {
+        setDeleteId(id)
+        setIsReply(isReply)
         setShowAlert(true)
     }
 
     const handleDelete = async () => {
-        try {
-            await deleteCommentApi(comment.commentId)
-        } catch (error) {
-            console.error(error)
+        if (deleteId !== null) {
+            try {
+                if (isReply) {
+                    await deleteReplyApi(deleteId)
+                } else {
+                    await deleteCommentApi(deleteId)
+                }
+            } catch (error) {
+                console.error(error)
+            }
         }
     }
     const handleNothing = () => {
@@ -90,16 +120,17 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
         <View style={styles.commentContainer}>
             <View style={styles.commentContent}>
                 <View style={styles.commentHeader}>
-                    <Image
-                        source={require('@/public/assets/defaultProfile.png')}
-                        // source={{
-                        //     uri: comment.anonymous
-                        //         ? require('@/public/assets/defaultProfile.png')
-                        //         : comment.userProfileUrl ||
-                        //           require('@/public/assets/defaultProfile.png'),
-                        // }}
-                        style={styles.profileImage}
-                    />
+                    {comment.anonymous || !comment.userProfileUrl ? (
+                        <Image
+                            source={require('@/public/assets/defaultProfile.png')}
+                            style={styles.profileImage}
+                        />
+                    ) : (
+                        <Image
+                            source={{ uri: comment.userProfileUrl }}
+                            style={styles.profileImage}
+                        />
+                    )}
                     <Text style={text.nicknameText}>
                         {comment.anonymous
                             ? t('post-anonymous')
@@ -118,7 +149,9 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
                                     liked && { color: '#52A55D' },
                                 ]}
                             >
-                                {comment.likes}
+                                {liked
+                                    ? comment.likeCount + 1
+                                    : comment.likeCount}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -129,7 +162,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
                         {formatDate(comment.createdAt)}
                     </Text>
                     <TouchableOpacity
-                        onPress={() => onReply(comment.commentId)}
+                        onPress={() => onReply(comment.id)}
                         style={styles.deleteButton}
                     >
                         <Text style={text.replyButtonText}>
@@ -138,7 +171,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
                     </TouchableOpacity>
                     {isLoggedInUser && (
                         <TouchableOpacity
-                            onPress={onDelete}
+                            onPress={() => onDelete(comment.id, false)}
                             style={styles.deleteButton}
                         >
                             <Text style={text.deleteButtonText}>
@@ -147,72 +180,82 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply }) => {
                         </TouchableOpacity>
                     )}
                 </View>
-                {comment.replies.map((reply) => (
-                    <View key={reply.replyId} style={styles.replyBox}>
-                        <View style={styles.commentHeader}>
-                            <Image
-                                source={require('@/public/assets/defaultProfile.png')}
-                                // source={{
-                                //     uri: reply.anonymous
-                                //         ? require('@/public/assets/defaultProfile.png')
-                                //         : reply.userProfileUrl ||
-                                //           require('@/public/assets/defaultProfile.png'),
-                                // }}
-                                style={styles.profileImage}
-                            />
-                            <Text style={text.nicknameText}>
-                                {reply.anonymous
-                                    ? t('post-anonymous')
-                                    : reply.userId}
-                                {isLoggedInUser && '(나)'}
-                            </Text>
-                            <TouchableOpacity
-                                style={styles.actionButton}
-                                onPress={handleLike}
-                            >
-                                <View style={styles.marginBox}>
-                                    {liked ? (
-                                        <ClikedLikedIcon />
-                                    ) : (
-                                        <LikedIcon />
-                                    )}
-                                    <Text
-                                        style={[
-                                            text.countText,
-                                            liked && { color: '#52A55D' },
-                                        ]}
-                                    >
-                                        {reply.likes}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={text.commentText}>{reply.content}</Text>
-                        <View style={styles.commentBottom}>
-                            <Text style={text.timestampText}>
-                                {formatDate(reply.createdAt)}
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => onReply(comment.commentId)}
-                                style={styles.deleteButton}
-                            >
-                                <Text style={text.replyButtonText}>
-                                    {t('comment-reply')}
+                {Array.isArray(comment.children) &&
+                    comment.children.map((reply, index) => (
+                        <View key={reply.id} style={styles.replyBox}>
+                            <View style={styles.commentHeader}>
+                                {reply.anonymous || !reply.userProfileUrl ? (
+                                    <Image
+                                        source={require('@/public/assets/defaultProfile.png')}
+                                        style={styles.profileImage}
+                                    />
+                                ) : (
+                                    <Image
+                                        source={{ uri: reply.userProfileUrl }}
+                                        style={styles.profileImage}
+                                    />
+                                )}
+                                <Text style={text.nicknameText}>
+                                    {reply.anonymous
+                                        ? t('post-anonymous')
+                                        : reply.userId}
+                                    {isLoggedInUser && '(나)'}
                                 </Text>
-                            </TouchableOpacity>
-                            {isLoggedInUser && (
                                 <TouchableOpacity
-                                    onPress={onDelete}
+                                    style={styles.actionButton}
+                                    onPress={() =>
+                                        handleReplyLike(index, reply.id)
+                                    }
+                                >
+                                    <View style={styles.marginBox}>
+                                        {replyLiked ? (
+                                            <ClikedLikedIcon />
+                                        ) : (
+                                            <LikedIcon />
+                                        )}
+                                        <Text
+                                            style={[
+                                                text.countText,
+                                                replyLiked[index] && {
+                                                    color: '#52A55D',
+                                                },
+                                            ]}
+                                        >
+                                            {replyLiked[index]
+                                                ? replyLikedCount[index] + 1
+                                                : replyLikedCount}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={text.commentText}>
+                                {reply.content}
+                            </Text>
+                            <View style={styles.commentBottom}>
+                                <Text style={text.timestampText}>
+                                    {formatDate(reply.createdAt)}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => onReply(comment.id)}
                                     style={styles.deleteButton}
                                 >
-                                    <Text style={text.deleteButtonText}>
-                                        {t('comment-delete')}
+                                    <Text style={text.replyButtonText}>
+                                        {t('comment-reply')}
                                     </Text>
                                 </TouchableOpacity>
-                            )}
+                                {isLoggedInUser && (
+                                    <TouchableOpacity
+                                        onPress={() => onDelete(reply.id, true)}
+                                        style={styles.deleteButton}
+                                    >
+                                        <Text style={text.deleteButtonText}>
+                                            {t('comment-delete')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
                         </View>
-                    </View>
-                ))}
+                    ))}
             </View>
 
             {/* 댓글 삭제 모달-alert */}
