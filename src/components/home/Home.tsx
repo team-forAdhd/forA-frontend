@@ -3,39 +3,64 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './HomeStyle'
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { DummyPost, generateDummyPosts } from './dummydata'
 
 import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
 import PostListItem from './postListItem/PostListItem'
 import FloatingButton from './FloatingButton'
+<<<<<<< HEAD
 import { postLogin } from '@/api/myPage/mycommentApi'
+=======
+import {
+    getMainCategoryApi,
+    getMainRealtimeApi,
+    Post,
+} from '@/api/home/getPostsApi'
+>>>>>>> f2b9918 ([feat] integrate post API & navigation)
 
 export default function Home() {
     //랭킹 클릭 상태
-    const [rankingClick, setRankingClick] = useState<string>('realtime-tab')
+    const [rankingClick, setRankingClick] = useState<string>('실시간')
     //새로고침 리랜더링
     const [reRender, setReRender] = useState(false)
     //랭킹 리스트 띄울 이름 키 값
-    const rankingList = [
-        'realtime-tab',
-        '10s-tab',
-        '20s-tab',
-        '30s-tab',
-        'parents-tab',
-    ]
+    const rankingList = ['실시간', '10대', '20대', '30대↑', '학부모']
 
     const { t } = useTranslation('home')
 
     const navigation = useNavigation()
 
-    const [posts, setPosts] = useState<DummyPost[]>([])
+    const [posts, setPosts] = useState<Post[]>([])
     const [visiblePostsCount, setVisiblePostsCount] = useState<number>(5)
 
     useEffect(() => {
-        const dummyPosts = generateDummyPosts()
-        setPosts(dummyPosts)
-    }, [])
+        const fetchPosts = async () => {
+            let fetchedPosts: Post[] = []
+            try {
+                if (rankingClick === '실시간') {
+                    fetchedPosts = await getMainRealtimeApi()
+                } else {
+                    const category =
+                        rankingClick === '10대'
+                            ? 'TEENS'
+                            : rankingClick === '20대'
+                              ? 'TWENTIES'
+                              : rankingClick === '30대↑'
+                                ? 'THIRTIES_AND_ABOVE'
+                                : rankingClick === '학부모'
+                                  ? 'PARENTS'
+                                  : ''
+                    fetchedPosts = await getMainCategoryApi(category)
+                }
+                setPosts(fetchedPosts)
+            } catch (error) {
+                console.error('Error fetching posts:', error)
+                setPosts([]) // 에러 발생 시 빈 배열로 설정
+            }
+        }
+        fetchPosts()
+    }, [rankingClick, reRender])
+
     const handleLoadMore = () => {
         setVisiblePostsCount((prevCount) => prevCount + 5)
     }
@@ -113,7 +138,7 @@ export default function Home() {
                                             : text.baseText
                                     }
                                 >
-                                    {t(rankingName)}
+                                    {rankingName}
                                 </Text>
                             </TouchableOpacity>
                         )
@@ -138,11 +163,7 @@ export default function Home() {
                 {/* 게시글 목록 */}
                 <ScrollView style={styles.postListContainer}>
                     {posts.slice(0, visiblePostsCount).map((post, index) => (
-                        <PostListItem
-                            key={post.postId}
-                            post={post}
-                            index={index}
-                        />
+                        <PostListItem key={post.id} post={post} index={index} />
                     ))}
                     {/* 더보기 버튼 */}
                     <View style={styles.loadButtonConatiner}>

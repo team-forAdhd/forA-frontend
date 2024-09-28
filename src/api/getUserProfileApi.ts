@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { API_URL } from '@env';
 
 interface UserProfile {
+  accessToken: string;
   userId: string;
   nickname: string;
   email: string;

@@ -46,6 +46,7 @@ export default function LoginScreen() {
                     response.accessToken,
                 )
                 userStore.login(
+                    userProfile.accessToken,
                     userProfile.userId,
                     userProfile.nickname,
                     userProfile.profileImageUrl,
@@ -92,6 +93,7 @@ export default function LoginScreen() {
                     response.accessToken,
                 )
                 userStore.login(
+                    userProfile.accessToken,
                     userProfile.userId,
                     userProfile.nickname,
                     userProfile.profileImageUrl,

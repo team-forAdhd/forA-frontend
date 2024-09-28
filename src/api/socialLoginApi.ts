@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { API_URL } from '@env'
+import { API_URL } from '@env';
 
 export interface ApiResponse {
   accessToken: string;

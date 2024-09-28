@@ -2,7 +2,8 @@ import { makeAutoObservable } from 'mobx';
 
 class UserStore {
     isLoggedIn = false
-    userId: number | string = ''
+    accessToken = ''
+    userId = ''
     nickname = ''
     profileImageUrl = ''
 
@@ -10,8 +11,9 @@ class UserStore {
         makeAutoObservable(this)
     }
 
-    login(userId: number | string, nickname: string, profileImageUrl: string) {
+    login(accessToken: string, userId: string, nickname: string, profileImageUrl: string) {
         this.isLoggedIn = true
+        this.accessToken = this.accessToken
         this.userId = userId
         this.nickname = nickname
         this.profileImageUrl = profileImageUrl

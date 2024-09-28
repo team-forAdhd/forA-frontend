@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
+import { API_URL } from '@env';
 
-export const updatePostApi = async (postInfo: any): Promise<void> => {
+export const updatePostApi = async (postInfo: any, postId: number): Promise<void> => {
   try {
-    const apiUrl = 'api address';
-    await axios.put(apiUrl);
+    await axios.put(`${API_URL}/api/v1/posts/${postId}`, postInfo);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;

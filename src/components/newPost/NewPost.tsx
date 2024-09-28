@@ -89,13 +89,12 @@ export default function NewPost() {
     const handlePostInfo = async () => {
         try {
             const postInfo = {
-                // postId: '1',
-                category_name: selectedCategory,
                 title: title,
                 nickname: userStore.nickname,
                 content: content,
-                images: attachedPhotos.join(','),
+                images: attachedPhotos,
                 anonymous: isAnonymous,
+                category: selectedCategory,
                 createdAt: new Date(),
             }
             await sendNewPostApi(postInfo)
@@ -106,7 +105,7 @@ export default function NewPost() {
     }
 
     const handleUploadButton = () => {
-        handlePostInfo
+        handlePostInfo()
         navigation.navigate('Home' as never)
     }
 
