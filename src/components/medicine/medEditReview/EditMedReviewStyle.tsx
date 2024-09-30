@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
     View,
     Text,
@@ -7,37 +7,33 @@ import {
     Image,
     Modal,
 } from 'react-native'
-import { styles, text } from './MedNewReivewStyle'
-import { useNavigation } from '@react-navigation/native'
+import { styles, text } from './EditMedReviewStyle'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { Rating } from 'react-native-elements'
 import { TextInput } from 'react-native-gesture-handler'
 import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
 import * as ImagePicker from 'expo-image-picker'
-import { useEffect } from 'react'
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
 import MedSelectModal from '../medNewReview/MedSelectModal/MedSelectModal'
 import medStore from '@/state/medState/medStore'
-const data = {
-    medId: 2,
-    itemName: '메디키넷리타드캡슐5mg',
-    itemEngName: 'Medikinet Retard Cap. 5mg',
-    entpName: '명인제약(주)',
-    itemImage:
-        'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-}
+import { getMedReviewApi } from '@/api/medicine/medReviewApi'
 
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('(')
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
 
-const NewMedReview = () => {
-    // prop으로 medId 받아와야 함
+interface EditMedReviewProps {
+    reviewId: number
+}
+
+const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
     const { t } = useTranslation('medicine')
 
     const navigation = useNavigation()
     const scrollViewRef = useRef<ScrollView>(null)
+    const route = useRoute()
 
     const [rating, setRating] = useState(0)
     const [isCoMed, setIsCoMed] = useState(false)
@@ -51,6 +47,28 @@ const NewMedReview = () => {
     const [sex, setSex] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
 
+    useEffect(() => {
+        const fetchReviewData = async () => {
+            try {
+                const reviewData = await getMedReviewApi(reviewId) // getMedReviewApi 호출
+                if (reviewData) {
+                    setRating(reviewData.grade) // 리뷰 평점 설정
+                    setContent(reviewData.content) // 리뷰 내용 설정
+                    setAttachedPhotos(reviewData.images) // 첨부 사진 설정
+                    setIsCoMed(reviewData.coMedications.length > 0) // 공동복용 여부 설정
+                    if (reviewData.coMedications.length > 0) {
+                        setCoMedId(reviewData.coMedications[0]) // 공동복용약 ID 설정
+                        setCoMedName(medStore.selectedMed?.itemName || '') // 공동복용약 이름 설정
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching review data:', error)
+            }
+        }
+
+        fetchReviewData()
+    }, [reviewId])
+
     //MedDetail로 이동
     const gotoMedDetail = () => {
         navigation.navigate('MedDetail' as never)
@@ -59,7 +77,7 @@ const NewMedReview = () => {
     //MedDetail로 이동
     const handleReviewSend = () => {
         const reviewData = {
-            medicineId: data.medId,
+            // reviewId,
             coMedications:
                 isCoMed && medStore.selectedMed
                     ? [medStore.selectedMed.medId]
@@ -500,4 +518,4 @@ const NewMedReview = () => {
     )
 }
 
-export default NewMedReview
+export default EditMedReview

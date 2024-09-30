@@ -79,7 +79,27 @@ export const styles = StyleSheet.create({
         borderColor: '#52A55D',
         marginBottom: 10,
         backgroundColor: '#F4F9D9'
-    }
+    },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경 흐림
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: 382,
+        height: 382,
+        flexShrink: 0,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    modalImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
 
 })
 

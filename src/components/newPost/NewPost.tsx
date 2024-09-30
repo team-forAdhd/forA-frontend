@@ -20,6 +20,7 @@ import { styles, text } from './NewPostStyle'
 import * as ImagePicker from 'expo-image-picker'
 import { sendNewPostApi } from '@/api/home/sendNewPostApi'
 import userStore from '@/store/userStore/userStore'
+import { uploadImageApi } from '@/api/image/imageApi'
 
 export default function NewPost() {
     const { t: t } = useTranslation('board')
@@ -69,7 +70,19 @@ export default function NewPost() {
             return null // 이미지 업로드 취소한 경우
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
+
         setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
+    }
+
+    const handleImageUpload = async (imageFile: any) => {
+        try {
+            const response = await uploadImageApi(imageFile)
+            const imagePathList = response.imagePathList
+            return imagePathList
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            throw error
+        }
     }
 
     const handleDeletePhoto = (index: number) => {
@@ -86,13 +99,36 @@ export default function NewPost() {
         setIsAnonymous((prev) => !prev)
     }
 
+    // const handlePostInfo = async () => {
+    //     try {
+    //         const postInfo = {
+    //             title: title,
+    //             nickname: userStore.nickname,
+    //             content: content,
+    //             images: attachedPhotos,
+    //             anonymous: isAnonymous,
+    //             category: selectedCategory,
+    //             createdAt: new Date(),
+    //         }
+    //         await sendNewPostApi(postInfo)
+    //         console.log('PostInfo sent successfully:', postInfo)
+    //     } catch (error) {
+    //         console.error('Error sending PostInfo:', error)
+    //     }
+    // }
     const handlePostInfo = async () => {
         try {
+            const imagePathList = await Promise.all(
+                attachedPhotos.map((photo) =>
+                    handleImageUpload({ uri: photo }),
+                ),
+            )
+
             const postInfo = {
                 title: title,
                 nickname: userStore.nickname,
                 content: content,
-                images: attachedPhotos,
+                images: imagePathList.flat(),
                 anonymous: isAnonymous,
                 category: selectedCategory,
                 createdAt: new Date(),

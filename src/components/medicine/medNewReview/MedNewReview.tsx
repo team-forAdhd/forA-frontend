@@ -32,11 +32,11 @@ const truncateItemName = (name: string) => {
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
 
-interface NewMedReviewProps {
+interface MedNewReviewProps {
     medId: number
 }
 
-const NewMedReview: React.FC<NewMedReviewProps> = ({ medId }) => {
+const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     // prop으로 medId 받아와야 함
     const { t } = useTranslation('medicine')
 

@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+    View,
+    Text,
+    Image,
+    Modal,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+} from 'react-native'
 import { styles, text } from './MedReviewListItemStyle'
 import { formatDate } from '@/common/formatDate'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -29,6 +36,8 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({ review }) => {
     const { t } = useTranslation('medicine')
     const [helpCount, setHelpCount] = useState(review.helpCount)
     const [isHelpClicked, setIsHelpClicked] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
     const handleHelpClick = async () => {
         if (!isHelpClicked) {
@@ -38,6 +47,15 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({ review }) => {
         } else {
             setIsHelpClicked(false)
         }
+    }
+    const openImageModal = (image: string) => {
+        setSelectedImage(image)
+        setModalVisible(true)
+    }
+
+    const closeImageModal = () => {
+        setModalVisible(false)
+        setSelectedImage(null)
     }
     return (
         <View style={styles.container}>
@@ -107,6 +125,27 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({ review }) => {
                     </View>
                 </TouchableOpacity>
             </View>
+
+            {/* 이미지 모달 */}
+            <Modal
+                visible={modalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={closeImageModal}
+            >
+                <TouchableWithoutFeedback onPress={closeImageModal}>
+                    <View style={styles.modalBackground}>
+                        {selectedImage && (
+                            <View style={styles.modalContainer}>
+                                <Image
+                                    source={{ uri: selectedImage }}
+                                    style={styles.modalImage}
+                                />
+                            </View>
+                        )}
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
         </View>
     )
 }
