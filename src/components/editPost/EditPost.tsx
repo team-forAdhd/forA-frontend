@@ -21,6 +21,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { getPostDetail } from '@/api/home/getPostsDetailsApi'
 import { updatePostApi } from '@/api/home/updatePostApi'
 import userStore from '@/store/userStore/userStore'
+import { uploadImageApi } from '@/api/image/imageApi'
 
 interface EditPostProps {
     postId: number
@@ -76,6 +77,17 @@ export default function EditPost({ postId }: EditPostProps) {
         return !title.trim() || !content.trim() // 제목 또는 내용 중 하나라도 입력이 없으면 버튼 비활성
     }
 
+    const handleImageUpload = async (imageFile: any) => {
+        try {
+            const response = await uploadImageApi(imageFile)
+            const imagePathList = response.data.imagePathList // response.data로 접근
+            return imagePathList
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            throw error
+        }
+    }
+
     const uploadImage = async () => {
         // 갤러리 접근 권한
         if (!status?.granted) {
@@ -113,13 +125,19 @@ export default function EditPost({ postId }: EditPostProps) {
 
     const handlePostInfo = async () => {
         try {
+            const imagePathList = await Promise.all(
+                attachedPhotos.map((photo) =>
+                    handleImageUpload({ uri: photo }),
+                ),
+            )
+
             const postInfo = {
                 postId: postId,
                 category_name: selectedCategory,
                 title: title,
                 nickname: userStore.nickname,
                 content: content,
-                images: attachedPhotos.join(','),
+                images: imagePathList.flat().join(','), // 이미지 경로를 문자열로 변환
                 anonymous: isAnonymous,
             }
             await updatePostApi(postInfo, postId)

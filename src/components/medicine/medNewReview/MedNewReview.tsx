@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
     View,
     Text,
@@ -17,20 +17,8 @@ import * as ImagePicker from 'expo-image-picker'
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
 import MedSelectModal from './MedSelectModal/MedSelectModal'
 import medStore from '@/state/medState/medStore'
-
-const data = {
-    medId: 2,
-    itemName: '메디키넷리타드캡슐5mg',
-    itemEngName: 'Medikinet Retard Cap. 5mg',
-    entpName: '명인제약(주)',
-    itemImage:
-        'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-}
-
-const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(')
-    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
-}
+import { getSingleMedInfoApi } from '@/api/medicine/medListApi'
+import { uploadImageApi } from '@/api/image/imageApi'
 
 interface MedNewReviewProps {
     medId: number
@@ -42,7 +30,7 @@ const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
 
     const navigation = useNavigation()
     const scrollViewRef = useRef<ScrollView>(null)
-    const route = useRoute()
+    const [data, setData] = useState<any>(null)
 
     const [rating, setRating] = useState(0)
     const [isCoMed, setIsCoMed] = useState(false)
@@ -56,24 +44,64 @@ const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     const [sex, setSex] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
 
+    useEffect(() => {
+        // API 호출
+        const fetchData = async () => {
+            try {
+                const medicine = await getSingleMedInfoApi(medId)
+                setData(medicine)
+            } catch (error) {
+                console.error('Error fetching medication data:', error)
+            }
+        }
+
+        fetchData()
+    }, [medId])
+
+    const handleImageUpload = async (imageFile: any) => {
+        try {
+            const response = await uploadImageApi(imageFile)
+            const imagePathList = response.data.imagePathList // response.data로 접근
+            return imagePathList
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            throw error
+        }
+    }
+
     //MedDetail로 이동
     const gotoMedDetail = () => {
         navigation.navigate('MedDetail' as never)
     }
 
-    //MedDetail로 이동
-    const handleReviewSend = () => {
-        const reviewData = {
-            medicineId: data.medId,
-            coMedications:
-                isCoMed && medStore.selectedMed
-                    ? [medStore.selectedMed.medId]
-                    : [],
-            content: content,
-            images: attachedPhotos,
-            grade: rating,
+    const handleReviewSend = async () => {
+        try {
+            const imagePathList = await Promise.all(
+                attachedPhotos.map((photo) =>
+                    handleImageUpload({ uri: photo }),
+                ),
+            )
+
+            const reviewData = {
+                medicineId: medId,
+                coMedications:
+                    isCoMed && medStore.selectedMed
+                        ? [medStore.selectedMed.medId]
+                        : [],
+                content: content,
+                images: imagePathList.flat(), // 이미지 경로를 배열로 포함
+                grade: rating,
+            }
+            await sendMedReviewApi(reviewData)
+            navigation.navigate('MedDetail' as never)
+            console.log('Review sent successfully:', reviewData)
+        } catch (error) {
+            console.error('Error sending review:', error)
         }
-        sendMedReviewApi(reviewData)
+    }
+
+    const handleReviewButton = () => {
+        handleReviewSend()
         navigation.navigate('MedDetail' as never)
     }
 
@@ -482,7 +510,7 @@ const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
                     }
                 >
                     <TouchableOpacity
-                        onPress={handleReviewSend}
+                        onPress={handleReviewButton}
                         disabled={!isReviewButtonEnabled()}
                     >
                         <Text style={text.submitButtonText}>
