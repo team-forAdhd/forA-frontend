@@ -33,6 +33,7 @@ import ShapeSearchScreen from '../medicine/medSearch/ShapeSearchScreen'
 import MedDetail from '../medicine/medetails/MedDetail'
 import NewMedReview from '../medicine/medNewReview/MedNewReview'
 import MedReview from '../medicine/medetails/MedReview'
+import MedSearchResult from '../medicine/medSearch/MedSearchResult'
 
 export type RootStackParamList = {
     Home: undefined
@@ -69,6 +70,7 @@ export type RootStackParamList = {
     MedDetail: { medId: number }
     NewMedReview: { medId: number }
     MedReview: { medId: number }
+    MedSearchResult: { resultList: any[]; searchInputValue: string }
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -143,13 +145,18 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="ShapeSearch"
                     component={ShapeSearchScreen}
                 />
+                <Stack.Screen
+                    name="MedSearchResult"
+                    component={MedSearchResult}
+                />
                 <Stack.Screen name="MedDetail">
-                    {(props) => (
-                        <MedDetail
-                            {...props}
-                            medId={props.route.params.medId}
-                        />
-                    )}
+                    {(props) => {
+                        const medId =
+                            props.route?.params?.medId !== undefined
+                                ? props.route.params.medId
+                                : 1 // medId 기본값 설정
+                        return <MedDetail {...props} medId={medId} />
+                    }}
                 </Stack.Screen>
                 <Stack.Screen name="MedReview">
                     {(props) => (
@@ -160,12 +167,13 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     )}
                 </Stack.Screen>
                 <Stack.Screen name="NewMedReview">
-                    {(props) => (
-                        <NewMedReview
-                            {...props}
-                            medId={props.route.params.medId}
-                        />
-                    )}
+                    {(props) => {
+                        const medId =
+                            props.route?.params?.medId !== undefined
+                                ? props.route.params.medId
+                                : 1 // medId 기본값 설정
+                        return <NewMedReview {...props} medId={medId} />
+                    }}
                 </Stack.Screen>
 
                 <Stack.Screen name="MyPage" component={MyPage} />

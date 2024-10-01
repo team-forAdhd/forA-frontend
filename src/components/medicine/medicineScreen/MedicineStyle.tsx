@@ -99,6 +99,13 @@ export const text = {
         lineHeight: 26,
         letterSpacing: -1.2,
     },
+    searchBarResultText: {
+        fontSize: 18,
+        fontWeight: '400',
+        color: '#232323',
+        lineHeight: 26,
+        letterSpacing: -0.9,
+    },
     shapeSearchText: {
         fontSize: 18,
         fontWeight: '600',

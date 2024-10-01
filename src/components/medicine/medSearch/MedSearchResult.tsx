@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { View, Image, TouchableOpacity, Text, FlatList } from 'react-native'
-import { styles, text } from './MedicineStyle'
+import { RouteProp, useNavigation } from '@react-navigation/native'
+import { View, Image, TouchableOpacity, Text } from 'react-native'
+import { styles, text } from './../medicineScreen/MedicineStyle'
 import TabBar from '@/components/common/tabBar/tabBar'
-import { MedicineItem } from '@/common/types'
 import MedicineListItem from '../medListItem/MedicineListItem'
 import {
     getMedListApi,
@@ -12,6 +11,7 @@ import {
 } from '@/api/medicine/medListApi'
 import { ScrollView } from 'react-native-gesture-handler'
 import BottomSheet from '../medBottomSheet/BottomSheet'
+import { RootStackParamList } from '@/components/navigation'
 
 type Med = {
     id: number
@@ -24,10 +24,21 @@ type Med = {
     favorite: boolean
 }
 
-export default function MedScreen() {
+interface MedSearchResultProps {
+    resultList: Med[]
+    searchInputValue: string
+}
+
+type MedSearchResultRouteProp = RouteProp<RootStackParamList, 'MedSearchResult'>
+
+type MedSearchResultScreenProps = {
+    route: MedSearchResultRouteProp
+}
+
+export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
+    const { resultList, searchInputValue } = route.params
     const { t } = useTranslation('medicine')
     const navigation = useNavigation()
-    const [searchQuery, setSearchQuery] = useState('')
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
     const [selectedIngredient, setSelectedIngredient] = useState<string | null>(
         null,
@@ -54,14 +65,6 @@ export default function MedScreen() {
     ]
     const [sortOption, setSortOption] = useState(rangeList[0])
 
-    // 기본 약 리스트 호출
-    useEffect(() => {
-        if (sortOption === '성분 순') {
-        } else {
-            fetchMedList()
-        }
-    }, [sortOption])
-
     // 성분 선택 시 해당 성분의 약 리스트 API 호출
     const fetchMedListByIngredient = async (ingredient: string) => {
         const englishName = ingredientMap[ingredient] // 한글명을 영문명으로 변환
@@ -80,21 +83,6 @@ export default function MedScreen() {
         setSelectedIngredient(ingredient) // 성분을 선택한 상태로 유지
     }
 
-    const fetchMedList = async () => {
-        const data = await getMedListApi()
-        const filteredData = data.map((med: Med) => ({
-            id: med.id,
-            itemName: med.itemName,
-            entpName: med.entpName,
-            itemEngName: med.itemEngName,
-            itemImage: med.itemImage,
-            className: med.className,
-            rating: med.rating,
-            favorite: med.favorite,
-        }))
-        setMedList(filteredData)
-    }
-
     const gotoMedSearch = () => {
         // 약 일반 검색창으로 이동
         navigation.navigate('MedSearch' as never)
@@ -106,7 +94,7 @@ export default function MedScreen() {
 
     // 정렬 함수
     const sortMedList = () => {
-        let sortedList = [...medList]
+        let sortedList = [...resultList]
 
         switch (sortOption) {
             case '가나다 순':
@@ -144,8 +132,8 @@ export default function MedScreen() {
                             source={require('@/public/assets/greenSearch.png')}
                         />
                         <TouchableOpacity onPress={gotoMedSearch}>
-                            <Text style={text.searchBarText}>
-                                {t('search-placeholder')}
+                            <Text style={text.searchBarResultText}>
+                                {searchInputValue}
                             </Text>
                         </TouchableOpacity>
                     </View>
