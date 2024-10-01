@@ -7,10 +7,9 @@ import { TabBarStoreContext } from '@/state/tabBarState'
 import { Observer } from 'mobx-react'
 interface NavigationList {
     [key: string]: string
-    'home-tab': string
     'hospital-tab': string
     'meds-tab': string
-    'selfCheck-tab': string
+    'home-tab': string
     'MY-tab': string
 }
 export default function TabBar() {
@@ -19,26 +18,24 @@ export default function TabBar() {
 
     //t함수에 전달할 키 값과 아이콘 이미지 경로
     const tabBarList = {
-        'home-tab': require('@/public/assets/home.png'),
         'hospital-tab': require('@/public/assets/hospital.png'),
         'meds-tab': require('@/public/assets/meds.png'),
-        'selfCheck-tab': require('@/public/assets/self-check.png'),
+        'home-tab': require('@/public/assets/Today.png'),
         'MY-tab': require('@/public/assets/MY.png'),
     }
 
     const navigationList: NavigationList = {
-        'home-tab': 'Home',
         'hospital-tab': 'HospitalMaps',
-        'meds-tab': 'Home',
-        'selfCheck-tab': 'Home',
         'MY-tab': 'MyPage',
+        'meds-tab': 'MedicineMain',
+        // 'meds-tab': 'MedSearch',
+        'home-tab': 'Home',
     }
 
     const clickTabIcons = [
-        require('@/public/assets/clickHome.png'),
         require('@/public/assets/clickHospital.png'),
         require('@/public/assets/clickMeds.png'),
-        require('@/public/assets/clickSelf-check.png'),
+        require('@/public/assets/clickToday.png'),
         require('@/public/assets/clickMY.png'),
     ]
 
@@ -67,7 +64,12 @@ export default function TabBar() {
                                             ? clickTabIcons[index]
                                             : tabImage
                                     }
-                                    style={styles.TabBarImage}
+                                    // style={styles.TabBarImage}
+                                    style={
+                                        tab === 'home-tab'
+                                            ? styles.TodayTabImage
+                                            : styles.TabBarImage
+                                    }
                                 />
                                 <Text
                                     style={

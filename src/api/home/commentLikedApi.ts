@@ -3,7 +3,7 @@ import { API_URL } from '@env'
 import userStore from '@/store/userStore/userStore'
 
 export const getCommentLikedCount = async (commentId: number) => {
-  const response = await axios.get(`/api/posts/comments/${commentId}/likedCount`)
+  const response = await axios.get(`${API_URL}/api/posts/comments/${commentId}/likedCount`)
   return response.data.likedCount
 }
 

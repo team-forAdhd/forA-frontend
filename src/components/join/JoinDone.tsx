@@ -5,6 +5,7 @@ import { TouchableOpacity, Text, View, Image } from 'react-native'
 import { styles, text } from './JoinStyle'
 import { ProfileStoreContext } from '@/state/signupState'
 import { sendUserInfoApi } from '@/api/join/sendUserInfoApi'
+import { uploadImageApi } from '@/api/image/imageApi'
 
 export default function JoinDone() {
     const { t } = useTranslation('login-join')
@@ -18,6 +19,14 @@ export default function JoinDone() {
 
     const handleSendUserInfo = async () => {
         try {
+            let profileImageUrl = profileStore.imageUrl
+            if (profileStore.imageUrl) {
+                const imagePathList = await uploadImageApi({
+                    uri: profileStore.imageUrl,
+                }) // 이미지 업로드
+                profileImageUrl = imagePathList[0] // 첫 번째 이미지 경로를 저장
+            }
+
             const userInfo = {
                 name: profileStore.name,
                 birth: profileStore.birthYearMonth,
