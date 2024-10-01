@@ -1,4 +1,4 @@
-import React, { useState, useTransition } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native'
 import { styles, text } from './MedSelectModalStyle'
 import ModalMedListItem from './medListItem/ModalMedListItem'
@@ -8,75 +8,27 @@ import { searchStoreContext } from '@/state/searchState'
 import { useContext } from 'react'
 import medStore from '@/state/medState/medStore'
 import { observer } from 'mobx-react-lite'
+import { getMedListApi } from '@/api/medicine/medListApi'
 
 interface MedListItem {
-    medId: number
+    id: number
     itemName: string
     itemImage: string
     itemEngName: string
     entpName: string
+    favorite: boolean
 }
 
 interface MedSelectModalProps {
     onClose: () => void
 }
 
-const medList: MedListItem[] = [
-    {
-        medId: 1,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    {
-        medId: 2,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    {
-        medId: 3,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    {
-        medId: 1,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    {
-        medId: 2,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    {
-        medId: 3,
-        itemName: '도모틴캡술 10mg',
-        itemImage:
-            'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-        itemEngName: 'Domotine Cap, 10mg',
-        entpName: '㈜한국파마',
-    },
-    // 추가 항목들...
-]
-
 const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
     const { t } = useTranslation('medicine')
     const [selectedMed, setSelectedMed] = useState<MedListItem | null>(null)
     const [searchQuery, setSearchQuery] = useState('')
+    const [data, setData] = useState<any>(null)
+
     //텍스트 인풋에서 받을 검색어
     const [searchInputValue, setSearchInputValue] = useState<string>('')
     //submit 상태에 따라 화면에 조건부 렌더링
@@ -85,6 +37,20 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
     const store = useContext(searchStoreContext)
     //검색창 포커스 여부에 따라 placeholder 변화 주기 위해
     const [isFocused, setIsFocused] = useState<boolean>(false)
+
+    useEffect(() => {
+        // API 호출
+        const fetchData = async () => {
+            try {
+                const medicine = await getMedListApi()
+                setData(medicine)
+            } catch (error) {
+                console.error('Error fetching medication data:', error)
+            }
+        }
+
+        fetchData()
+    }, [])
 
     const handleSearch = () => {
         setSubmit(true)
@@ -99,27 +65,23 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
         }
     }
 
-    // const handleMedSelect = (item: MedListItem) => {
-    //     setSelectedMed(item)
-    //     // 선택한 항목의 medId와 itemName을 모달을 사용할 컴포넌트에 전달
-    //     console.log('Selected Med:', item.medId, item.itemName)
-    // }
-
     const handleMedSelect = (item: MedListItem) => {
         setSelectedMed((prevSelectedMed) => {
-            if (prevSelectedMed && prevSelectedMed.medId === item.medId) {
+            if (prevSelectedMed && prevSelectedMed.id === item.id) {
                 // 동일한 항목을 다시 선택하면 선택 해제
                 return null
             }
             // 새로운 항목 선택
             return item
         })
-        console.log('Selected Med:', item.medId, item.itemName)
+        console.log('Selected Med:', item.id, item.itemName)
     }
 
-    const filteredMedList = medList.filter((med) =>
-        med.itemName.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
+    const filteredMedList = data
+        ? data.filter((med: { itemName: string }) =>
+              med.itemName.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+        : []
 
     return (
         <View style={styles.container}>
@@ -177,9 +139,9 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
                 </View>
             </View>
             <ScrollView>
-                {filteredMedList.map((med) => (
+                {filteredMedList.map((med: MedListItem) => (
                     <ModalMedListItem
-                        key={med.medId}
+                        key={med.id}
                         item={med}
                         onPress={() => handleMedSelect(med)}
                     />

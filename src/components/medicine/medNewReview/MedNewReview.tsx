@@ -86,7 +86,7 @@ const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
                 medicineId: medId,
                 coMedications:
                     isCoMed && medStore.selectedMed
-                        ? [medStore.selectedMed.medId]
+                        ? [medStore.selectedMed.id]
                         : [],
                 content: content,
                 images: imagePathList.flat(), // 이미지 경로를 배열로 포함

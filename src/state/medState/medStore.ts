@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
 interface MedListItem {
-    medId: number
+    id: number
     itemName: string
 }
 
