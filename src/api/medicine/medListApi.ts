@@ -4,12 +4,13 @@ import userStore from '@/store/userStore/userStore';
 
 export const getMedListApi = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted`, {
+    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted?tabletType=SOFT_CAPSULE`, {
       headers: {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
-    return response.data.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
+    console.log('API response', response.data)
+    return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
       id: med.id,
       itemName: med.itemName,
       entpName: med.entpName,
