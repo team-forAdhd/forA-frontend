@@ -9,7 +9,6 @@ export const getMedListApi = async () => {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
-    console.log('API response', response.data)
     return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
       id: med.id,
       itemName: med.itemName,
@@ -31,7 +30,12 @@ export const getMedListApi = async () => {
 
 export const getSingleMedInfoApi = async (medId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/${medId}`);
+    const response = await axios.get(`${API_URL}/api/v1/medicines/${medId}`, {
+      headers: {
+        Authorization: `Bearer ${userStore.accessToken}`,
+      },
+    });
+    console.log(response.data)
     return response.data;
 } catch (error) {
     console.error('Error fetching single medication info:', error);
@@ -41,13 +45,14 @@ export const getSingleMedInfoApi = async (medId: number) => {
 
 export const getMedListByIngredientApi = async (ingredientType: string) => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted-by-ingredient`, {
+    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted-by-ingredient?ingredientType=${ingredientType}`, {
       params: { ingredientType },
       headers: {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
-    return response.data.medicineList.map((med: { itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
+    return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
+      id: med.id,
       itemName: med.itemName,
       entpName: med.entpName,
       itemImage: med.itemImage || 'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147427768615900053',

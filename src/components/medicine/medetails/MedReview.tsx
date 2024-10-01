@@ -7,101 +7,7 @@ import MedReviewListItem from './MedReviewList/MedReviewListItem'
 import StarRating from './StarRating/StarRating'
 import BottomSheet from '../medBottomSheet/BottomSheet'
 import { useRoute } from '@react-navigation/native'
-const medId = 1
-const mockData = {
-    data: [
-        {
-            id: 4,
-            medicineId: 1,
-            content:
-                '{"header":{"resultCode":"00","resultMsg":"NORMAL SERVICE."},"body":{"pageNo":1,"totalCount":0,"numOfRows":10}}',
-            images: [
-                'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-                'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-                'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-                'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-                'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-            ],
-            grade: 2.5,
-            helpCount: 0,
-            coMedications: [2, 3],
-            nickname: '이헨',
-            profileImage: '',
-            ageRange: '20대',
-            gender: 'FEMALE',
-            averageGrade: 4,
-            createdAt: 1722060150,
-            lastModifiedAt: 1722060150,
-        },
-        {
-            id: 3,
-            medicineId: 1,
-            content:
-                '{"header":{"resultCode":"00","resultMsg":"NORMAL SERVICE."},"body":{"pageNo":1,"totalCount":0,"numOfRows":10}}',
-            images: [],
-            grade: 4,
-            helpCount: 0,
-            coMedications: [2, 3],
-            nickname: '이헨',
-            profileImage: 'http://',
-            ageRange: '20대',
-            gender: 'FEMALE',
-            averageGrade: 4,
-            createdAt: 1722060143,
-            lastModifiedAt: 1722060143,
-        },
-        {
-            id: 2,
-            medicineId: 1,
-            content:
-                '{"header":{"resultCode":"00","resultMsg":"NORMAL SERVICE."},"body":{"pageNo":1,"totalCount":0,"numOfRows":10}}',
-            images: [
-                'http://example.com/image1.jpg',
-                'http://example.com/image2.jpg',
-            ],
-            grade: 4.5,
-            helpCount: 0,
-            coMedications: [2, 3],
-            nickname: '이헨',
-            profileImage: 'http://',
-            ageRange: '20대',
-            gender: 'FEMALE',
-            averageGrade: 4,
-            createdAt: 1722060133,
-            lastModifiedAt: 1722060133,
-        },
-        {
-            id: 1,
-            medicineId: 1,
-            content:
-                '{"header":{"resultCode":"00","resultMsg":"NORMAL SERVICE."},"body":{"pageNo":1,"totalCount":0,"numOfRows":10}}',
-            images: [
-                'http://example.com/image1.jpg',
-                'http://example.com/image2.jpg',
-            ],
-            grade: 5,
-            helpCount: 0,
-            coMedications: [2, 3],
-            nickname: '이헨',
-            profileImage: 'http://',
-            ageRange: '20대',
-            gender: 'FEMALE',
-            averageGrade: 4,
-            createdAt: 1722060126,
-            lastModifiedAt: 1722060126,
-        },
-    ],
-    paging: {
-        page: 0,
-        size: 10,
-        totalPages: 1,
-        numberOfElements: 4,
-        totalElements: 4,
-        isFirst: true,
-        isLast: true,
-        isEmpty: false,
-    },
-}
+
 interface MedReviewProps {
     medId: number
 }
@@ -124,10 +30,10 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
         '별점 낮은 순',
     ]
     const [sortOption, setSortOption] = useState(rangeList[0])
+    const [sortedReviews, setSortedReviews] = useState<any[]>([])
 
     useEffect(() => {
         const fetchReviews = async () => {
-            // const response = mockData
             const response = await getMedReviewApi(medId)
             if (response && response.data) {
                 setReviews(response.data)
@@ -139,32 +45,36 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
         fetchReviews()
     }, [medId])
 
-    // 정렬 옵션에 따른 정렬 함수
-    useEffect(() => {
-        const sortReviews = () => {
-            let sortedReviews = [...reviews]
-            switch (sortOption) {
-                case '최신순':
-                case '추천 받은 순':
-                    sortedReviews.sort((a, b) => b.heloCount - a.helpCount)
-                    break
-                case '오래된 순':
-                    sortedReviews.sort((a, b) => a.createdAt - b.createdAt)
-                    break
-                case '별점 높은 순':
-                    sortedReviews.sort((a, b) => b.grade - a.grade)
-                    break
-                case '별점 낮은 순':
-                    sortedReviews.sort((a, b) => a.grade - b.grade)
-                    break
-                default:
-                    break
-            }
-            setReviews(sortedReviews)
+    // 리뷰 정렬 함수
+    const sortReviews = (reviewsToSort: any[]) => {
+        let sorted = [...reviewsToSort]
+        switch (sortOption) {
+            case '최신순':
+                sorted.sort((a, b) => b.createdAt - a.createdAt)
+                break
+            case '오래된 순':
+                sorted.sort((a, b) => a.createdAt - b.createdAt)
+                break
+            case '추천 받은 순':
+                sorted.sort((a, b) => b.helpCount - a.helpCount)
+                break
+            case '별점 높은 순':
+                sorted.sort((a, b) => b.grade - a.grade)
+                break
+            case '별점 낮은 순':
+                sorted.sort((a, b) => a.grade - b.grade)
+                break
+            default:
+                break
         }
+        setSortedReviews(sorted)
+    }
 
-        sortReviews()
+    // sortOption이 바뀌면 리뷰 정렬
+    useEffect(() => {
+        sortReviews(reviews)
     }, [sortOption, reviews])
+
     // 평균 점수 계산
     const calcAverageRate = (reviews: any[]) => {
         const totalRating = reviews.reduce(
@@ -276,7 +186,7 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
                     </TouchableOpacity>
                 </View>
                 {/* 리뷰목록 */}
-                {reviews.map((review) => (
+                {sortedReviews.map((review) => (
                     <MedReviewListItem key={review.id} review={review} />
                 ))}
             </ScrollView>

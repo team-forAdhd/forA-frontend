@@ -12,6 +12,7 @@ const MedicineListItem: React.FC<MedicineListItemProps> = ({ item }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
     const handlePress = () => {
+        console.log(item.id)
         navigation.navigate('MedDetail', { medId: item.id })
     }
 

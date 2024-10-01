@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 
 class UserStore {
     isLoggedIn = false
-    accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyZTZhODU5N2I5MWQ0OWQ4ODg2OTc5NTE5YTBjOTUxOCIsImF1dGhvcml0aWVzIjoiUk9MRV9VU0VSIiwiZW1haWwiOiJqa2RlNzcyMUBnbWFpbC5jb20iLCJpYXQiOjE3Mjc3ODY0NDcsImV4cCI6MTcyNzc5MDA0N30._PVIPN8sZAUSFRFt9mWyeknQ7PxYwgAQ9cDdwnhpty4'
+    accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyZTZhODU5N2I5MWQ0OWQ4ODg2OTc5NTE5YTBjOTUxOCIsImVtYWlsIjoiamtkZTc3MjFAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOiJST0xFX1VTRVIiLCJpYXQiOjE3Mjc3OTQyNzMsImV4cCI6MTcyNzc5Nzg3M30.NCyt9qz0ih2v6MH2lVlK-15D4Im8kBOUNmqrVPV0Fx0'
     userId = ''
     nickname = ''
     profileImageUrl = ''

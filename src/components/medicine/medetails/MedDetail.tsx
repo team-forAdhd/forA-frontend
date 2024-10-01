@@ -18,14 +18,6 @@ interface MedDetailProps {
     medId: number
 }
 
-// const data = {
-//     itemName: '메디키넷리타드캡슐5mg(메틸페니데이트염산염)',
-//     itemEngName: 'Medikinet Retard Cap. 5mg',
-//     entpName: '명인제약(주)',
-//     itemImage:
-//         'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
-// }
-
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('(')
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
@@ -46,6 +38,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
         const fetchData = async () => {
             try {
                 const medicine = await getSingleMedInfoApi(medId)
+                console.log(medicine)
                 setData(medicine)
             } catch (error) {
                 console.error('Error fetching medication data:', error)
@@ -53,7 +46,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
         }
 
         fetchData()
-    }, [medId])
+    }, [])
 
     const handleLeftArrowPress = () => {
         navigation.navigate('MedicineMain' as never)
@@ -91,7 +84,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
                 return '아토.effect'
             if ([18, 19, 29, 21, 7].includes(id)) return '아트.effect'
-            if ([24, 25, 26, 1].includes(id)) return '메디.effect'
+            if ([1, 24, 25, 26].includes(id)) return '메디.effect'
             if (id === 2) return '켑베.effect'
             if ([4, 29, 30].includes(id)) return '콘서.effect'
             if (id === 31) return '페니.effect'
@@ -145,7 +138,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                 </TouchableOpacity>
                 <View style={styles.titleStyle}>
                     <Text style={text.titleText}>
-                        {truncateItemName(data.itemName)}
+                        {data ? truncateItemName(data.itemName) : t('review')}
                     </Text>
                 </View>
             </View>
@@ -326,7 +319,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('effect')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(data.id, 'effect'))}
+                                {dataT(getTranslationKey(medId, 'effect'))}
                             </Text>
                         </View>
                         <View onLayout={handleLayout('usage')}>
@@ -334,7 +327,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('usage')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(data.id, 'usage'))}{' '}
+                                {dataT(getTranslationKey(medId, 'usage'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -343,9 +336,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('precaution')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(
-                                    getTranslationKey(data.id, 'precaution'),
-                                )}{' '}
+                                {dataT(getTranslationKey(medId, 'precaution'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -354,7 +345,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('med-info')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(data.id, 'med-info'))}{' '}
+                                {dataT(getTranslationKey(medId, 'med-info'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -363,7 +354,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('company')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(data.id, 'company'))}{' '}
+                                {dataT(getTranslationKey(medId, 'company'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>

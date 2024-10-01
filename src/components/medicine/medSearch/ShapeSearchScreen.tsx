@@ -3,9 +3,17 @@ import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { styles, text } from './ShapeSearchStyle'
 import { useTranslation } from 'react-i18next'
+import { getShapeColorSearchResult } from '@/api/medicine/medSearchApi'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { RootStackParamList } from '@/components/navigation'
+
+type ShapeSearchScreenNavigationProp = StackNavigationProp<
+    RootStackParamList,
+    'MedSearchResult'
+>
 
 const ShapeSearchScreen = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation<ShapeSearchScreenNavigationProp>()
     const { t } = useTranslation('medicine')
 
     const [selectedDosageForm, setSelectedDosageForm] = useState<string | null>(
@@ -118,12 +126,33 @@ const ShapeSearchScreen = () => {
     ]
 
     const isSearchButtonEnabled =
-        selectedDosageForm && selectedShapeForm && selectedColor
+        selectedDosageForm || selectedShapeForm || selectedColor
 
-    const handleSearch = () => {
-        // 검색 로직 추가
-        // selectedDosateForm, selectedShapeForm, selectedColor api에 담아서 백엔드 보내기
-        console.log('검색 버튼 클릭')
+    const handleSearch = async () => {
+        try {
+            // 선택된 값들을 배열로 모은 후 콤마로 구분하여 문자열로 변환
+            const selectedValues = [
+                selectedColor,
+                selectedShapeForm,
+                selectedDosageForm,
+            ].filter(Boolean) // null이나 undefined 제거
+            const resultString = selectedValues.join(', ')
+
+            // 선택된 값만 '' 안에 담아서 API 호출
+            const searchResult = await getShapeColorSearchResult(
+                selectedShapeForm || '',
+                selectedDosageForm || '',
+                selectedColor || '',
+            )
+
+            // 선택된 필터 값들도 resultList에 포함해서 MedSearchResult로 전달
+            navigation.navigate('MedSearchResult', {
+                resultList: searchResult,
+                searchInputValue: resultString,
+            })
+        } catch (error) {
+            console.error('Error while ShapleColorSearch:', error)
+        }
     }
 
     return (

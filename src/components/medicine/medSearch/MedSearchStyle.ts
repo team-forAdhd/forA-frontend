@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         justifyContent: 'center',
-        flexDirection: 'column',
     },
     header: {
         position: 'absolute',
@@ -40,16 +39,6 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 133,
     },
-    searchContainer: {
-        position: 'absolute',
-        top: 133,
-        backgroundColor: '#EDEDEA',
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        marginTop: 110,
-        paddingTop: 16,
-    },
     noneSearchContainer: {
         position: 'absolute',
         top: 133,
@@ -66,15 +55,23 @@ export const styles = StyleSheet.create({
         marginTop: 24,
     },
     recentSearchTermContainer: {
-        width: '100%',
+        flexDirection: 'row',
         height: 42,
         justifyContent: 'space-between',
         alignItems: 'center',
-        flexDirection: 'row',
     },
-    searchHistiryCancel: {
-        width: 26,
-        height: 26,
+    recentSearchBox: {
+        flexDirection: 'row',
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        backgroundColor: '#EDEDEA',
+        marginRight: 6,
+        height: 33,
+        paddingVertical: 4,
+        paddingHorizontal: 17.9,
+
     },
     recentSearchContainer: {
         //최근 검색어와 모두 지우기를 담고 있는 컨테이너
@@ -107,16 +104,19 @@ const baseText = {
 }
 
 export const text = {
-    recentSearchText: {
+    medRecentSearchText: {
+        fontSize: 18,
+        fontWeight: '400',
+        color: '#232323',
+        lineHeight: 24,
+    },
+    medRecentSearchValue: {
+        ...baseText,
+        color: '#52A55D',
         fontSize: 16,
         fontWeight: '400',
-        color: '#52A55D',
         lineHeight: 22.4,
-        letterSpacing: -0.9,
-    },
-    recentSearchValue: {
-        ...baseText,
-        fontSize: 16,
+        letterSpacing: -0.8
     },
     deleteText: {
         fontSize: 18,
