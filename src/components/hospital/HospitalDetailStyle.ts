@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'center',
         flexDirection: 'column',
-        zIndex: 0,
     },
     header: {
         position: 'absolute',
@@ -37,7 +36,7 @@ export const styles = StyleSheet.create({
         borderRadius: 12,
         flexDirection: 'column',
         backgroundColor: 'white',
-        zIndex: 11,
+        zIndex: 8,
         paddingHorizontal: 16,
         paddingVertical: 21,
     },
@@ -62,7 +61,6 @@ export const styles = StyleSheet.create({
     topButtonContainer: {
         position: 'absolute',
         top: 106,
-        marginHorizontal: 16,
         flexDirection: 'row',
         width: '100%',
     },

@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
         marginLeft: 4,
     },
     distanceContainer: {
-        width: 49,
+        width: 60,
         height: 24,
         justifyContent: 'center',
         alignItems: 'center',

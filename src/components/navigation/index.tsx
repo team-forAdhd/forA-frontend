@@ -20,8 +20,6 @@ import MyPage from '../myPage/myPage'
 import MyPost from '../myPage/myPost'
 import AccountSettings from '../accountSettings/accountSettings'
 import ChangeNickName from '../changeNickName/changeNickName'
-import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
-import GoogleMap from '../hospital/Maps'
 import HospitalMaps from '../hospital/HospitalMaps'
 import CameraScreen from '../review/CameraScreen'
 import ChooseDoctor from '../review/ChooseDoctor'
@@ -50,13 +48,14 @@ export type RootStackParamList = {
     NewPost: undefined
     PostDetail: { postId: number }
     EditPost: { postId: number }
-    HospitalDetail: undefined
-    Maps: undefined
+    HospitalDetail: { hospitalId: string }
     HospitalMaps: undefined
     CameraScreen: undefined
     ChooseDoctor: undefined
     Onboard: undefined
     HospitalReview: undefined
+    SavedHospitals: { postType: 'savedHospitals' }
+    SavedPharmacies: { postType: 'savedPharmacies' }
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -119,11 +118,14 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="SocialLoginAgree"
                     component={SiocialLoginScreen}
                 />
-                <Stack.Screen
-                    name="HospitalDetail"
-                    component={HospitalDetail}
-                />
-
+                <Stack.Screen name="HospitalDetail">
+                    {(props) => (
+                        <HospitalDetail
+                            {...props}
+                            hospitalId={props.route.params.hospitalId}
+                        />
+                    )}
+                </Stack.Screen>
                 <Stack.Screen name="MyPage" component={MyPage} />
                 <Stack.Screen
                     name="AccountSettings"
@@ -153,7 +155,6 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="ChangeNickname"
                     component={ChangeNickName}
                 />
-                <Stack.Screen name="Maps" component={GoogleMap} />
                 <Stack.Screen name="HospitalMaps" component={HospitalMaps} />
                 <Stack.Screen
                     name="HospitalReview"
@@ -161,6 +162,16 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 />
                 <Stack.Screen name="CameraScreen" component={CameraScreen} />
                 <Stack.Screen name="ChooseDoctor" component={ChooseDoctor} />
+                <Stack.Screen
+                    name="SavedHospitals"
+                    component={MyPost}
+                    initialParams={{ postType: 'savedHospitals' }}
+                />
+                <Stack.Screen
+                    name="SavedPharmacies"
+                    component={MyPost}
+                    initialParams={{ postType: 'savedPharmacies' }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )

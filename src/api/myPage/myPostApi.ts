@@ -2,13 +2,14 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiClient } from '../login/loginApi'
 
-export const getMyComment = async (
+export const getMyPosts = async (
+    category: string,
     sortOption: 'NEWEST_FIRST' | 'OLDEST_FIRST',
 ) => {
     try {
         const token = await AsyncStorage.getItem('accessToken')
         const response = await apiClient.get(
-            `/comments/my-comments?sortOption=${sortOption}`,
+            `/posts/my-posts?sortOption=${sortOption}&category=${category}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

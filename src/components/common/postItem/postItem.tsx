@@ -1,34 +1,55 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, Image, Text, ImageSourcePropType } from 'react-native'
 import { styles, text } from './postItemStyle'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useNavigation, NavigationProp } from '@react-navigation/native'
 
 interface PostProps {
-    page: 'homeRealTime' | 'myPage' | 'homeOther' //페이지에 따라 디자인 변경
+    page: 'homeRealTime' | 'myPage' | 'homeOther'
     post: {
-        postId: string
-        title: string
-        views: number
-        category: string
-        recommend: number
-        comments: number
-        createdAt: string
-        images: ImageSourcePropType[]
+        anonymous?: boolean
+        category?: string | null
+        commentCount?: number
+        comments?: string[] | null
+        content?: string
+        createdAt: number
+        id?: number
+        images?: string[] | null
+        lastModifiedAt?: number | null
+        likeCount?: number
+        nickname?: string | null
+        profileImage?: string | null
+        scrapCount?: number
+        title?: string
+        userId?: number | null
+        viewCount?: number
     }
 }
 
+type PostDetailParams = {
+    PostDetail: { postId: number } //postId: number
+}
 export default function PostItem({ post, page }: PostProps) {
+    const categoryMap: Record<string, string> = {
+        TEENS: '10대',
+        TWENTIES: '20대',
+        THIRTIES: '30대',
+        PARENTS: '학부모',
+    }
+
+    // post의 각 속성들에 안전하게 접근하도록 변경
     const {
-        postId,
-        title,
-        views,
         category,
-        recommend,
         comments,
+        likeCount,
+        title = '',
+        viewCount,
         createdAt,
         images,
-    } = post
-    //게시글에 보일 아이콘과 글자
+        id,
+    } = post || {}
+
+    // postItems 정의
     const postItems = {
         homeRealTime: {
             images: [
@@ -36,7 +57,11 @@ export default function PostItem({ post, page }: PostProps) {
                 require('@/public/assets/views.png'),
                 require('@/public/assets/recommend.png'),
             ],
-            text: [category, views, recommend],
+            text: [
+                category ? categoryMap[category] : '',
+                viewCount ?? 0,
+                likeCount ?? 0,
+            ],
         },
         homeOther: {
             images: [
@@ -44,7 +69,7 @@ export default function PostItem({ post, page }: PostProps) {
                 require('@/public/assets/recommend.png'),
                 require('@/public/assets/comments.png'),
             ],
-            text: [views, recommend, comments],
+            text: [viewCount ?? 0, likeCount ?? 0, comments?.length ?? 0],
         },
         myPage: {
             images: [
@@ -53,10 +78,16 @@ export default function PostItem({ post, page }: PostProps) {
                 require('@/public/assets/recommend.png'),
                 require('@/public/assets/comments.png'),
             ],
-            text: [category, views, recommend, comments],
+            text: [
+                category ? categoryMap[category] : '',
+                viewCount ?? 0,
+                likeCount ?? 0,
+                comments?.length ?? 0,
+            ],
         },
     }
-    //각 페이지에 따라 게시글에 보일 아이콘 다르게
+
+    // 페이지에 따라 postItems 선택
     const thisPage =
         page === 'homeRealTime'
             ? postItems.homeRealTime
@@ -64,16 +95,33 @@ export default function PostItem({ post, page }: PostProps) {
               ? postItems.myPage
               : postItems.homeOther
 
+    const formattedDate = new Date(createdAt * 1000).toLocaleDateString(
+        'ko-KR',
+        {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        },
+    )
+    const navigation = useNavigation<NavigationProp<PostDetailParams>>()
     return (
-        <View style={styles.container} key={postId}>
+        <TouchableOpacity
+            style={styles.container}
+            key={id}
+            onPress={() => {
+                //navigation.navigate('PostDetail', { postId: post.id })
+            }}
+        >
             <View style={styles.RightContainer}>
                 <Text style={text.title}>
                     {title.length > 20 ? title.slice(0, 20) + '...' : title}
-                    {/*제목 길이 일정 범위 넘길 경우 줄여주기 */}
                 </Text>
                 <View style={styles.iconContainer}>
                     {thisPage.images.map((imageUri, index) => (
-                        <TouchableOpacity style={styles.iconInnerContainer}>
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.iconInnerContainer}
+                        >
                             <Image source={imageUri} style={styles.iconIamge} />
                             <Text
                                 style={
@@ -87,18 +135,20 @@ export default function PostItem({ post, page }: PostProps) {
                         </TouchableOpacity>
                     ))}
                 </View>
-                <Text style={text.time}>{createdAt}</Text>
+                <Text style={text.time}>{formattedDate}</Text>
             </View>
-            <View style={styles.PictureContainer}>
-                <Image source={images[0]} style={styles.picture} />
-                {images.length > 1 && (
-                    <View style={styles.imagesLength}>
-                        <Text style={text.iamgesLength}>
-                            {'+' + images.length}
-                        </Text>
-                    </View>
-                )}
-            </View>
-        </View>
+            {images && images.length > 0 && (
+                <View style={styles.PictureContainer}>
+                    <Image source={{ uri: images[0] }} style={styles.picture} />
+                    {images.length > 1 && (
+                        <View style={styles.imagesLength}>
+                            <Text style={text.iamgesLength}>
+                                {'+' + images.length}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+            )}
+        </TouchableOpacity>
     )
 }

@@ -34,7 +34,7 @@ export default function MyPage() {
             t('my-scrabHospital'),
             t('my-scrabMed'),
         ],
-        myScrabNavigation: ['SavedPosts', 'SavedPosts', 'SavedPosts'],
+        myScrabNavigation: ['SavedPosts', 'SavedHospitals', 'SavedPharmacies'],
         settings: [
             t('account-setting'),
             t('push-noti'),
@@ -63,7 +63,7 @@ export default function MyPage() {
                     </View>
                     <View style={styles.ProfileInnerContainer}>
                         <Text style={text.nickName}>
-                            {'코코벤' + store.nickName}
+                            {'코코벤' + store.nickname}
                         </Text>
                         <Text style={text.sirText}>님</Text>
                     </View>

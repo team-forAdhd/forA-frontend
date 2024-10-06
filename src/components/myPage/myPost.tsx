@@ -9,6 +9,10 @@ import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '../navigation'
 import { getMyComment } from '@/api/myPage/mycommentApi'
 import { Login } from '@/api/login/loginApi'
+import { getSavedPosts } from '@/api/myPage/mySavedPostApi'
+import { getMyPosts } from '@/api/myPage/myPostApi'
+import { getSavedHospitals } from '@/api/myPage/mySavedHospitalsApi'
+import { getSavedPharmacies } from '@/api/myPage/mySavedPharmacieApi'
 
 interface PostProps {
     route:
@@ -16,6 +20,27 @@ interface PostProps {
         | RouteProp<RootStackParamList, 'MyComments'>
         | RouteProp<RootStackParamList, 'MyReviews'>
         | RouteProp<RootStackParamList, 'SavedPosts'>
+        | RouteProp<RootStackParamList, 'SavedHospitals'>
+        | RouteProp<RootStackParamList, 'SavedPharmacies'>
+}
+
+interface Post {
+    anonymous: boolean
+    category: string | null
+    commentCount: number
+    comments: string[] | null
+    content: string
+    createdAt: number
+    id: number
+    images: string[] | null
+    lastModifiedAt: number | null
+    likeCount: number
+    nickname: string | null
+    profileImage: string | null
+    scrapCount: number
+    title: string
+    userId: number | null
+    viewCount: number
 }
 
 export default function MyPost({ route }: PostProps) {
@@ -38,8 +63,20 @@ export default function MyPost({ route }: PostProps) {
         },
         {
             postType: 'savedPosts',
-            title: '내가 저장한 글 ',
+            title: '내가 저장한 글',
             content: '아직 저장한 글이 없어요!',
+            icon: require('@/public/assets/myArticle.png'),
+        },
+        {
+            postType: 'savedHospitals',
+            title: '내가 저장한 병원',
+            content: '아직 저장한 병원이 없어요!',
+            icon: require('@/public/assets/myArticle.png'),
+        },
+        {
+            postType: 'savedPharmacies',
+            title: '내가 저장한 약',
+            content: '아직 저장한 약이 없어요!',
             icon: require('@/public/assets/myArticle.png'),
         },
     ]
@@ -55,29 +92,61 @@ export default function MyPost({ route }: PostProps) {
     // 정렬 클릭시 나올 바텀시트 상태
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
 
-    const [commentSort, setCommentSort] = useState<
+    const [sortOption, setsortOption] = useState<
         'NEWEST_FIRST' | 'OLDEST_FIRST'
     >('NEWEST_FIRST')
 
     const [token, setToken] = useState<string>('')
-    //내 댓글
-    const [myComment, setMyComment] = useState()
-    //내가 쓴 게시글
-    const [myPost, getMyPost] = useState()
+    //받아온 데이터
+    const [dataList, setDataList] = useState<Post[]>()
+
+    //게시글 카테코리 선택
+    const [category, setCategory] = useState('TEENS')
+
+    const [rerender, setRerender] = useState(false)
+    //병원, 약 정렬
+    const [sort, setSort] = useState<'createdAt' | 'desc'>('createdAt')
 
     useEffect(() => {
-        const fetchMyComment = async () => {
+        const fetchData = async () => {
             try {
-                const commentData = await getMyComment(1, commentSort)
-                setMyComment(commentData)
-                console.log(commentData)
+                await Login()
+
+                let fetchedData
+                switch (postType) {
+                    case 'myPosts':
+                        fetchedData = await getMyPosts(category, sortOption)
+                        break
+
+                    case 'myComments':
+                        fetchedData = await getMyComment(sortOption)
+                        break
+
+                    case 'savedPosts':
+                        fetchedData = await getSavedPosts(category, sortOption)
+                        break
+
+                    case 'savedHospitals':
+                        fetchedData = await getSavedHospitals(sort)
+                        break
+
+                    case 'savedPharmacies':
+                        fetchedData = await getSavedPharmacies()
+                        break
+
+                    default:
+                        console.warn('Unknown post type:', postType)
+                        return
+                }
+
+                setDataList(fetchedData)
+                console.log(`${postType} Data:`, fetchedData)
             } catch (error) {
                 console.error(error)
             }
         }
-        // fetchToken()
-        fetchMyComment()
-    }, [token, commentSort])
+        fetchData()
+    }, [route, sortOption, category])
 
     const navigation = useNavigation()
 
@@ -107,7 +176,7 @@ export default function MyPost({ route }: PostProps) {
                 </Text>
                 <View style={styles.IconImage} />
             </View>
-            {dummy.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
+            {dataList && dataList.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
                 <>
                     {/* 게시판 리스트 */}
                     <View style={styles.topContainer}>
@@ -154,9 +223,8 @@ export default function MyPost({ route }: PostProps) {
                     </View>
                     {/* 게시글 */}
                     <View style={styles.postsContainer}>
-                        {dummy
-                            .filter((data) => data.category === boardClick)
-                            .map((post, index) => (
+                        {dataList &&
+                            dataList.map((post, index) => (
                                 <View
                                     key={index}
                                     style={styles.postInnerContainer}

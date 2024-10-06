@@ -12,15 +12,24 @@ import { styles, text } from './hospitalListBottomSheetStyle'
 import HospitalListItem from '../hospitalListItem/hospitalListItem'
 import { foraRibbonStoreContext } from '@/state/forAribbonClickState'
 import { Observer } from 'mobx-react'
+import { Hospital } from '@/components/hospital/HospitalMaps'
 
 interface DescriptionProps {
     setDescription: React.Dispatch<React.SetStateAction<boolean>>
     setModal: React.Dispatch<React.SetStateAction<boolean>>
+    hospitalList: Hospital[]
+    setSort: React.Dispatch<React.SetStateAction<string>>
+    setRerender: React.Dispatch<React.SetStateAction<boolean>>
+    reRender: boolean
 }
 
 export default function HospitalBottomSheet({
     setDescription,
     setModal,
+    hospitalList,
+    setSort,
+    reRender,
+    setRerender,
 }: DescriptionProps) {
     //정렬 순서 클릭 상태
     const [sortCLick, setSortCLick] = useState<string>('위치순')
@@ -35,7 +44,6 @@ export default function HospitalBottomSheet({
     //포에이 리본 병원 설명을 띄우기 위해 클릭 카운트를 확인하기 위한 store
     const store = useContext(foraRibbonStoreContext)
 
-    const [rerender, setRerender] = useState<boolean>(false)
     // 팬 리스폰더 설정
     const panResponder = useRef(
         PanResponder.create({
@@ -102,7 +110,6 @@ export default function HospitalBottomSheet({
             />
             <View style={styles.listContainer}>
                 {sortVisible && (
-                    //이게 처음에는 안보이다가 나중에 보여야되는데 어떻게 하라는거냐
                     <View style={styles.rankingListContainer}>
                         {sortOrders.map((sortOrder, index) => {
                             return (
@@ -130,6 +137,15 @@ export default function HospitalBottomSheet({
                                                     )
                                                 }
                                                 setSortCLick(sortOrder)
+                                                if (sortOrder == '위치순') {
+                                                    setSort('distance,asc')
+                                                } else if (
+                                                    sortOrder ===
+                                                    '포에이 리본 병원'
+                                                ) {
+                                                } else {
+                                                    setSort('reviewCount,desc')
+                                                }
                                             }}
                                         >
                                             <Text
@@ -161,6 +177,8 @@ export default function HospitalBottomSheet({
                                 hospital={hospital}
                                 key={index}
                                 setModal={setModal}
+                                setRerender={setRerender}
+                                reRender={reRender}
                             />
                         ))}
                 </View>
@@ -168,46 +186,3 @@ export default function HospitalBottomSheet({
         </Animated.View>
     )
 }
-
-const hospitalList = [
-    {
-        hospitalName: '서울 병원',
-        distance: '2km',
-        open: 'open',
-        forA: true,
-        reviewCount: 25,
-        bookmark: true,
-    },
-    {
-        hospitalName: '강남 병원',
-        distance: '5km',
-        open: 'closed',
-        forA: false,
-        reviewCount: 18,
-        bookmark: false,
-    },
-    {
-        hospitalName: '부산 병원',
-        distance: '10km',
-        open: 'open',
-        forA: true,
-        reviewCount: 40,
-        bookmark: true,
-    },
-    {
-        hospitalName: '인천 병원',
-        distance: '3km',
-        open: 'closed',
-        forA: false,
-        reviewCount: 10,
-        bookmark: false,
-    },
-    {
-        hospitalName: '대구 병원',
-        distance: '8km',
-        open: 'open',
-        forA: true,
-        reviewCount: 30,
-        bookmark: true,
-    },
-]

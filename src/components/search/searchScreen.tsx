@@ -4,9 +4,20 @@ import { useNavigation } from '@react-navigation/native'
 import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
 import { searchStoreContext } from '@/state/searchState'
 import { styles, text } from './searchStyle'
-import { TextInput } from 'react-native-gesture-handler'
+import { ScrollView, TextInput } from 'react-native-gesture-handler'
+import PostItem from '../common/postItem/postItem'
 import { Observer } from 'mobx-react'
-import { getSearch } from '@/api/myPage/mycommentApi'
+import { getSearch } from '@/api/search/searchApi'
+import { Login } from '@/api/login/loginApi'
+
+type PostData = {
+    commentCount: number
+    createdAt: number
+    images: string[] | null // 이미지가 URL 문자열 배열로 가정
+    likeCount: number
+    title: string
+    viewCount: number
+}
 
 export default function SearchScreen() {
     //텍스트 인풋에서 받을 검색어
@@ -14,7 +25,7 @@ export default function SearchScreen() {
     //submit 상태에 따라 화면에 조건부 렌더링
     const [submit, setSubmit] = useState<boolean>(false)
     //검색 결과 리스트
-    const [searchResultList, setSearchResultList] = useState([])
+    const [searchResultList, setSearchResultList] = useState<PostData[]>([])
 
     const store = useContext(searchStoreContext)
     //검색창 포커스 여부에 따라 placeholder 변화 주기 위해
@@ -22,29 +33,37 @@ export default function SearchScreen() {
 
     const { t } = useTranslation('search')
 
+    const [title, setTitle] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false) // 로딩 상태 추가
     const handleSearch = () => {
         setSubmit(true)
-        console.log('Searching for:', searchInputValue)
+        setTitle(searchInputValue)
         store.setSearchTerm(searchInputValue)
     }
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        const fetchMyComment = async () => {
-            try {
-                const commentData = await getSearch()
-                console.log(commentData)
-            } catch (error) {
-                console.error(error)
+        const fetchHospitalData = async () => {
+            if (title) {
+                setLoading(true) // 데이터 요청 시작 전에 로딩 상태로 설정
+                try {
+                    const search = await getSearch(title)
+                    setSearchResultList(search)
+                    console.log('search result', search)
+                } catch (error) {
+                    console.error('Error fetching data:', error)
+                } finally {
+                    setLoading(false) // 데이터 요청 완료 후 로딩 해제
+                }
             }
         }
-        // fetchToken()
-        fetchMyComment()
-    }, [])
-    useEffect(() => {
-        submit && setSearchResultList([])
-    }, [submit]) //제출 여부 변경시에 api호출
+
+        if (submit) {
+            fetchHospitalData()
+        }
+    }, [title])
+
     return (
         <View style={styles.container}>
             {/*검색창과 취소 버튼 */}
@@ -95,9 +114,25 @@ export default function SearchScreen() {
                     <Text style={text.deleteText}>{t('cancel')}</Text>
                 </TouchableOpacity>
             </View>
-            {submit ? ( //검색을 한 경우
-                searchResultList.length > 0 ? ( //검색 결과가 있는 경우
-                    <View></View>
+            {loading ? null : submit ? ( //검색을 한 경우
+                searchResultList && searchResultList.length > 0 ? ( //검색 결과가 있는 경우
+                    <ScrollView style={{ marginTop: 110 }}>
+                        {searchResultList.map((post, index) => (
+                            <View
+                                style={{
+                                    flex: 1,
+                                    marginHorizontal: 16,
+                                    marginVertical: 20,
+                                }}
+                            >
+                                <PostItem
+                                    post={post}
+                                    key={index}
+                                    page="myPage"
+                                />
+                            </View>
+                        ))}
+                    </ScrollView>
                 ) : (
                     <View style={styles.noneSearchContainer}>
                         <Image
@@ -135,11 +170,15 @@ export default function SearchScreen() {
                                 <View>
                                     {store.recentSearchTerm.map(
                                         (search, index) => (
-                                            <View
+                                            <TouchableOpacity
                                                 key={index}
                                                 style={
                                                     styles.recentSearchTermContainer
                                                 }
+                                                onPress={() => {
+                                                    setTitle(search)
+                                                    setSubmit(true)
+                                                }}
                                             >
                                                 <Text
                                                     style={
@@ -163,7 +202,7 @@ export default function SearchScreen() {
                                                         }
                                                     />
                                                 </TouchableOpacity>
-                                            </View>
+                                            </TouchableOpacity>
                                         ),
                                     )}
                                 </View>

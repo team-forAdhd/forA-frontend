@@ -233,7 +233,7 @@ export default function AccountSettings() {
                 ))}
                 <TouchableOpacity
                     onPress={() => {
-                        store.setPassword(passwordText[-1])
+                        store.setPassword(passwordText[0], passwordText[-1])
                     }}
                     style={
                         edit && //수정 중이고 모두 타당한 경우
