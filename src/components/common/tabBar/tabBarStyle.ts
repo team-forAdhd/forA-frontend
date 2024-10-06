@@ -22,11 +22,20 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     TabBarImage: {
+        position: 'absolute',
         width: 32,
         height: 32,
         objectFit: 'contain',
-        marginTop: 12,
-        marginBottom: 5,
+        top: 12,
+        bottom: 5,
+    },
+    TodayTabImage: {
+        position: 'absolute',
+        width: 22,
+        height: 22,
+        objectFit: 'contain',
+        top: 16,
+        bottom: 5,
     },
 })
 
@@ -39,19 +48,20 @@ const baseText = {
 export const text = {
     tabBarText: {
         ...baseText,
+        position: 'absolute',
         color: '#949494',
         fontSize: 16,
         letterSpacing: -1,
         flexGrow: 1,
-        marginBottom: 23,
+        bottom: 35,
     },
     clickTabBarText: {
-        fontStyle: 'normal',
+        position: 'absolute',
         color: '#52A55D',
         fontSize: 16,
         letterSpacing: -1,
         flexGrow: 1,
-        marginBottom: 23,
+        bottom: 35,
         fontWeight: '600',
     },
 } as {

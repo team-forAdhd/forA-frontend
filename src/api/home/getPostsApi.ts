@@ -81,7 +81,7 @@ export const getMainRealtimeApi = async (): Promise<Post[]> => {
 
 export const getMainCategoryApi = async (category: string): Promise<Post[]> => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axios.get(`${API_URL}/api/v1/posts/main/top/${category}`, {
+    const response: AxiosResponse<ApiResponse> = await axios.get(`${API_URL}/api/v1/posts/main/top/category?category=${category}`, {
       headers: {
         'Authorization': `Bearer ${userStore.accessToken}`,
       }

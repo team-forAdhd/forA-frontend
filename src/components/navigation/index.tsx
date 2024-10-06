@@ -23,8 +23,15 @@ import ChangeNickName from '../changeNickName/changeNickName'
 import HospitalMaps from '../hospital/HospitalMaps'
 import CameraScreen from '../review/CameraScreen'
 import ChooseDoctor from '../review/ChooseDoctor'
+import MedScreen from '../medicine/medicineScreen/MedicineScreen'
 import OnboardingScreen from '../splash-n-onboard/onboard/Onboard'
 import HospitalReview from '../hospital/HospitalReview'
+import MedSearchScreen from '../medicine/medSearch/MedSearchScreen'
+import ShapeSearchScreen from '../medicine/medSearch/ShapeSearchScreen'
+import MedDetail from '../medicine/medetails/MedDetail'
+import NewMedReview from '../medicine/medNewReview/MedNewReview'
+import MedReview from '../medicine/medetails/MedReview'
+import MedSearchResult from '../medicine/medSearch/MedSearchResult'
 
 export type RootStackParamList = {
     Home: undefined
@@ -52,10 +59,17 @@ export type RootStackParamList = {
     HospitalMaps: undefined
     CameraScreen: undefined
     ChooseDoctor: undefined
+    MedicineMain: undefined
     Onboard: undefined
     HospitalReview: undefined
     SavedHospitals: { postType: 'savedHospitals' }
     SavedPharmacies: { postType: 'savedPharmacies' }
+    MedSearch: undefined
+    ShapeSearch: undefined
+    MedDetail: { medId: number }
+    NewMedReview: { medId: number }
+    MedReview: { medId: number }
+    MedSearchResult: { resultList: any[]; searchInputValue: string }
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -125,6 +139,43 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                             hospitalId={props.route.params.hospitalId}
                         />
                     )}
+                </Stack.Screen>
+                {/* 약탭 */}
+                <Stack.Screen name="MedicineMain" component={MedScreen} />
+                <Stack.Screen name="MedSearch" component={MedSearchScreen} />
+                <Stack.Screen
+                    name="ShapeSearch"
+                    component={ShapeSearchScreen}
+                />
+                <Stack.Screen
+                    name="MedSearchResult"
+                    component={MedSearchResult}
+                />
+                <Stack.Screen name="MedDetail">
+                    {(props) => {
+                        const medId =
+                            props.route?.params?.medId !== undefined
+                                ? props.route.params.medId
+                                : 1 // medId 기본값 설정
+                        return <MedDetail {...props} medId={medId} />
+                    }}
+                </Stack.Screen>
+                <Stack.Screen name="MedReview">
+                    {(props) => (
+                        <MedReview
+                            {...props}
+                            medId={props.route.params.medId}
+                        />
+                    )}
+                </Stack.Screen>
+                <Stack.Screen name="NewMedReview">
+                    {(props) => {
+                        const medId =
+                            props.route?.params?.medId !== undefined
+                                ? props.route.params.medId
+                                : 1 // medId 기본값 설정
+                        return <NewMedReview {...props} medId={medId} />
+                    }}
                 </Stack.Screen>
                 <Stack.Screen name="MyPage" component={MyPage} />
                 <Stack.Screen

@@ -19,6 +19,7 @@ export const sendNewPostApi = async (postInfo: any): Promise<void> => {
       ...postInfo,
       category: convertCategory(postInfo.category),
     };
+    console.log(`${API_URL}/api/v1/posts`)
 
     await axios.post(`${API_URL}/api/v1/posts`, transformedPostInfo, {
       headers: {
