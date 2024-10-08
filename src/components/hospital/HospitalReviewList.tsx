@@ -6,7 +6,11 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { styles, text } from './HospitalReviewListStyle'
 import AlertModal from '../common/alertModal/AlertModal'
 import { getReviewsApi } from '@/api/review/getReviewsApi'
+import { getDoctorsApi } from '@/api/review/getDoctorsApi'
 import { deleteReviewApi } from '@/api/review/deleteReviewApi'
+import { reviewHelpedApi } from '@/api/review/reviewHelpedApi'
+import { hospitalBookmarkApi } from '@/api/review/hospitalBookmarkApi'
+import { formatDate } from 'date-fns';
 
 
 export default function HospitalReviewList() {
@@ -16,39 +20,41 @@ export default function HospitalReviewList() {
 
     const [filter, setFilter] = useState<string>('all')
 
-    const sortOptionList = ['lastest', 'oldest', 'mostliked']
-    const [sortOption, setSortOption] = useState<string>(sortOptionList[0]);   // 정렬 옵션 - default; 추천순 (좋아요 순)
+    const sortOptionList = ['createAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
+    const [sortOption, setSortOption] = useState<string>(sortOptionList[0]);   // 정렬 옵션 - default; 최신순
+    const [reviewList, setReviewList] = useState<any>([]);
+    const [doctorList, setDoctorList] = useState<any>([]);
     const [showAlert, setShowAlert] = useState<boolean>(false)
     const [showBottomSheet, setShowBottomSheet] = useState<boolean>(false)
 
-    console.log("리뷰 뽑아보자")
-    /*
-    let reviewList2 = async () => {
-        let response = getReviewsApi('064377163e0611ef87e706a9c1a84c57', 0, 10, 'createdAt,desc')
-        return response
-    }
-        */
-    let reviewList2
-    console.log(reviewList2)
 
     const getReviewList = async (doctorId: string, page: number, size: number, sort: string) => {
         try {
-          const response = await getReviewsApi(doctorId, page, size, sort)
+          const res = await getReviewsApi(doctorId, page, size, sort)
     
-          if (response) {
-            reviewList2 = response
-            console.log(reviewList2)
+          if (res) {
+            setReviewList(res)
           } else {
-            console.log("응아니야")
+            console.log("Unknown response")
           }
         } catch (error) {
           console.error('Fail to load review list: ', error)
         }
-      }
+    }
+
+    const getDoctorList = async () => {
+        try {
+          const res = await getDoctorsApi()
     
-    useEffect(() => {
-        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, 'createdAt,desc')
-    }, []);
+          if (res) {
+            setDoctorList(res)
+          } else {
+            console.log("Unknown response")
+          }
+        } catch (error) {
+          console.error('Fail to load doctor list: ', error)
+        }
+    }
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -64,54 +70,35 @@ export default function HospitalReviewList() {
     const selectSortOption = (option : string) => {
         setSortOption(option)
         setShowBottomSheet(false)
+        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
       }  
 
     const getFilteredSortedList = () => {
-        /*
-        try {
-            const reviewList3 = await getReviewsApi('064377163e0611ef87e706a9c1a84c57', 0, 10, 'createdAt,desc')
-            return reviewList3
-        } catch (error) {
-            console.log("Fail! babo")
-        }
-        */
         let filteredList = new Array()
 
         if (filter === 'all') {
             filteredList = reviewList
         } else {
-            filteredList = reviewList.filter((review) => review.doctorName == filter)
+            filteredList = reviewList.filter((review : any) => review.doctorName === filter)
         }
 
         let sortedList = filteredList
 
         switch (sortOption) {
-            case 'lastest':
-                sortedList = filteredList.sort((a, b) => b.date.localeCompare(a.date));
+            case 'createAt,desc':
+                sortedList = filteredList.sort((a, b) => b.createdAt - a.createdAt);
                 break
             
-            case 'oldest':
-                sortedList = filteredList.sort((a, b) => a.date.localeCompare(b.date));
+            case 'createdAt,asc':
+                sortedList = filteredList.sort((a, b) => a.createdAt - b.createdAt);
                 break
             
             default:
-                sortedList = filteredList.sort((a, b) => b.likeCount - a.likeCount);
+                sortedList = filteredList.sort((a, b) => b.helpCount - a.helpCount);
         }
 
         return sortedList   // 정렬된 데이터 반환
     };
-
-    useEffect(() => {
-        setSortOption(sortOption)
-    }, []);
-
-    useEffect(() => {
-        setFilter(filter)
-    }, []);
-
-    useEffect(() => {
-        setShowAlert(showAlert)
-    }, []);
 
 
     const editReview = () => {
@@ -123,11 +110,10 @@ export default function HospitalReviewList() {
 
     const handleDelete = async (reviewId : string) => {
         setShowAlert(false)
-        console.log("Delete Review")
 
         try {
             await deleteReviewApi(reviewId)
-            console.log("Delete Success!")
+            console.log("Deleted review")
 
         } catch (error) {
             console.error('Error while deleting: ', error)
@@ -137,6 +123,33 @@ export default function HospitalReviewList() {
     const handleContinue = () => {
         setShowAlert(false)
     }
+
+    const postReviewHelp = async (reviewId : string) => {
+        try {
+          await reviewHelpedApi(reviewId)
+          console.log("Helped Success!")
+
+        } catch (error) {
+          console.error('Error while liking: ', error)
+        }
+      }
+
+    const postBookmark = async () => {
+        try {
+          await hospitalBookmarkApi()
+          console.log("Bookmark Success!")
+
+        } catch (error) {
+          console.error('Error while marking: ', error)
+        }
+    }
+
+    useEffect(() => {
+        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
+        //getDoctorList()
+        setSortOption(sortOption)
+        setShowAlert(showAlert)
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -149,7 +162,6 @@ export default function HospitalReviewList() {
                 style={styles.iconImage}
                 />
             </TouchableOpacity>
-            <Text style={text.headerText}>용산구정신의학과의원</Text>
             </View>
 
 
@@ -186,7 +198,7 @@ export default function HospitalReviewList() {
                                         ]}>
                         <Text style={[text.filterText, filter === 'all' ? { color: 'white' } : {}]}>{t('filter-total')}</Text>
                     </TouchableOpacity>
-                    {doctorList.map((doctor) => (
+                    {dDoctorList.map((doctor : any) => (
                         <View key={doctor.doctorId}>
                             <TouchableOpacity activeOpacity={1} onPress={() => setFilter(doctor.name)}
                                                 style={[styles.filterButton,
@@ -203,7 +215,7 @@ export default function HospitalReviewList() {
                     </ScrollView>
                 </View>
                 <View style={{ width: '100%' }}>
-                    {/*getFilteredSortedList()*/reviewList.map((review) => (
+                    {getFilteredSortedList()/*reviewList*/.map((review : any) => (
                         <View key={review.hospitalReceiptReviewId}>
                         <View style={styles.reviewContainer}>
                             <View style={styles.reviewLeft}>
@@ -215,17 +227,22 @@ export default function HospitalReviewList() {
                             <View style={styles.reviewRight}>
                                 <View style={styles.reviewRightTop}>
                                     <Text style={text.reviewNicknameText}>{review.writerName}</Text>
-                                    <Text style={text.reviewDoctorNameText}>{review.doctorName + ' ' + t('doctor')}</Text>
-                                    <Text style={text.reviewDateText}>{review.createdAt}</Text>
+                                    {review.doctorName
+                                    ? (<Text style={text.reviewDoctorNameText}>{review.doctorName + ' ' + t('doctor')}</Text>)
+                                    : (<></>)
+                                    }
+                                    <Text style={text.reviewDateText}>{formatDate(review.createdAt, 'yyyy.MM.dd  hh:mm').toString()}</Text>
                                 </View>
                                 <View style={styles.reviewRightBottom}>
                                     <Text style={text.reviewContentText}>{review.content}</Text>
                                     <View style={{ alignItems: 'flex-start' }}>
-                                        <TouchableOpacity style={[styles.reviewRadiusContainer,
-                                                                    { borderWidth: 1,
-                                                                        borderColor: review.isHelped ? '#52A35D' : '#949494',
-                                                                        backgroundColor: review.isHelped ? '#F4F9D9' : 'white'
-                                                                    }]}
+                                        <TouchableOpacity onPress={review.isHelped ? () => {} : () => postReviewHelp(review.hospitalReceiptReviewId)}
+                                                            activeOpacity={1}
+                                                            style={[styles.reviewRadiusContainer,
+                                                                { borderWidth: 1,
+                                                                    borderColor: review.isHelped ? '#52A35D' : '#949494',
+                                                                    backgroundColor: review.isHelped ? '#F4F9D9' : 'white'
+                                                                }]}
                                         >
                                             <Image
                                                 source={require('@/public/assets/none.png')}
@@ -267,25 +284,24 @@ export default function HospitalReviewList() {
                                         message={t('delete-ask')}
                                         leftButtonText={t('delete-yes')}
                                         rightButtonText={t('delete-no')}
-                                        onLeftClicked={() => handleDelete('e1069b81c59a421ca52fd1fb09e9e9bf')}
+                                        onLeftClicked={() => handleDelete(review.hospitalReceiptReviewId)}
                                         onRightClicked={handleContinue}
                                     />
                                 </View>
                             </View>
                         </Modal>
 
-
                         </View>
                     ))}
                 </View>
 
             </ScrollView>
-        </View>
+            </View>
 
 
             {/* 하단 버튼 컨테이너 */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => console.log("Pressed bookmark button!")}>
+                <TouchableOpacity onPress={postBookmark}>
                     <Image
                         source={require('@/public/assets/scrabButton.png')}
                         style={styles.bookmarkImage}
@@ -340,160 +356,16 @@ export default function HospitalReviewList() {
 
 /* 더미 데이터 */
 
-const reviewList = [
+const dDoctorList = [
     {
-      hospitalReceiptReviewId: '80ba817ac4404127813258073bb7cc12',
-      writerId: 'fac2695a5ca044d1a052a2b20795e755',
-      writerName: '김다',
-      writerImage:'http://',
-      doctorName: '김코코',
-      createdAt: 1716306462,
-      content: '리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용',
-      imageList: [
-        "https://image.png",
-        "https://image2.png",
-        "https://image3.png"
-      ],
-      medicalExpense: 37500,
-      helpCount: 0,
-      isHelped: false,
-      isMine: true
+      "doctorId": "3872e2c2178911efb0630aa72ad9c348",
+      "name": "김베니",
+      "image": "https://image.png"
     },
     {
-      hospitalReceiptReviewId: 'f6fe4aa5c6224065a417c4fbf05a49d0',
-      writerId: 'fac2695a5ca044d1a052a2b20795e755',
-      writerName: '김다',
-      writerImage: 'http://',
-      doctorName: null,
-      createdAt: 1716306498,
-      content: '리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용',
-      imageList: [
-        "https://image.png",
-        "https://image2.png",
-        "https://image3.png"
-      ],
-      medicalExpense: 34000,
-      helpCount: 0,
-      isHelped: false,
-      isMine: true
-    },
-    {
-      hospitalReceiptReviewId: '8aec3170178911efb0630aa72ad9c348',
-      writerId: 'fac2695a5ca044d1a052a2b20795e755',
-      writerName: '김다',
-      writerImage: 'http://',
-      doctorName: '김베니',
-      createdAt: 1719652337,
-      content: '어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구',
-      imageList: [
-        "http://image.jpg",
-        "http://image.png"
-      ],
-      medicalExpense: null,
-      helpCount: 0,
-      isHelped: false,
-      isMine: true
-    },
-    {
-      hospitalReceiptReviewId: '75bc40b0178911efb0630aa72ad9c348',
-      writerId: 'fac2695a5ca044d1a052a2b20795e755',
-      writerName: '김다',
-      writerImage: null,
-      doctorName: '김코코',
-      createdAt: 1719652457,
-      content: '어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구',
-      imageList: [
-        "http://image.jpg",
-        "http://image.png"
-      ],
-      medicalExpense: null,
-      helpCount: 1,
-      isHelped: true,
-      isMine: true
+      "doctorId": "3872d98a178911efb0630aa72ad9c348",
+      "name": "김코코",
+      "image": "https://image.jpg"
     }
 ]
-
-/*
-[
-    {
-        //reviewId: '1452be87a2194b3fbd4351f13e84cd29',
-        reviewId: 'e1069b81c59a421ca52fd1fb09e9e9bf',
-        userId: 'U12345',
-        profileImage: '',
-        nickname: '닉네임',
-        doctorName: '김코코',
-        date: '2024/03/25 10:00',
-        content: '완전 친절하고 진료 잘 봐주세요',
-        image: [],
-        likeCount: 12,
-        price: 34000,
-    },
-    {
-        reviewId: 'asj9841nddjsng0fkjdsh20144fn1a3s',
-        userId: 'U00000',
-        profileImage: '',
-        nickname: '닉네임',
-        doctorName: '김베니',
-        date: '2024/01/16 15:08',
-        content: '내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다',
-        image: [],
-        likeCount: 3,
-        price: null,
-    },
-    {
-        reviewId: '1452besdfd79csekjkcjm393251f4cd2',
-        userId: 'U12345',
-        profileImage: '',
-        nickname: '닉네임',
-        doctorName: '김코코',
-        date: '2023/06/30 11:29',
-        content: '내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다 내용입니다',
-        image: [],
-        likeCount: 0,
-        price: null,
-    },
-    {
-        reviewId: 'lkds9csek1233kdjsdksfj43lksdf042',
-        userId: 'U99880',
-        profileImage: '',
-        nickname: '닉네임',
-        doctorName: '김코코',
-        date: '2023/06/30 11:31',
-        content: '과잉진료 없이 편하게 갔다 왔어요~ 김코코 선생님 추천합니다',
-        image: [],
-        likeCount: 8,
-        price: 9700,
-    },
-]
-    */
-
-const doctorList = [
-    {
-        doctorId: 'D12345',
-        name: '김코코',
-        image: '',
-          totalGrade: 4.5,
-          totalReviewCount: 123,
-          profile: 'Specialist in cardiology with over 20 years of experience.',
-      },
-      {
-          doctorId: 'D67890',
-          name: '김베니',
-          image: '',
-          totalGrade: 4.8,
-          totalReviewCount: 89,
-          profile:
-              'Renowned neurologist known for her research in neurodegenerative diseases.',
-      },
-      {
-          doctorId: 'D00000',
-          name: '이동동',
-          image: '',
-          totalGrade: 3.9,
-          totalReviewCount: 51,
-          profile:
-              '',
-      },
-  ]
-
   

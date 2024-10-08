@@ -2,9 +2,9 @@
     "review": "리뷰",
     "review-count": "명",
     "sort-option": "정렬 옵션",
-    "sort-option-lastest": "최신순",
-    "sort-option-oldest": "오래된 순",
-    "sort-option-mostliked": "추천순",
+    "sort-option-createAt,desc": "최신순",
+    "sort-option-createdAt,asc": "오래된 순",
+    "sort-option-helpCount,desc": "추천순",
 
     "doctor": "선생님",
 
