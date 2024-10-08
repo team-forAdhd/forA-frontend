@@ -57,28 +57,26 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
                     />
                     {hospitalList &&
                         hospitalList.map((hospital, index) => (
-                            <TouchableOpacity
+                            <Marker
                                 key={index}
+                                coordinate={{
+                                    latitude: hospital.latitude,
+                                    longitude: hospital.longitude,
+                                }}
+                                image={
+                                    hospitalclick[index]
+                                        ? require('@/public/assets/clickLocation.png')
+                                        : require('@/public/assets/unclickLocation.png')
+                                }
                                 onPress={() => {
                                     const temp = Array(
                                         hospitalList.length,
                                     ).fill(false)
                                     temp[index] = true
                                     setHospitalClick(temp)
+                                    console.log('터치')
                                 }}
-                            >
-                                <Marker
-                                    coordinate={{
-                                        latitude: hospital.latitude,
-                                        longitude: hospital.longitude,
-                                    }}
-                                    image={
-                                        hospitalclick[index]
-                                            ? require('@/public/assets/clickLocation.png')
-                                            : require('@/public/assets/unclickLocation.png')
-                                    }
-                                />
-                            </TouchableOpacity>
+                            />
                         ))}
                 </MapView>
             )}

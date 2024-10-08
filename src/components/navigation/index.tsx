@@ -55,7 +55,7 @@ export type RootStackParamList = {
     NewPost: undefined
     PostDetail: { postId: number }
     EditPost: { postId: number }
-    HospitalDetail: { hospitalId: string }
+    HospitalDetail: { hospitalId: string; latitude: number; longitude: number }
     HospitalMaps: undefined
     CameraScreen: undefined
     ChooseDoctor: undefined
@@ -137,6 +137,8 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                         <HospitalDetail
                             {...props}
                             hospitalId={props.route.params.hospitalId}
+                            latitude={props.route.params.latitude}
+                            longitude={props.route.params.longitude}
                         />
                     )}
                 </Stack.Screen>

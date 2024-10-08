@@ -90,7 +90,7 @@ function SignupProfileScreen() {
                         onPress={() => {
                             console.log(
                                 'nickname:',
-                                store.nickName,
+                                store.nickname,
                                 'imageL',
                                 store.imageUrl,
                             )

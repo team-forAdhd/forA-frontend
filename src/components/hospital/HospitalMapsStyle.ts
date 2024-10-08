@@ -23,12 +23,14 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 16,
         backgroundColor: 'white',
         paddingTop: 42,
+        flexGrow: 1,
     },
     locationContainer: {
         width: '100%',
         height: 43,
         marginTop: 23,
         flexDirection: 'row',
+        alignItems: 'center',
     },
     locationIcon: {
         width: 27,
@@ -76,7 +78,6 @@ export const text = {
         fontWeight: '600',
         color: color.normal,
         fontSize: 18,
-        lineHeight: 22.4,
     },
     inactiveText: {
         ...baseText,

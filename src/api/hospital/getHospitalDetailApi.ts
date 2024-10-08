@@ -2,14 +2,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiClient } from '../login/loginApi'
 
-export const getHospitalDetails = async (hospitalId: string) => {
+export const getHospitalDetails = async (
+    hospitalId: string,
+    latitude: number,
+    longitude: number,
+) => {
     try {
         const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.get(`/hospitals/${hospitalId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
+        const response = await apiClient.get(
+            `/hospitals/${hospitalId}?latitude=${latitude}&longitude=${longitude}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             },
-        })
+        )
         if (response.status === 200) {
             console.log('병원 상세 응답 성공:', response.data)
         } else {

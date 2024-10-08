@@ -14,7 +14,7 @@ interface HospitalProps {
 }
 
 type HospitalDetailParams = {
-    HospitalDetail: { hospitalId: string }
+    HospitalDetail: { hospitalId: string; latitude: number; longitude: number }
 }
 
 export default function HospitalListItem({
@@ -50,9 +50,15 @@ export default function HospitalListItem({
         <TouchableOpacity
             style={styles.container}
             onPress={() => {
-                navigation.navigate('HospitalDetail', {
-                    hospitalId: hospital.hospitalId,
-                })
+                if (hospital.longitude && hospital.latitude) {
+                    navigation.navigate('HospitalDetail', {
+                        hospitalId: hospital.hospitalId,
+                        latitude: hospital.latitude,
+                        longitude: hospital.longitude,
+                    })
+                } else {
+                    console.log('Hospital data is not fully loaded yet.')
+                }
             }}
         >
             <View style={styles.columnContainer}>

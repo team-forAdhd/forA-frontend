@@ -15,7 +15,6 @@ export const Login = async () => {
         const token = response.data.accessToken
         AsyncStorage.setItem('accessToken', token) // 토큰 저장
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}` // 모든 요청 헤더에 토큰 설정
-        console.log('Login successful:', response.data)
     } catch (error) {
         console.error('Error logging in:', error)
         throw error

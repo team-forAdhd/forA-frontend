@@ -11,6 +11,8 @@ import { getHospitalDetails } from '@/api/hospital/getHospitalDetailApi'
 
 interface HospitalProps {
     hospitalId: string
+    latitude: number
+    longitude: number
 }
 
 type HospitalDetailNavigationProp = StackNavigationProp<
@@ -19,6 +21,7 @@ type HospitalDetailNavigationProp = StackNavigationProp<
 >
 interface HospitalInfo {
     address: string
+    distance: number
     doctorList: Array<Doctor> // Doctor 타입을 따로 정의해야 합니다.
     hospitalId: string
     isBookmarked: boolean
@@ -43,7 +46,11 @@ type Doctor = {
     totalReviewCount?: number // 의사에 대한 총 리뷰 수 (선택적)
 }
 
-export default function HospitalDetail({ hospitalId }: HospitalProps) {
+export default function HospitalDetail({
+    hospitalId,
+    latitude,
+    longitude,
+}: HospitalProps) {
     const ribbonCount = 1
 
     const navigation = useNavigation<HospitalDetailNavigationProp>()
@@ -69,26 +76,30 @@ export default function HospitalDetail({ hospitalId }: HospitalProps) {
     const [hospital, setHospital] = useState<HospitalInfo>()
 
     const [hospitalIdState, setHospitalIdState] = useState<string>(hospitalId)
-    useEffect(() => {
-        if (hospitalId) {
-            const fetchHospitalData = async () => {
-                setIsLoading(true)
-                try {
-                    // 병원 데이터 가져오기
-                    const hospitals = await getHospitalDetails(hospitalId)
-                    setHospital(hospitals)
-                    console.log(hospitals, '병원 상세')
-                } catch (error) {
-                    console.error('Error fetching hospital data:', error)
-                } finally {
-                    setIsLoading(false) // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
-                }
-            }
+    //
+    const [latitudeState, setLatitude] = useState<number>(latitude)
+    const [longtitudeState, setLongtitude] = useState<number>(longitude)
 
-            fetchHospitalData()
+    useEffect(() => {
+        const fetchHospitalData = async () => {
+            setIsLoading(true)
+            try {
+                // 병원 데이터 가져오기
+                const hospitals = await getHospitalDetails(
+                    hospitalId,
+                    latitude,
+                    longitude,
+                )
+                setHospital(hospitals)
+                console.log(hospitals, '병원 상세')
+            } catch (error) {
+                console.error('Error fetching hospital data:', error)
+            } finally {
+                setIsLoading(false) // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
+            }
         }
-        setIsLoading(!isLoading)
-    }, [hospitalIdState])
+        fetchHospitalData()
+    }, [hospitalIdState, latitudeState, longtitudeState])
 
     return !ribbonOpen ? ( //병원 이름을 내려줘야해서 네비게이션으로 이동 안하고 state변화를 통해 뜨게끔 함
         <View style={styles.container}>
@@ -226,7 +237,9 @@ export default function HospitalDetail({ hospitalId }: HospitalProps) {
                             {hospital && hospital.name}
                         </Text>
                         <View style={styles.distanceContainer}>
-                            <Text style={text.smallBlackText}>620m</Text>
+                            <Text style={text.smallBlackText}>
+                                {hospital && hospital.distance + 'm'}
+                            </Text>
                         </View>
                     </View>
                 </View>

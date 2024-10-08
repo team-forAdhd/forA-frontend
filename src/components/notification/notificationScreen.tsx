@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { styles, text } from './notificationStyle'
 import { Text, TouchableOpacity, View, Image } from 'react-native'
 import NotificationComponent from '../common/notificationComponent/notificationComponent'
-
+import EventSource from 'react-native-event-source'
 import { notificationStoreContext } from '@/state/notificationState'
 import { NotificationType } from '@/state/notificationState/notificationStore'
 import { Observer } from 'mobx-react'
@@ -26,32 +26,53 @@ const notificationDummy = [
         date: '2023/03/25 00:11',
     },
 ]
-
+interface Notification {
+    title: string
+    date: string
+    // 필요한 다른 필드들 추가 가능
+}
 export default function NotificationScreen() {
-    const [notifications, setNotifications] = useState<NotificationType[]>([])
+    const [notifications, setNotifications] = useState<Notification[]>([])
 
-    //컴포넌트가 언마운트 되더라도 알림을 확인했는지(클릭)여부는 보존이 되도록 전역관리
+    // 컴포넌트가 언마운트 되더라도 알림을 확인했는지 여부는 전역 관리
     const store = useContext(notificationStoreContext)
 
     const { t } = useTranslation('notification')
 
     const navigation = useNavigation()
 
-    // notifications를 업데이트
     useEffect(() => {
-        setNotifications(notificationDummy)
-    }, [])
+        // SSE 연결 생성
+        const eventSource = new EventSource(
+            'https://foradhd.site/api/v1/notifications/sse',
+        )
 
-    // notifications가 업데이트된 후 실행
-    useEffect(() => {
-        if (notifications.length > 0) {
-            store.setNotifications(notifications)
+        // 메시지 수신 이벤트
+        eventSource.addEventListener('message', (event: any) => {
+            console.log('New message:', event.data)
+
+            try {
+                const parsedData: Notification[] = JSON.parse(event.data)
+                setNotifications(parsedData)
+            } catch (error) {
+                console.error('Failed to parse SSE message:', error)
+            }
+        })
+
+        // 에러 이벤트를 addEventListener로 처리 일단은 타입을 any로 정의
+        eventSource.addEventListener('error', (error: any) => {
+            console.error('SSE error:', error)
+        })
+
+        // 컴포넌트가 언마운트될 때 연결 종료
+        return () => {
+            eventSource.close()
         }
-    }, [notifications])
+    }, [])
 
     return (
         <View style={styles.container}>
-            {/*헤더 */}
+            {/* 헤더 */}
             <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => {
@@ -68,14 +89,12 @@ export default function NotificationScreen() {
             {/* 알림창 */}
             <View style={styles.notificationContainer}>
                 {/* 알림 개수에 따라 화면 조건부 렌더링 */}
-                {notifications.length > 0 ? (
+                {notifications && notifications.length > 0 ? (
                     <>
                         {notifications.map((noti, index) => {
                             return (
-                                //store.clicks배열 변경 감지하고 알림 컴포넌트에 새prop을 내려 리랜더링 되도록
-                                <Observer>
+                                <Observer key={index}>
                                     {() => (
-                                        //직접적으로 jsx넣으면 에러 -> mobX가 반응할 대상이 함수 안에 정의되어 있어야함
                                         <TouchableOpacity
                                             key={index}
                                             onPress={() => {

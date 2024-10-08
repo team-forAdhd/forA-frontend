@@ -95,7 +95,7 @@ export default function EvaluationFinish({
                     </Text>
                 ) : (
                     <Text style={{ textAlign: 'center' }}>
-                        <Text style={text.hospitalText}>{store.nickName}</Text>
+                        <Text style={text.hospitalText}>{store.nickname}</Text>
                         <Text style={text.questionText}>
                             {t('review-title')}
                         </Text>

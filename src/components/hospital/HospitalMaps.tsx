@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next'
 import * as Location from 'expo-location'
 import { getNearHospitals } from '@/api/hospital/getNearHospitalListApi'
 import { Login } from '@/api/login/loginApi'
-
+import { GOOGLE_GEOCODING_API_KEY } from '@env'
+import getCurrentAddress from '@/api/hospital/getCurrentAddressApi'
 export interface LocationCoords {
     latitude: number
     longitude: number
@@ -49,6 +50,8 @@ export default function HospitalMaps() {
     const [size, setSize] = useState<number>(10) // 한 번에 가져올 데이터의 개수
     const [sort, setSort] = useState<string>('reviewCount,desc') // 정렬 옵션
     const [filter, setFilter] = useState<string>('ALL') // 필터 옵션
+    //위도 경도 값으로 가져올 주소
+    const [address, setAddress] = useState<string | null>(null)
     // 현재 위치를 가져오는 useEffect
     useEffect(() => {
         const fetchLocation = async () => {
@@ -107,6 +110,21 @@ export default function HospitalMaps() {
         }
     }, [location, radius, page, size, sort, filter, reRender])
 
+    useEffect(() => {
+        if (location) {
+            const fetchAddress = async () => {
+                const result = await getCurrentAddress(
+                    location.latitude,
+                    location.longitude,
+                    GOOGLE_GEOCODING_API_KEY,
+                )
+                setAddress(result)
+            }
+
+            fetchAddress()
+        }
+    }, [location])
+
     let txt = 'Waiting..'
     if (errorMsg) {
         txt = errorMsg
@@ -148,9 +166,7 @@ export default function HospitalMaps() {
                         style={styles.locationIcon}
                         source={require('@/public/assets/compass.png')}
                     />
-                    <Text style={text.locationText}>
-                        서울특별시 용산구 청파로47길 100
-                    </Text>
+                    <Text style={text.locationText}>{address}</Text>
                 </View>
             </View>
             {/*구글맵 */}
