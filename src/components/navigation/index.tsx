@@ -20,8 +20,6 @@ import MyPage from '../myPage/myPage'
 import MyPost from '../myPage/myPost'
 import AccountSettings from '../accountSettings/accountSettings'
 import ChangeNickName from '../changeNickName/changeNickName'
-import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
-import GoogleMap from '../hospital/Maps'
 import HospitalMaps from '../hospital/HospitalMaps'
 import CameraScreen from '../review/CameraScreen'
 import ChooseDoctor from '../review/ChooseDoctor'
@@ -57,14 +55,15 @@ export type RootStackParamList = {
     NewPost: undefined
     PostDetail: { postId: number }
     EditPost: { postId: number }
-    HospitalDetail: undefined
-    Maps: undefined
+    HospitalDetail: { hospitalId: string; latitude: number; longitude: number }
     HospitalMaps: undefined
     CameraScreen: undefined
     ChooseDoctor: undefined
     MedicineMain: undefined
     Onboard: undefined
     HospitalReview: undefined
+    SavedHospitals: { postType: 'savedHospitals' }
+    SavedPharmacies: { postType: 'savedPharmacies' }
     MedSearch: undefined
     ShapeSearch: undefined
     MedDetail: { medId: number }
@@ -133,11 +132,16 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="SocialLoginAgree"
                     component={SiocialLoginScreen}
                 />
-                <Stack.Screen
-                    name="HospitalDetail"
-                    component={HospitalDetail}
-                />
-
+                <Stack.Screen name="HospitalDetail">
+                    {(props) => (
+                        <HospitalDetail
+                            {...props}
+                            hospitalId={props.route.params.hospitalId}
+                            latitude={props.route.params.latitude}
+                            longitude={props.route.params.longitude}
+                        />
+                    )}
+                </Stack.Screen>
                 {/* 약탭 */}
                 <Stack.Screen name="MedicineMain" component={MedScreen} />
                 <Stack.Screen name="MedSearch" component={MedSearchScreen} />
@@ -175,7 +179,6 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                         return <NewMedReview {...props} medId={medId} />
                     }}
                 </Stack.Screen>
-
                 <Stack.Screen name="MyPage" component={MyPage} />
                 <Stack.Screen
                     name="AccountSettings"
@@ -205,7 +208,6 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="ChangeNickname"
                     component={ChangeNickName}
                 />
-                <Stack.Screen name="Maps" component={GoogleMap} />
                 <Stack.Screen name="HospitalMaps" component={HospitalMaps} />
                 <Stack.Screen
                     name="HospitalReview"
@@ -213,6 +215,16 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                 />
                 <Stack.Screen name="CameraScreen" component={CameraScreen} />
                 <Stack.Screen name="ChooseDoctor" component={ChooseDoctor} />
+                <Stack.Screen
+                    name="SavedHospitals"
+                    component={MyPost}
+                    initialParams={{ postType: 'savedHospitals' }}
+                />
+                <Stack.Screen
+                    name="SavedPharmacies"
+                    component={MyPost}
+                    initialParams={{ postType: 'savedPharmacies' }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )

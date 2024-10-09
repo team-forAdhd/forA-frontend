@@ -1,14 +1,16 @@
+///api/v1/posts/scraps?category=TWENTIES&sortOption=NEWEST_FIRST
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiClient } from '../login/loginApi'
 
-export const getMyComment = async (
+export const getSavedPosts = async (
+    category: string,
     sortOption: 'NEWEST_FIRST' | 'OLDEST_FIRST',
 ) => {
     try {
         const token = await AsyncStorage.getItem('accessToken')
         const response = await apiClient.get(
-            `/comments/my-comments?sortOption=${sortOption}`,
+            `/posts/scraps?category=${category}&sortOption=${sortOption}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -3,12 +3,11 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './HomeStyle'
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
-
+import { Login } from '@/api/login/loginApi'
 import TabBar from '../common/tabBar/tabBar'
 import CarouselComponent from '../common/carousel/carousel'
 import PostListItem from './postListItem/PostListItem'
 import FloatingButton from './FloatingButton'
-import { postLogin } from '@/api/myPage/mycommentApi'
 import {
     getMainCategoryApi,
     getMainRealtimeApi,
@@ -65,7 +64,7 @@ export default function Home() {
     useEffect(() => {
         const login = async () => {
             try {
-                const fetchedToken = await postLogin()
+                const fetchedToken = await Login()
             } catch (error) {
                 console.error(error)
             }

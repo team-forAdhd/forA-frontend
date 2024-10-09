@@ -162,14 +162,11 @@ export const text = {
         fontSize: 24,
         fontWeight: 'bold',
         letterSpacing: -1,
-        flexGrow: 1,
-        marginBottom: 23,
     },
     nickName: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#232323',
-        paddingBottom: 7,
     },
     sirText: {
         ...baseText,

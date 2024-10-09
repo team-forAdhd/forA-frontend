@@ -1,25 +1,15 @@
 import { TouchableOpacity, View, Image, Text } from 'react-native'
 import { useState, useEffect, useRef } from 'react'
-import { PROVIDER_GOOGLE } from 'react-native-maps'
-import MapView, { Marker, Region } from 'react-native-maps'
-import * as Location from 'expo-location'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { styles, text } from './MapsStyle'
+import { LocationCoords, Hospital } from './HospitalMaps'
 
-interface LocationCoords {
-    latitude: number
-    longitude: number
+interface MapProps {
+    hospitalList: Hospital[]
+    location?: LocationCoords | null
 }
-const hospitalList = [
-    {
-        latitude: 36.889,
-        longitude: 138.9,
-        forA: true,
-    },
-]
 
-export default function GoogleMap() {
-    //현재 위치 위도, 경도
-    const [location, setLocation] = useState<LocationCoords | null>(null)
+export default function GoogleMap({ hospitalList, location }: MapProps) {
     //에러 메세지
     const [errorMsg, setErrorMsg] = useState<string>('')
 
@@ -29,29 +19,6 @@ export default function GoogleMap() {
     )
     //위치 재검색
     const [retry, setRetry] = useState<boolean>(false)
-
-    useEffect(() => {
-        ;(async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync()
-            if (status !== 'granted') {
-                setErrorMsg('위치 정보 허용이 거절당했습니다.')
-                return
-            }
-
-            let currentLocation = await Location.getCurrentPositionAsync({}) //혀내 사용자 위치 받아오기
-            setLocation({
-                latitude: currentLocation.coords.latitude,
-                longitude: currentLocation.coords.longitude,
-            })
-        })()
-    }, [])
-
-    let txt = 'Waiting..'
-    if (errorMsg) {
-        txt = errorMsg
-    } else if (location) {
-        txt = JSON.stringify(location)
-    }
 
     return (
         <View style={styles.screen}>
@@ -90,28 +57,26 @@ export default function GoogleMap() {
                     />
                     {hospitalList &&
                         hospitalList.map((hospital, index) => (
-                            <TouchableOpacity
+                            <Marker
                                 key={index}
+                                coordinate={{
+                                    latitude: hospital.latitude,
+                                    longitude: hospital.longitude,
+                                }}
+                                image={
+                                    hospitalclick[index]
+                                        ? require('@/public/assets/clickLocation.png')
+                                        : require('@/public/assets/unclickLocation.png')
+                                }
                                 onPress={() => {
                                     const temp = Array(
                                         hospitalList.length,
                                     ).fill(false)
                                     temp[index] = true
                                     setHospitalClick(temp)
+                                    console.log('터치')
                                 }}
-                            >
-                                <Marker
-                                    coordinate={{
-                                        latitude: hospital.latitude,
-                                        longitude: hospital.longitude,
-                                    }}
-                                    image={
-                                        hospitalclick[index]
-                                            ? require('@/public/assets/clickLocation.png')
-                                            : require('@/public/assets/unclickLocation.png')
-                                    }
-                                />
-                            </TouchableOpacity>
+                            />
                         ))}
                 </MapView>
             )}

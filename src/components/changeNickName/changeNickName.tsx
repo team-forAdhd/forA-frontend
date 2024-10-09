@@ -41,7 +41,7 @@ export default function ChangeNickName() {
                         </Text>
                         <TextInput
                             style={styles.inputContainer}
-                            placeholder={store.nickName}
+                            placeholder={store.nickname}
                             caretHidden={true}
                             onChangeText={store.setNickName}
                         />
