@@ -38,7 +38,7 @@ export default function HospitalBottomSheet({
     //정렬순이 처음에는 보이면 안됨
     const [sortVisible, setSortVisible] = useState<boolean>(false)
     // 현재 해당 컴포넌트의 y축 위치
-    const translateY = useRef(new Animated.Value(671)).current
+    const translateY = useRef(new Animated.Value(471)).current
     //스크롤해서 내려간 마지막 위치 기억
     const lastY = useRef<number>(0)
     //포에이 리본 병원 설명을 띄우기 위해 클릭 카운트를 확인하기 위한 store
