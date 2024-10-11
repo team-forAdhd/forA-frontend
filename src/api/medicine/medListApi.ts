@@ -35,7 +35,7 @@ export const getSingleMedInfoApi = async (medId: number) => {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
-    console.log(response.data)
+
     return response.data;
 } catch (error) {
     console.error('Error fetching single medication info:', error);

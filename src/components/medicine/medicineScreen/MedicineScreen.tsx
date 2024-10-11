@@ -49,7 +49,6 @@ export default function MedScreen() {
         '가나다 순',
         '성분 순',
         '별점 높은 순',
-        '별점 낮은 순',
         '즐겨찾기',
     ]
     const [sortOption, setSortOption] = useState(rangeList[0])
@@ -114,9 +113,6 @@ export default function MedScreen() {
                 break
             case '별점 높은 순':
                 sortedList.sort((a, b) => b.rating - a.rating)
-                break
-            case '별점 낮은 순':
-                sortedList.sort((a, b) => a.rating - b.rating)
                 break
             case '즐겨찾기':
                 sortedList = sortedList.filter((med) => med.favorite)

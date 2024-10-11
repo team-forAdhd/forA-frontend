@@ -12,7 +12,6 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import MedReview from './MedReview'
 import { RootStackParamList } from '@/components/navigation'
-import { getSingleMedInfoApi } from '@/api/medicine/medListApi'
 
 interface MedDetailProps {
     medId: number
@@ -23,30 +22,16 @@ const truncateItemName = (name: string) => {
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
 
-export default function MedDetail({ medId }: MedDetailProps) {
+export default function MedDetail(med : any) {
+    const data = med.route.params
+
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const { t: t } = useTranslation('medicine')
     const { t: dataT } = useTranslation('medDetail')
-    const [data, setData] = useState<any>(null)
     const [activeTab, setActiveTab] = useState('정보')
     const [activeButton, setActiveButton] = useState('all')
     const scrollViewRef = useRef<ScrollView>(null)
     const sectionPositions = useRef<{ [key: string]: number }>({})
-
-    useEffect(() => {
-        // API 호출
-        const fetchData = async () => {
-            try {
-                const medicine = await getSingleMedInfoApi(medId)
-                console.log(medicine)
-                setData(medicine)
-            } catch (error) {
-                console.error('Error fetching medication data:', error)
-            }
-        }
-
-        fetchData()
-    }, [])
 
     const handleLeftArrowPress = () => {
         navigation.navigate('MedicineMain' as never)
@@ -319,7 +304,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('effect')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(medId, 'effect'))}
+                                {dataT(getTranslationKey(med.medId, 'effect'))}
                             </Text>
                         </View>
                         <View onLayout={handleLayout('usage')}>
@@ -327,7 +312,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('usage')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(medId, 'usage'))}{' '}
+                                {dataT(getTranslationKey(med.medId, 'usage'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -336,7 +321,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('precaution')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(medId, 'precaution'))}{' '}
+                                {dataT(getTranslationKey(med.medId, 'precaution'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -345,7 +330,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('med-info')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(medId, 'med-info'))}{' '}
+                                {dataT(getTranslationKey(med.medId, 'med-info'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
@@ -354,13 +339,13 @@ export default function MedDetail({ medId }: MedDetailProps) {
                                 {t('company')}
                             </Text>
                             <Text style={text.contentText}>
-                                {dataT(getTranslationKey(medId, 'company'))}{' '}
+                                {dataT(getTranslationKey(med.medId, 'company'))}{' '}
                                 {/* 번역 처리 */}
                             </Text>
                         </View>
                     </View>
                 ) : (
-                    <MedReview medId={medId} />
+                    <MedReview medId={med.medId} />
                 )}
             </ScrollView>
             <View style={styles.revivewButtonContainer}>
@@ -382,7 +367,7 @@ export default function MedDetail({ medId }: MedDetailProps) {
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate('MedReview', {
-                                medId: medId,
+                                medId: med.medId,
                             })
                         }}
                     >
