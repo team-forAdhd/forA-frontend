@@ -9,6 +9,9 @@ export const getMedListApi = async () => {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
+    
+    return response.data
+    /*
     return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
       id: med.id,
       itemName: med.itemName,
@@ -21,6 +24,7 @@ export const getMedListApi = async () => {
       rating: med.rating,
       favorite: med.favorite,
     }));
+    */
 
   } catch (error) {
     console.error('Error fetching medicine list:', error);
@@ -37,10 +41,11 @@ export const getSingleMedInfoApi = async (medId: number) => {
     });
 
     return response.data;
-} catch (error) {
+
+  } catch (error) {
     console.error('Error fetching single medication info:', error);
     throw error;
-}
+  }
 }
 
 export const getMedListByIngredientApi = async (ingredientType: string) => {
@@ -51,6 +56,7 @@ export const getMedListByIngredientApi = async (ingredientType: string) => {
         Authorization: `Bearer ${userStore.accessToken}`,
       },
     });
+
     return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
       id: med.id,
       itemName: med.itemName,

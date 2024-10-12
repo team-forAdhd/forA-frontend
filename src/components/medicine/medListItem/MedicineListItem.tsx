@@ -23,18 +23,6 @@ const MedicineListItem: React.FC<MedicineListItemProps> = ({ item }) => {
             console.error('Error fetching medication data:', error)
         }
     }
-   
-  /*
-    const handlePress = async (medId : number) => {
-        try {
-            const medicine = await getSingleMedInfoApi(medId)
-            //console.log(medicine.itemName)
-        } catch (error) {
-            console.error('Error fetching medication data:', error)
-        }
-    }
-        */
-    
 
     const truncateItemName = (name: string) => {
         // 괄호부터 사라지도록 이름 수정

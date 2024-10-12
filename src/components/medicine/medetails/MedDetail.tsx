@@ -13,9 +13,6 @@ import { useTranslation } from 'react-i18next'
 import MedReview from './MedReview'
 import { RootStackParamList } from '@/components/navigation'
 
-interface MedDetailProps {
-    medId: number
-}
 
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('(')
