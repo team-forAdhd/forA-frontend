@@ -1,14 +1,10 @@
-import { View, TouchableOpacity, Image, Text, Alert, Linking, Modal, Pressable } from 'react-native'
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera'
-import React, { useState, useEffect, useRef } from "react"
-import { useNavigation } from '@react-navigation/native'
-import { cameraOcrApi } from '@/api/review/cameraOcrApi'
+import { View, TouchableOpacity, Image, Text, Alert, Linking, Modal, Pressable } from "react-native";
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import React, { useState, useEffect, useRef } from "react";
 import { styles, text } from './CameraScreenStyle'
+import { cameraOcrApi } from '@/api/review/cameraOcrApi'
 
-export default function CameraScreen() {
-
-  const navigation = useNavigation()
-  
+export default function CameraScreen({ navigation } : any) {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [imageData, setImageData] = useState<any>(null);
@@ -101,37 +97,48 @@ const takePictureHandler = async () => {
 /* 의사 선택 화면으로 넘기는 함수 */
 const pressModalButton = () => {
   setIsModalVisible(false)
-  navigation.navigate('ChooseDoctor' as never)
+  navigation.navigate('ChooseDoctor')
 }
 
 
 return (
   <View style={styles.container}>
-
     <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+      {/* HEADER */}
+      <View style={styles.headerTextContainer}>
+        <Text style={text.headerText}>간단리뷰</Text>
+      </View>
+      <TouchableOpacity activeOpacity={1} style={styles.headerButtonContainer} onPress={() => {navigation.goBack()}}>
+        <Image source={require('../public/assets/x_white.png')} style={styles.iconHeaderImage}/>
+      </TouchableOpacity>
+
+      {/* MESSAGE BOX */}
+      <View style={styles.messageBox}>
+        <Text style={text.messageText}>영수증의 글자가</Text>
+        <Text style={text.messageText}>잘 보이게 찍어주세요</Text>
+      </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => {navigation.goBack()}}>
-          <Image source={require('@/public/assets/x.png')} style={styles.iconImage}/>
+          <Image source={require('../public/assets/x_white.png')} style={styles.iconImage}/>
         </TouchableOpacity>
-        <View style={[styles.iconImage, { marginHorizontal: 30 }]}/>
         <TouchableOpacity style={styles.button} onPress={takePictureHandler}>
-          <Image source={require('@/public/assets/cameraIcon.png')} style={styles.iconImage}/>
+          <Image source={require('../public/assets/shoot.png')} style={styles.iconShootImage}/>
         </TouchableOpacity>
-        <View style={[styles.iconImage, { marginHorizontal: 30 }]}/>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-          <Image source={require('@/public/assets/refresh.png')} style={styles.iconImage}/>
+          <Image source={require('../public/assets/refresh-ccw.png')} style={styles.iconImage}/>
         </TouchableOpacity>
       </View>
     </CameraView>
 
     <View style={{ position: 'absolute' }}>
       <Modal animationType="fade" visible={isModalVisible} transparent={true}>
-        <View style={styles.modalView}>
-          <Pressable style={{ flexDirection: 'row' }} onPress={pressModalButton}>
+          <Pressable style={styles.modalBackGround} onPress={pressModalButton}>
+          <View style={styles.modalView}>
             <Text style={[text.modalText, { color: '#52A35D' }]}>영수증 인증</Text>
-            <Text style={[text.modalText, { color: 'white' }]}>이 완료되었습니다</Text>
+            <Text style={[text.modalText, { color: '#232323' }]}>이 완료되었습니다</Text>
+            </View>
           </Pressable>
-        </View>
       </Modal>
     </View>
 
