@@ -109,7 +109,7 @@ return (
         <Text style={text.headerText}>간단리뷰</Text>
       </View>
       <TouchableOpacity activeOpacity={1} style={styles.headerButtonContainer} onPress={() => {navigation.goBack()}}>
-        <Image source={require('../public/assets/x_white.png')} style={styles.iconHeaderImage}/>
+        <Image source={require('@/public/assets/x_white.png')} style={styles.iconHeaderImage}/>
       </TouchableOpacity>
 
       {/* MESSAGE BOX */}
@@ -120,13 +120,13 @@ return (
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => {navigation.goBack()}}>
-          <Image source={require('../public/assets/x_white.png')} style={styles.iconImage}/>
+          <Image source={require('@/public/assets/x_white.png')} style={styles.iconImage}/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={takePictureHandler}>
-          <Image source={require('../public/assets/shoot.png')} style={styles.iconShootImage}/>
+          <Image source={require('@/public/assets/shoot.png')} style={styles.iconShootImage}/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-          <Image source={require('../public/assets/refresh-ccw.png')} style={styles.iconImage}/>
+          <Image source={require('@/public/assets/refresh-ccw.png')} style={styles.iconImage}/>
         </TouchableOpacity>
       </View>
     </CameraView>
