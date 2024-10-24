@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from '../login/loginApi'
 
 
 interface Doctor {
@@ -8,34 +9,27 @@ interface Doctor {
     image: string,
 }
 
-export const getDoctorsApi = async (): Promise<Doctor[]> => {
-    const API_URL = 'https://428d5c97-d536-4b2c-9520-a1f46ef5a2b0.mock.pstmn.io'
-    
+export const getDoctorsApi = async (hospitalId: string) => {
     try {
         const token = await AsyncStorage.getItem('accessToken')
-        const response = await axios.get(
-            `${API_URL}/api/v1/hospitals/064377163e0611ef87e706a9c1a84c57/doctors/brief`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
+        const response = await apiClient.get(`/hospitals/${hospitalId}/doctors/brief`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
+          },
         )
 
         if (response.status === 200) {
-            console.log('Success: ', response.data)
+            console.log('의사 목록 조회 성공')
+
+            return response.data.doctorList;
         } else {
-            console.log('Fail to get doctor list: ', response.status)
+            console.log('응답 실패, 상태 코드:', response.status)
         }
-        
-        return response.data.doctorList;
 
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios Error:', error.message);
-        } else {
-            console.error('Unknown Error:', error);
-        }
+        console.log('Error pressing bookmark: ', error)
         throw error
     }
 };

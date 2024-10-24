@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from '../login/loginApi'
 
 
 interface Review {
@@ -17,34 +18,27 @@ interface Review {
     isMine: boolean
 }
 
-export const getReviewsApi = async (doctorId: string, page: number, size: number, sort: string): Promise<Review[]> => {
-    const API_URL = 'https://428d5c97-d536-4b2c-9520-a1f46ef5a2b0.mock.pstmn.io'
-    
-    try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await axios.get(
-            `${API_URL}/api/v1/hospitals/${doctorId}/receipt-reviews?page=${page}&size=${size}&sort=${sort}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            },
-        )
+export const getReviewsApi = async (hospitalId: string, page: number, size: number, sort: string) => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/hospitals/${hospitalId}/receipt-reviews?page=${page}&size=${size}&sort=${sort}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
 
-        if (response.status === 200) {
-            console.log('Success: ', response.data)
-        } else {
-            console.log('Fail to get review list: ', response.status)
-        }
+    if (response.status === 200) {
+        console.log('병원 리뷰 불러오기 성공')
 
         return response.data.hospitalReceiptReviewList;
 
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios Error:', error.message);
-        } else {
-            console.error('Unknown Error:', error);
-        }
-        throw error
+    } else {
+      console.log('응답 실패, 상태 코드:', response.status)
     }
+  } catch (error) {
+    console.log('Error fetching review list: ', error)
+    throw error
+  }
 };

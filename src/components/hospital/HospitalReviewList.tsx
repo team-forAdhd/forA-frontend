@@ -13,14 +13,17 @@ import { hospitalBookmarkApi } from '@/api/review/hospitalBookmarkApi'
 import { formatDate } from 'date-fns';
 
 
-export default function HospitalReviewList() {
+export default function HospitalReviewList(/*hospitalId: string*/) {
+
+    // 더미 병원 아이디
+    const hospitalId = '064377163e0611ef87e706a9c1a84c57'
 
     const navigation = useNavigation()
     const { t: t } = useTranslation('hospitalReviewList')
 
     const [filter, setFilter] = useState<string>('all')
 
-    const sortOptionList = ['createAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
+    const sortOptionList = ['createdAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
     const [sortOption, setSortOption] = useState<string>(sortOptionList[0]);   // 정렬 옵션 - default; 최신순
     const [reviewList, setReviewList] = useState<any>([]);
     const [doctorList, setDoctorList] = useState<any>([]);
@@ -28,12 +31,13 @@ export default function HospitalReviewList() {
     const [showBottomSheet, setShowBottomSheet] = useState<boolean>(false)
 
 
-    const getReviewList = async (doctorId: string, page: number, size: number, sort: string) => {
+    const getReviewList = async (hospitalId: string, page: number, size: number, sort: string) => {
         try {
-          const res = await getReviewsApi(doctorId, page, size, sort)
+          const res = await getReviewsApi(hospitalId, page, size, sort)
     
           if (res) {
             setReviewList(res)
+            console.log(res)    // `
           } else {
             console.log("Unknown response")
           }
@@ -42,12 +46,13 @@ export default function HospitalReviewList() {
         }
     }
 
-    const getDoctorList = async () => {
+    const getDoctorList = async (hospitalId: string) => {
         try {
-          const res = await getDoctorsApi()
+          const res = await getDoctorsApi(hospitalId)
     
           if (res) {
             setDoctorList(res)
+            console.log(res)
           } else {
             console.log("Unknown response")
           }
@@ -70,7 +75,7 @@ export default function HospitalReviewList() {
     const selectSortOption = (option : string) => {
         setSortOption(option)
         setShowBottomSheet(false)
-        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
+        getReviewList(hospitalId, 0, 10, sortOption)
       }  
 
     const getFilteredSortedList = () => {
@@ -85,7 +90,7 @@ export default function HospitalReviewList() {
         let sortedList = filteredList
 
         switch (sortOption) {
-            case 'createAt,desc':
+            case 'createdAt,desc':
                 sortedList = filteredList.sort((a, b) => b.createdAt - a.createdAt);
                 break
             
@@ -136,7 +141,7 @@ export default function HospitalReviewList() {
 
     const postBookmark = async () => {
         try {
-          await hospitalBookmarkApi()
+          await hospitalBookmarkApi(hospitalId)
           console.log("Bookmark Success!")
 
         } catch (error) {
@@ -145,8 +150,8 @@ export default function HospitalReviewList() {
     }
 
     useEffect(() => {
-        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
-        //getDoctorList()
+        getReviewList(hospitalId, 0, 10, sortOption)
+        getDoctorList(hospitalId)
         setSortOption(sortOption)
         setShowAlert(showAlert)
     }, []);
@@ -198,7 +203,7 @@ export default function HospitalReviewList() {
                                         ]}>
                         <Text style={[text.filterText, filter === 'all' ? { color: 'white' } : {}]}>{t('filter-total')}</Text>
                     </TouchableOpacity>
-                    {dDoctorList.map((doctor : any) => (
+                    {doctorList.map((doctor : any) => (
                         <View key={doctor.doctorId}>
                             <TouchableOpacity activeOpacity={1} onPress={() => setFilter(doctor.name)}
                                                 style={[styles.filterButton,
@@ -307,7 +312,7 @@ export default function HospitalReviewList() {
                         style={styles.bookmarkImage}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log("Go to post new review!")} style={styles.postButton}>
+                <TouchableOpacity onPress={() => navigation.navigate('HospitalReview' as never)} style={styles.postButton}>
                     <Text style={text.postButtonText}>{t('post-button')}</Text>
                 </TouchableOpacity>
             </View>
