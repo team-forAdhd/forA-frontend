@@ -220,7 +220,7 @@ export default function HospitalReviewList(/*hospitalId: string*/) {
                     </ScrollView>
                 </View>
                 <View style={{ width: '100%' }}>
-                    {getFilteredSortedList()/*reviewList*/.map((review : any) => (
+                    {reviewList.map((review : any) => (
                         <View key={review.hospitalReceiptReviewId}>
                         <View style={styles.reviewContainer}>
                             <View style={styles.reviewLeft}>
@@ -250,7 +250,7 @@ export default function HospitalReviewList(/*hospitalId: string*/) {
                                                                 }]}
                                         >
                                             <Image
-                                                source={require('@/public/assets/none.png')}
+                                                source={require('@/public/assets/reviewHelped.png')}
                                                 style={styles.reviewHelpButtonImage}
                                             />
                                             <Text style={[text.reviewRadiusContainerText,
@@ -372,5 +372,44 @@ const dDoctorList = [
       "name": "김코코",
       "image": "https://image.jpg"
     }
+]
+
+const rReviewList = [
+    {
+      "hospitalReceiptReviewId": "80ba817ac4404127813258073bb7cc12",
+      "writerId": "fac2695a5ca044d1a052a2b20795e755",
+      "writerName": "김다",
+      "writerImage": "http://",
+      "doctorName": "김코코",
+      "createdAt": 1716306462,
+      "content": "리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용",
+      "imageList": [
+        "https://image.png",
+        "https://image2.png",
+        "https://image3.png"
+      ],
+      "medicalExpense": 37500,
+      "helpCount": 0,
+      "isHelped": false,
+      "isMine": true
+    },
+    {
+      "hospitalReceiptReviewId": "f6fe4aa5c6224065a417c4fbf05a49d0",
+      "writerId": "fac2695a5ca044d1a052a2b20795e755",
+      "writerName": "김다",
+      "writerImage": "http://",
+      "doctorName": null,
+      "createdAt": 1716306498,
+      "content": "리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용",
+      "imageList": [
+        "https://image.png",
+        "https://image2.png",
+        "https://image3.png"
+      ],
+      "medicalExpense": 34000,
+      "helpCount": 0,
+      "isHelped": false,
+      "isMine": true
+    },
 ]
   
