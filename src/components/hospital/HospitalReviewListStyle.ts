@@ -16,27 +16,6 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        zIndex: 0,
-    },
-    header: {
-        position: 'absolute',
-        top: 52,
-        width: '100%',
-        height: 36,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        zIndex: 2,
-    },
-    scrollContainer: {
-        position: 'absolute',
-        width: '100%',
-        top: 140,
-        height: 570,
     },
     shadowBox: {
         shadowOffset: {
@@ -114,40 +93,6 @@ export const styles = StyleSheet.create({
         height: 25,
         objectFit: 'contain',
     },
-    buttonContainer: {
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        height: 130,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        paddingTop: 20,
-        paddingHorizontal: 25,
-
-        backgroundColor: 'white',
-        shadowColor: color.inactive,
-        shadowOffset: {
-            // 그림자의 위치
-            width: 0,
-            height: -2,
-        },
-        shadowOpacity: 0.5,
-        shadowRadius: 3.84,
-    },
-    postButton: {
-        backgroundColor: color.primary,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 280,
-        height: 50,
-        borderRadius: 10,
-    },
-    bookmarkImage: {
-        width: 50,
-        height: 50,
-        objectFit: 'contain',
-    },
     userProfileImage: {
         width: 35,
         height: 35,
@@ -165,6 +110,7 @@ export const styles = StyleSheet.create({
         left: 13,
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 0,
     },
     overlay: {
         position: 'absolute',
@@ -210,21 +156,6 @@ const baseText = {
 }
 
 export const text = {
-    headerText: {
-        color: color.normal,
-        fontSize: 18,
-        fontWeight: 'bold',
-        letterSpacing: -0.7,
-        lineHeight: 22.4,
-        textAlign: 'center',
-    },
-    postButtonText: {
-        textAlign: 'center',
-        color: 'white',
-        fontSize: 18,
-        fontWeight: '600',
-        lineHeight: 22.4,
-    },
     normalText: { 
         ...baseText,
         fontSize: 18,
