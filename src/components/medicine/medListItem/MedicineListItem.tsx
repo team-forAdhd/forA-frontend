@@ -14,7 +14,6 @@ const MedicineListItem: React.FC<MedicineListItemProps> = ({ item }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     
     const handlePress = async (medId : number) => {
-        console.log(`Item Id : ${item.id}`)
         try {
             const medicine = await getSingleMedInfoApi(medId)
             console.log(medicine)
@@ -31,7 +30,7 @@ const MedicineListItem: React.FC<MedicineListItemProps> = ({ item }) => {
     }
 
     return (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handlePress(1)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handlePress(item.id)}>
             <Image source={{ uri: item.itemImage }} style={styles.itemImage} />
             <View style={styles.itemTextContainer}>
                 <Text style={text.nameText}>

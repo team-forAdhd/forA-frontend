@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
-import { View, Image, TouchableOpacity, Text, FlatList } from 'react-native'
+import { View, Image, TouchableOpacity, Text } from 'react-native'
 import { styles, text } from './MedicineStyle'
 import TabBar from '@/components/common/tabBar/tabBar'
-import { MedicineItem } from '@/common/types'
 import MedicineListItem from '../medListItem/MedicineListItem'
 import {
     getMedListApi,
@@ -29,22 +28,20 @@ export default function MedScreen() {
     const navigation = useNavigation()
     const [searchQuery, setSearchQuery] = useState('')
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
-    const [selectedIngredient, setSelectedIngredient] = useState<string | null>(
-        null,
-    )
+    const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null)
     const [medList, setMedList] = useState<Med[]>([])
-    const [ingredientList, setIngredientList] = useState<string[]>([
+    const ingredientList = [
         '메틸페니데이트',
         '아토목세틴',
         '클로니딘',
-    ])
+    ]
     const ingredientMap: { [key: string]: string } = {
         메틸페니데이트: 'METHYLPHENIDATE',
         아토목세틴: 'ATOMOXETINE',
         클로니딘: 'CLONIDINE',
     }
 
-    //정렬 리스트
+    // 정렬 리스트
     const rangeList = [
         '가나다 순',
         '성분 순',
@@ -55,18 +52,21 @@ export default function MedScreen() {
 
     // 기본 약 리스트 호출
     useEffect(() => {
-        if (sortOption === '성분 순') {
+        if (sortOption === '성분 순' && selectedIngredient) {
+            console.log(`(성분: ${selectedIngredient})`)
+            fetchMedListByIngredient(selectedIngredient)
         } else {
             fetchMedList()
         }
-    }, [sortOption])
+    }, [selectedIngredient, sortOption])
 
     // 성분 선택 시 해당 성분의 약 리스트 API 호출
     const fetchMedListByIngredient = async (ingredient: string) => {
         const englishName = ingredientMap[ingredient] // 한글명을 영문명으로 변환
         const data = await getMedListByIngredientApi(englishName)
-        const filteredData = data.map((med: Med) => ({
-            id: med.id,
+        
+        const filteredData = data.map((med: any) => ({
+            id: med.medicineId,
             itemName: med.itemName,
             entpName: med.entpName,
             itemEngName: med.itemEngName,
@@ -75,14 +75,16 @@ export default function MedScreen() {
             rating: med.rating,
             favorite: med.favorite,
         }))
+
         setMedList(filteredData)
         setSelectedIngredient(ingredient) // 성분을 선택한 상태로 유지
     }
 
     const fetchMedList = async () => {
         const data = await getMedListApi()
-        const filteredData = data.map((med: Med) => ({
-            id: med.id,
+        
+        const filteredData = data.map((med: any) => ({
+            id: med.medicineId,
             itemName: med.itemName,
             entpName: med.entpName,
             itemEngName: med.itemEngName,
@@ -91,6 +93,7 @@ export default function MedScreen() {
             rating: med.rating,
             favorite: med.favorite,
         }))
+
         setMedList(filteredData)
     }
 
@@ -105,7 +108,8 @@ export default function MedScreen() {
 
     // 정렬 함수
     const sortMedList = () => {
-        let sortedList = [...medList]
+        let sortedList = new Array()
+        sortedList = medList
 
         switch (sortOption) {
             case '가나다 순':
@@ -204,7 +208,7 @@ export default function MedScreen() {
             ) : (
                 <ScrollView style={styles.medList}>
                     {sortMedList().map((med) => (
-                        <MedicineListItem key={med.id} item={med} />
+                        <MedicineListItem key={med.medicineId} item={med} />
                     ))}
                 </ScrollView>
             )}

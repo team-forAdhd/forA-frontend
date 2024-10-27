@@ -41,6 +41,11 @@ const ShapeSearchScreen = () => {
             style: styles.formula2,
         },
     ]
+    const dosageMap: { [key: string]: string } = {
+        정제: 'TABLET',
+        경질캡슐: 'HARD_CAPSULE',
+        연질캡슐: 'SOFT_CAPSULE',
+    }
     const shapeForms = [
         {
             label: '원형',
@@ -132,16 +137,16 @@ const ShapeSearchScreen = () => {
         try {
             // 선택된 값들을 배열로 모은 후 콤마로 구분하여 문자열로 변환
             const selectedValues = [
-                selectedColor,
-                selectedShapeForm,
                 selectedDosageForm,
+                selectedShapeForm,
+                selectedColor,
             ].filter(Boolean) // null이나 undefined 제거
             const resultString = selectedValues.join(', ')
 
             // 선택된 값만 '' 안에 담아서 API 호출
             const searchResult = await getShapeColorSearchResult(
                 selectedShapeForm || '',
-                selectedDosageForm || '',
+                dosageMap[selectedDosageForm || ''],
                 selectedColor || '',
             )
 

@@ -44,11 +44,11 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         null,
     )
     const [medList, setMedList] = useState<Med[]>([])
-    const [ingredientList, setIngredientList] = useState<string[]>([
+    const ingredientList = [
         '메틸페니데이트',
         '아토목세틴',
         '클로니딘',
-    ])
+    ]
     const ingredientMap: { [key: string]: string } = {
         메틸페니데이트: 'METHYLPHENIDATE',
         아토목세틴: 'ATOMOXETINE',
@@ -60,7 +60,6 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         '가나다 순',
         '성분 순',
         '별점 높은 순',
-        '별점 낮은 순',
         '즐겨찾기',
     ]
     const [sortOption, setSortOption] = useState(rangeList[0])
@@ -69,8 +68,8 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
     const fetchMedListByIngredient = async (ingredient: string) => {
         const englishName = ingredientMap[ingredient] // 한글명을 영문명으로 변환
         const data = await getMedListByIngredientApi(englishName)
-        const filteredData = data.map((med: Med) => ({
-            id: med.id,
+        const filteredData = data.map((med: any) => ({
+            id: med.medicineId,
             itemName: med.itemName,
             entpName: med.entpName,
             itemEngName: med.itemEngName,
@@ -94,7 +93,18 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
 
     // 정렬 함수
     const sortMedList = () => {
-        let sortedList = [...resultList]
+        let sortedList = new Array()
+        const filteredData = resultList.map((med: any) => ({
+            id: med.medicineId,
+            itemName: med.itemName,
+            entpName: med.entpName,
+            itemEngName: med.itemEngName,
+            itemImage: med.itemImage,
+            className: med.className,
+            rating: med.rating,
+            favorite: med.favorite,
+        }))
+        sortedList = filteredData
 
         switch (sortOption) {
             case '가나다 순':
@@ -103,16 +113,13 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             case '별점 높은 순':
                 sortedList.sort((a, b) => b.rating - a.rating)
                 break
-            case '별점 낮은 순':
-                sortedList.sort((a, b) => a.rating - b.rating)
-                break
             case '즐겨찾기':
                 sortedList = sortedList.filter((med) => med.favorite)
                 break
             default:
                 break
         }
-
+        
         return sortedList
     }
 

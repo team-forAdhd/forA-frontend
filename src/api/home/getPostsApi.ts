@@ -2,6 +2,8 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { API_URL } from '@env';
 import userStore from '@/store/userStore/userStore';
 import { formatDateForPostList } from '@/common/formatDate'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from '../login/loginApi'
 
 const categoryMap: { [key: string]: string } = {
   TEENS: '10대',
@@ -54,8 +56,36 @@ interface ApiResponse {
   postList: Post[];
 }
 
-export const getMainRealtimeApi = async (): Promise<Post[]> => {
+export const getMainRealtimeApi = async () => {
   try {
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/posts/main/top`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    if (response.status === 200) {
+      console.log('홈 랭킹별 게시글 불러오기 성공')
+
+      const transformedData = response.data.postList.map((post : any) => ({
+        ...post,
+        category: convertCategory(post.category),
+        formattedCreatedAt: formatCreatedAt(post.createdAt),
+      }));
+  
+      return transformedData;
+
+    } else {
+      console.log('응답 실패, 상태 코드:', response.status)
+    }
+  } catch (error) {
+    console.error('Error fetching comments:', error)
+    throw error
+  }
+}
+    /*
     const response: AxiosResponse<ApiResponse> = await axios.get(`${API_URL}/api/v1/posts/main/top`, {
       headers: {
         'Authorization': `Bearer ${userStore.accessToken}`,
@@ -76,10 +106,40 @@ export const getMainRealtimeApi = async (): Promise<Post[]> => {
     } else {
       throw new Error('Error while fetching PostList');
     }
-  }
-};
+    */
 
-export const getMainCategoryApi = async (category: string): Promise<Post[]> => {
+export const getMainCategoryApi = async (category: string) => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/posts/main/top/category?category=${category}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    if (response.status === 200) {
+      console.log('홈 카테고리별 게시글 불러오기 성공')
+
+      const transformedData = response.data.postList.map((post : any) => ({
+        ...post,
+        category: convertCategory(post.category),
+        formattedCreatedAt: formatCreatedAt(post.createdAt),
+      }))
+  
+      return transformedData
+
+    } else {
+      console.log('응답 실패, 상태 코드:', response.status)
+    }
+  } catch (error) {
+    console.error('Error fetching comments:', error)
+    throw error
+  }
+}
+
+
+/*
   try {
     const response: AxiosResponse<ApiResponse> = await axios.get(`${API_URL}/api/v1/posts/main/top/category?category=${category}`, {
       headers: {
@@ -104,5 +164,4 @@ export const getMainCategoryApi = async (category: string): Promise<Post[]> => {
       throw new Error('Error while fetching PostList');
     }
   }
-
-};
+*/
