@@ -31,7 +31,8 @@ export default function MedDetail(med : any) {
     const sectionPositions = useRef<{ [key: string]: number }>({})
 
     const handleLeftArrowPress = () => {
-        navigation.navigate('MedicineMain' as never)
+        //navigation.navigate('MedicineMain' as never)
+        navigation.goBack()
     }
 
     // 항목별 이동을 위한 동적 로직
@@ -160,13 +161,15 @@ export default function MedDetail(med : any) {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            {/* 바디 */}
             <ScrollView ref={scrollViewRef}>
                 {activeTab === '정보' ? (
                     <View style={styles.infoContainer}>
                         <View style={styles.imageContainer}>
                             <Image
                                 source={{
-                                    uri: 'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147426592401600111',
+                                    uri: data.itemImage,
                                 }}
                                 style={styles.pillImage}
                             />
@@ -342,9 +345,11 @@ export default function MedDetail(med : any) {
                         </View>
                     </View>
                 ) : (
-                    <MedReview medId={med.medId} />
+                    <MedReview medId={data.medicineId} />
                 )}
             </ScrollView>
+
+            {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
                 <View style={styles.bookmarkContainer}>
                     <TouchableOpacity>
@@ -363,9 +368,12 @@ export default function MedDetail(med : any) {
                 <View style={styles.reviewButton}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('MedReview', {
-                                medId: med.medId,
+                            
+                            navigation.navigate('MedNewReview', {
+                                medId: data.medicineId,
                             })
+                            //console.log(data.medicineId)
+                            //navigation.navigate('MedReview', data.medicineId)
                         }}
                     >
                         <Text style={text.reviewButtonText}>

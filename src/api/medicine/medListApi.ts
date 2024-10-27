@@ -1,47 +1,49 @@
-import axios from 'axios';
-import { API_URL } from '@env';
-import userStore from '@/store/userStore/userStore';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from '../login/loginApi'
 
 export const getMedListApi = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted?tabletType=SOFT_CAPSULE`, {
-      headers: {
-        Authorization: `Bearer ${userStore.accessToken}`,
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/medicines/sorted`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-    
-    return response.data
-    /*
-    return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
-      id: med.id,
-      itemName: med.itemName,
-      entpName: med.entpName,
-      itemImage: med.itemImage || 'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147427768615900053',
-      drugShape: med.drugShape,
-      colorClass1: med.colorClass1,
-      itemEngName: med.itemEngName,
-      fromeCodeName: med.fromCodeName,
-      rating: med.rating,
-      favorite: med.favorite,
-    }));
-    */
+    )
+    if (response.status === 200) {
+      console.log('약 목록 불러오기 성공')
 
+      return response.data.medicineList
+
+    } else {
+      console.log('응답 실패, 상태 코드:', response.status)
+    }
   } catch (error) {
-    console.error('Error fetching medicine list:', error);
-    return [];
+    console.error('Error fetching medicine list:', error)
+    throw error
   }
-};
+}
 
 export const getSingleMedInfoApi = async (medId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/${medId}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.accessToken}`,
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/medicines/${medId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    )
 
-    return response.data;
+    if (response.status === 200) {
+      console.log(`약 상세정보 불러오기 성공 (Med Id: ${medId})`)
 
+      return response.data
+
+    } else {
+      console.log('응답 실패, 상태 코드:', response.status)
+    }
   } catch (error) {
     console.error('Error fetching single medication info:', error);
     throw error;
@@ -50,25 +52,15 @@ export const getSingleMedInfoApi = async (medId: number) => {
 
 export const getMedListByIngredientApi = async (ingredientType: string) => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/medicines/sorted-by-ingredient?ingredientType=${ingredientType}`, {
+    const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/medicines/sorted-by-ingredient?ingredientType=${ingredientType}`, {
       params: { ingredientType },
       headers: {
-        Authorization: `Bearer ${userStore.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    return response.data.medicineList.map((med: { id: number; itemName: string; entpName: string; itemImage: string; drugShape: string; colorClass1: string; itemEngName: string; fromCodeName: string; rating: number; favorite: boolean; }) => ({
-      id: med.id,
-      itemName: med.itemName,
-      entpName: med.entpName,
-      itemImage: med.itemImage || 'https://nedrug.mfds.go.kr/pbp/cmn/itemImageDownload/147427768615900053',
-      drugShape: med.drugShape,
-      colorClass1: med.colorClass1,
-      itemEngName: med.itemEngName,
-      fromeCodeName: med.fromCodeName,
-      rating: med.rating,
-      favorite: med.favorite,
-    }));
+    return response.data.medicineList
 
   } catch (error) {
     console.error('Error fetching medicine list by ingredient:', error);
