@@ -3,6 +3,7 @@ import { View, Image, Dimensions } from 'react-native'
 import Carousel from 'react-native-snap-carousel'
 import { styles } from './carouselStyle'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useNavigation } from '@react-navigation/native'
 
 interface CarouselItem {
     source: { uri: string }
@@ -11,6 +12,7 @@ interface CarouselItem {
 
 // 함수형 컴포넌트와 props 타입 지정
 export default function CarouselComponent() {
+    const navigation = useNavigation()
     const entries: CarouselItem[] = [
         { source: require('@/public/assets/carousel1.png'), name: '인스타' },
         { source: require('@/public/assets/carousel2.png'), name: 'for A' },
@@ -23,6 +25,9 @@ export default function CarouselComponent() {
                 <TouchableOpacity
                     onPress={() => {
                         console.log(item.name)
+                        if (item.name === '약탭') {
+                            navigation.navigate('MedicineMain' as never)
+                        }
                     }}
                 >
                     <Image source={item.source} style={styles.carouselImage} />
@@ -38,6 +43,8 @@ export default function CarouselComponent() {
             renderItem={renderItem}
             sliderWidth={Dimensions.get('window').width}
             itemWidth={382}
+            autoplay={true}
+            autoplayInterval={4000}
         />
     )
 }
