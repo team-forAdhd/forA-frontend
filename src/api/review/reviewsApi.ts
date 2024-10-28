@@ -39,8 +39,6 @@ export const getReviewsApi = async (hospitalId: string, page: number, size: numb
 
         if (response.status === 200) {
           console.log('병원 리뷰 목록 불러오기 성공')
-          console.log(response.data)
-          
           return response.data.hospitalReceiptReviewList;
         } else {
             console.log('응답 실패, 상태 코드:', response.status)

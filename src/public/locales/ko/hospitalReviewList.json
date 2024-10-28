@@ -2,11 +2,9 @@
     "review": "리뷰",
     "review-count": "명",
     "sort-option": "정렬 옵션",
-    "sort-option-createdAt,desc": "최신순",
+    "sort-option-createAt,desc": "최신순",
     "sort-option-createdAt,asc": "오래된 순",
     "sort-option-helpCount,desc": "추천순",
-
-    "first-review": "제일 먼저 좋았던 경험을 작성해주세요!",
 
     "doctor": "선생님",
 
