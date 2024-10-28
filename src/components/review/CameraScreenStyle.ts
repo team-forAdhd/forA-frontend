@@ -13,49 +13,92 @@ const color = {
 }
 
 export const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  headerTextContainer: {
+    position: 'absolute',
+    top: 52,
+    height: 36,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  headerButtonContainer: {
+    position: 'absolute',
+    top: 52,
+    height: 36,
+    paddingRight: 20,
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  camera: {
+    flex: 1,
+  },
+  messageBox: {
+    position: 'absolute',
+    top: 180,
+    width: '80%',
+    height: 80,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 85,
+    opacity: 0.8,
+  },
+  buttonContainer: {
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: 85,
+    width: '95%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
     },
-    message: {
-      textAlign: 'center',
-      paddingBottom: 10,
+  iconHeaderImage: {
+    width: 42,
+    height: 42,
+    objectFit: 'contain',
+  },
+  iconImage: {
+    width: 45,
+    height: 45,
+    objectFit: 'contain',
+  },
+  iconShootImage: {
+    width: 80,
+    height: 80,
+    objectFit: 'contain',
+  },
+  modalBackGround: {
+    flex: 1,
+    backgroundColor: 'black',
+    opacity: 0.85
+  },
+  modalView: {
+    marginTop: 340,
+    margin: 30,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    camera: {
-      flex: 1,
-    },
-    buttonContainer: {
-      flex: 1,
-      flexDirection: 'row',
-      backgroundColor: 'transparent',
-      margin: 94,
-    },
-    button: {
-      flex: 1,
-      alignSelf: 'flex-end',
-      alignItems: 'center',
-    },
-    iconImage: {
-        width: 60,
-        height: 60,
-        objectFit: 'contain',
-    },
-    modalView: {
-        marginTop: 330,
-        margin: 30,
-        backgroundColor: 'black',
-        borderRadius: 15,
-        padding: 30,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 })
 
 const baseText = {
@@ -65,23 +108,39 @@ const baseText = {
 }
 
 export const text = {
-    modalText: {
-      fontSize: 19,
-      fontWeight: '500',
-      lineHeight: 22.4,
-      letterSpacing: -0.7,
-    },
-    boxText: {
-        ...baseText,
-        fontSize: 18,
-        lineHeight: 22.4,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: '600',
-        lineHeight: 22.4,
-    },
+  headerText: {
+    color: 'white',
+    fontSize: 19,
+    fontWeight: 'bold',
+    letterSpacing: -0.7,
+    lineHeight: 22.4,
+    textAlign: 'center',
+  },
+  messageText: {
+    ...baseText,
+    color: color.normal,
+    fontSize: 19,
+    letterSpacing: -0.7,
+    lineHeight: 22.4,
+    textAlign: 'center',
+  },
+  modalText: {
+    fontSize: 19,
+    fontWeight: '600',
+    lineHeight: 22.4,
+    letterSpacing: -0.7,
+  },
+  boxText: {
+    ...baseText,
+    fontSize: 18,
+    lineHeight: 22.4,
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+    lineHeight: 22.4,
+  },
 } as {
     [key: string]: StyleProp<TextStyle>
 }

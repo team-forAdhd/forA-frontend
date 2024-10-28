@@ -24,7 +24,7 @@ interface MedNewReviewProps {
     medId: number
 }
 
-const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
+const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     // prop으로 medId 받아와야 함
     const { t } = useTranslation('medicine')
 
@@ -533,4 +533,4 @@ const NewMedReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     )
 }
 
-export default NewMedReview
+export default MedNewReview

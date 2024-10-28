@@ -26,10 +26,11 @@ import ChooseDoctor from '../review/ChooseDoctor'
 import MedScreen from '../medicine/medicineScreen/MedicineScreen'
 import OnboardingScreen from '../splash-n-onboard/onboard/Onboard'
 import HospitalReview from '../hospital/HospitalReview'
+import HospitalReviewList from '../hospital/HospitalReviewList'
 import MedSearchScreen from '../medicine/medSearch/MedSearchScreen'
 import ShapeSearchScreen from '../medicine/medSearch/ShapeSearchScreen'
 import MedDetail from '../medicine/medetails/MedDetail'
-import NewMedReview from '../medicine/medNewReview/MedNewReview'
+import MedNewReview from '../medicine/medNewReview/MedNewReview'
 import MedReview from '../medicine/medetails/MedReview'
 import MedSearchResult from '../medicine/medSearch/MedSearchResult'
 
@@ -62,12 +63,13 @@ export type RootStackParamList = {
     MedicineMain: undefined
     Onboard: undefined
     HospitalReview: undefined
+    HospitalReviewList: undefined
     SavedHospitals: { postType: 'savedHospitals' }
     SavedPharmacies: { postType: 'savedPharmacies' }
     MedSearch: undefined
     ShapeSearch: undefined
     MedDetail: { medId: number }
-    NewMedReview: { medId: number }
+    MedNewReview: { medId: number }
     MedReview: { medId: number }
     MedSearchResult: { resultList: any[]; searchInputValue: string }
 } //나의 글, 나의 댓글 등의 페이지로 이동할 때 컴포넌트가 파라미터를 받다보니 타입 정의를 함
@@ -170,13 +172,13 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                         />
                     )}
                 </Stack.Screen>
-                <Stack.Screen name="NewMedReview">
+                <Stack.Screen name="MedNewReview">
                     {(props) => {
                         const medId =
                             props.route?.params?.medId !== undefined
                                 ? props.route.params.medId
                                 : 1 // medId 기본값 설정
-                        return <NewMedReview {...props} medId={medId} />
+                        return <MedNewReview {...props} medId={medId} />
                     }}
                 </Stack.Screen>
                 <Stack.Screen name="MyPage" component={MyPage} />
@@ -213,6 +215,7 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="HospitalReview"
                     component={HospitalReview}
                 />
+                <Stack.Screen name="HospitalReviewList" component={HospitalReviewList} />
                 <Stack.Screen name="CameraScreen" component={CameraScreen} />
                 <Stack.Screen name="ChooseDoctor" component={ChooseDoctor} />
                 <Stack.Screen

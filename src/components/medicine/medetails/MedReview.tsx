@@ -33,6 +33,7 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
     const [sortedReviews, setSortedReviews] = useState<any[]>([])
 
     useEffect(() => {
+        console.log(`약 리뷰 페이지 (id: ${medId})`)
         const fetchReviews = async () => {
             const response = await getMedReviewApi(medId)
             if (response && response.data) {

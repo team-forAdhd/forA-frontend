@@ -99,7 +99,7 @@ export default function MedSearchScreen() {
                     <Text style={text.deleteText}>{t('cancel')}</Text>
                 </TouchableOpacity>
             </View>
-            {submit ? ( //검색을 한 경우
+            {submit ? ( // 검색을 한 경우
                 searchResultList.length === 0 ? (
                     // 검색 결과가 없는 경우 UI 처리
                     <View style={styles.noneSearchContainer}>
