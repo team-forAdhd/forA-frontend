@@ -17,6 +17,25 @@ export const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
     },
+    reviewEmpty: {
+      flex: 1,
+      backgroundColor: '#EDEDEA',
+      height: 700,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    messageCircleIcon: {
+      width: 40,
+      height: 40,
+      marginTop: 90,
+      marginBottom: 20
+    },
+    arrowIcon: {
+      width: 10,
+      height: 247,
+      marginTop: 30,
+    },
     shadowBox: {
         shadowOffset: {
             width: 0,
@@ -162,6 +181,12 @@ export const text = {
         lineHeight: 22.4,
         letterSpacing: -0.5,
         color: color.normal,
+    },
+    firstReviewText: {
+        color: '#555',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 24,
     },
     filterText: { 
         ...baseText,

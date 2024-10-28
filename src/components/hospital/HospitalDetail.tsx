@@ -401,7 +401,7 @@ export default function HospitalDetail({
                         zIndex: 100,
                     }}
                 >
-                    <HospitalReviewList hospitalId={hospitalId}/>
+                    <HospitalReviewList hospitalId={hospitalId/*'064377163e0611ef87e706a9c1a84c57'*/} />
                 </View>
             )}
             </View>

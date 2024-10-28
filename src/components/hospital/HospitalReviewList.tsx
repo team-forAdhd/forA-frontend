@@ -33,7 +33,7 @@ const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) =
 
     const [filter, setFilter] = useState<string>('all')
 
-    const sortOptionList = ['createAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
+    const sortOptionList = ['createdAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
     const [sortOption, setSortOption] = useState<string>(sortOptionList[0]);   // 정렬 옵션 - default; 최신순
     const [reviewList, setReviewList] = useState<any>([]);
     const [doctorList, setDoctorList] = useState<any>([]);
@@ -98,7 +98,7 @@ const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) =
         let sortedList = filteredList
 
         switch (sortOption) {
-            case 'createAt,desc':
+            case 'createdAt,desc':
                 sortedList = filteredList.sort((a, b) => b.createdAt - a.createdAt);
                 break
             
@@ -149,10 +149,27 @@ const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) =
 
     useEffect(() => {
         getReviewList(hospitalId, 0, 10, sortOption)
+        console.log(reviewList)
         //getDoctorList()
         setSortOption(sortOption)
         setShowAlert(showAlert)
     }, []);
+
+    if (reviewList.length === 0) {
+        return (
+            <View style={styles.reviewEmpty}>
+                <Image
+                    source={require('@/public/assets/message-circle.png')}
+                    style={styles.messageCircleIcon}
+                />
+                <Text style={text.firstReviewText}>{t('first-review')}</Text>
+                <Image
+                    source={require('@/public/assets/review-arrow.png')}
+                    style={styles.arrowIcon}
+                />
+            </View>
+        )
+    }
 
     return (
         <View style={styles.container}>
