@@ -92,7 +92,9 @@ export default function ChooseDoctor() {
 
 
       {/* 하단 버튼 */}
-      <TouchableOpacity activeOpacity={1} disabled={choice ? false : true} onPress={() => console.log(`Go to [${choice}] review page!`)}
+      <TouchableOpacity activeOpacity={1}
+                        disabled={choice ? false : true}
+                        onPress={() => navigation.navigate('HospitalReview' as never)}
                         style={[styles.buttonContainer,
                                 choice
                                   ? { backgroundColor: '#52A35D'}

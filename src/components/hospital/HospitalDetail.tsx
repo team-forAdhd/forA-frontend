@@ -8,6 +8,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { RootStackParamList } from '../navigation'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { getHospitalDetails } from '@/api/hospital/getHospitalDetailApi'
+import HospitalReviewList from './HospitalReviewList'
 
 interface HospitalProps {
     hospitalId: string
@@ -182,8 +183,11 @@ export default function HospitalDetail({
                         </Text>
                     </TouchableOpacity>
                 </View>
+
+
                 {/* 지도 들어갈 부분 */}
-                <View
+                {button[0] ?
+                (<><View
                     style={{
                         position: 'absolute',
                         top: 143,
@@ -387,7 +391,22 @@ export default function HospitalDetail({
                         </View>
                     )}
                 </View>
+            </>) : (
+                <View
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        top: 143,
+                        bottom: 100,
+                        zIndex: 100,
+                    }}
+                >
+                    <HospitalReviewList hospitalId={hospitalId/*'064377163e0611ef87e706a9c1a84c57'*/} />
+                </View>
+            )}
             </View>
+
+
             {/*병원 평가하고 스크랩할 수 있는 버튼 바 */}
             <View style={[styles.flex, styles.ButtonsContainer]}>
                 <TouchableOpacity>
@@ -400,7 +419,8 @@ export default function HospitalDetail({
                         style={styles.scrabIamge}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity
+                {button[0] ?
+                (<><TouchableOpacity
                     onPress={() => {
                         navigation.navigate('HospitalReview' as never)
                     }}
@@ -418,6 +438,18 @@ export default function HospitalDetail({
                         style={styles.buttonRibbonImage}
                     />
                 </TouchableOpacity>
+                </>) : (<>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('HospitalReview')
+                        }}
+                        style={styles.forARibbonContainer}
+                    >
+                        <Text style={text.ribbonButtonText}>
+                            {t('write-review')}
+                        </Text>
+                    </TouchableOpacity>
+                </>)}
             </View>
         </View>
     ) : (
