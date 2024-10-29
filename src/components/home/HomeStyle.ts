@@ -9,12 +9,13 @@ export const styles = StyleSheet.create({
     },
     overlay: {
         backgroundColor: 'rgba(35, 35, 35, 0.3)',
-        zIndex: 30,
+        zIndex: 90,
         position: 'absolute',
         top: 0,
         height: '100%',
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     header: {
         position: 'absolute',

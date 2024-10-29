@@ -22,7 +22,6 @@ export const styles = StyleSheet.create({
         height: 'auto',
         borderRadius: 12,
         padding: 23,
-        marginTop: 100,
     },
     flexContainer: {
         flexDirection: 'row',
@@ -40,6 +39,7 @@ export const styles = StyleSheet.create({
     backIcon: {
         width: 28,
         height: 28,
+        objectFit: 'contain',
     },
     accountContainer: {
         backgroundColor: 'rgba(82, 165, 93, 0.2)',
@@ -83,7 +83,7 @@ export const text = {
         lineHeight: 26,
         letterSpacing: -0.5,
         color: color.normal,
-        marginRight: 7,
+        marginTop: 4,
     },
 } as {
     [key: string]: StyleProp<TextStyle>
