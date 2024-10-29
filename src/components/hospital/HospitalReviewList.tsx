@@ -1,26 +1,39 @@
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { View, TouchableOpacity, Image, Text, ScrollView, Modal } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import BottomSheet from '@gorhom/bottom-sheet';
 import { styles, text } from './HospitalReviewListStyle'
 import AlertModal from '../common/alertModal/AlertModal'
-import { getReviewsApi } from '@/api/review/getReviewsApi'
-import { getDoctorsApi } from '@/api/review/getDoctorsApi'
-import { deleteReviewApi } from '@/api/review/deleteReviewApi'
-import { reviewHelpedApi } from '@/api/review/reviewHelpedApi'
-import { hospitalBookmarkApi } from '@/api/review/hospitalBookmarkApi'
+import { getDoctorsApi, getReviewsApi, deleteReviewApi, reviewHelpedApi } from '@/api/review/reviewsApi'
 import { formatDate } from 'date-fns';
 
+interface HospitalReviewListProps {
+    hospitalId: string
+    /*
+    receiptReview: {
+        writerId: number
+        writerName: string
+        writerImage: string
+        doctorName: string
+        createdAt: number
+        content: string
+        imageList: string[]
+        medicalExpense: number
+        helpCount: number
+        isHelped: boolean
+        isMine: boolean
+    */
+}
 
-export default function HospitalReviewList() {
+const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) => {
 
     const navigation = useNavigation()
     const { t: t } = useTranslation('hospitalReviewList')
 
     const [filter, setFilter] = useState<string>('all')
 
-    const sortOptionList = ['createAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
+    const sortOptionList = ['createdAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
     const [sortOption, setSortOption] = useState<string>(sortOptionList[0]);   // 정렬 옵션 - default; 최신순
     const [reviewList, setReviewList] = useState<any>([]);
     const [doctorList, setDoctorList] = useState<any>([]);
@@ -28,9 +41,9 @@ export default function HospitalReviewList() {
     const [showBottomSheet, setShowBottomSheet] = useState<boolean>(false)
 
 
-    const getReviewList = async (doctorId: string, page: number, size: number, sort: string) => {
+    const getReviewList = async (hospitalId: string, page: number, size: number, sort: string) => {
         try {
-          const res = await getReviewsApi(doctorId, page, size, sort)
+          const res = await getReviewsApi(hospitalId, page, size, sort)
     
           if (res) {
             setReviewList(res)
@@ -44,7 +57,7 @@ export default function HospitalReviewList() {
 
     const getDoctorList = async () => {
         try {
-          const res = await getDoctorsApi()
+          const res = await getDoctorsApi(hospitalId)
     
           if (res) {
             setDoctorList(res)
@@ -70,7 +83,7 @@ export default function HospitalReviewList() {
     const selectSortOption = (option : string) => {
         setSortOption(option)
         setShowBottomSheet(false)
-        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
+        getReviewList(hospitalId, 0, 10, sortOption)
       }  
 
     const getFilteredSortedList = () => {
@@ -85,7 +98,7 @@ export default function HospitalReviewList() {
         let sortedList = filteredList
 
         switch (sortOption) {
-            case 'createAt,desc':
+            case 'createdAt,desc':
                 sortedList = filteredList.sort((a, b) => b.createdAt - a.createdAt);
                 break
             
@@ -134,41 +147,36 @@ export default function HospitalReviewList() {
         }
       }
 
-    const postBookmark = async () => {
-        try {
-          await hospitalBookmarkApi()
-          console.log("Bookmark Success!")
-
-        } catch (error) {
-          console.error('Error while marking: ', error)
-        }
-    }
-
     useEffect(() => {
-        getReviewList('064377163e0611ef87e706a9c1a84c57', 0, 10, sortOption)
+        getReviewList(hospitalId, 0, 10, sortOption)
+        console.log(reviewList)
         //getDoctorList()
         setSortOption(sortOption)
         setShowAlert(showAlert)
     }, []);
 
+    if (reviewList.length === 0) {
+        return (
+            <View style={styles.reviewEmpty}>
+                <Image
+                    source={require('@/public/assets/message-circle.png')}
+                    style={styles.messageCircleIcon}
+                />
+                <Text style={text.firstReviewText}>{t('first-review')}</Text>
+                <Image
+                    source={require('@/public/assets/review-arrow.png')}
+                    style={styles.arrowIcon}
+                />
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
-    
-            {/* 헤더 */}
-            <View style={styles.header}>
-            <TouchableOpacity activeOpacity={1} onPress={() => {navigation.goBack()}}>
-                <Image
-                source={require('@/public/assets/back.png')}
-                style={styles.iconImage}
-                />
-            </TouchableOpacity>
-            </View>
-
 
             {/* 스크롤 뷰 */}
-            <View style={styles.scrollContainer}>
-            <ScrollView style={{ flex: 1 }}>
-
+            <View style={styles.container}>
+            <ScrollView>
                 <View style={[styles.optionContainer, { justifyContent: 'space-between', height: 45 }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[text.normalText, { fontWeight: '600' }]}>{t('review')}</Text>
@@ -214,6 +222,7 @@ export default function HospitalReviewList() {
                     ))}
                     </ScrollView>
                 </View>
+
                 <View style={{ width: '100%' }}>
                     {getFilteredSortedList()/*reviewList*/.map((review : any) => (
                         <View key={review.hospitalReceiptReviewId}>
@@ -299,20 +308,6 @@ export default function HospitalReviewList() {
             </View>
 
 
-            {/* 하단 버튼 컨테이너 */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={postBookmark}>
-                    <Image
-                        source={require('@/public/assets/scrabButton.png')}
-                        style={styles.bookmarkImage}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log("Go to post new review!")} style={styles.postButton}>
-                    <Text style={text.postButtonText}>{t('post-button')}</Text>
-                </TouchableOpacity>
-            </View>
-
-
             {/* 리뷰 정렬을 위한 Bottom Sheet */}
             {showBottomSheet ?
             (<View style={styles.overlay}>
@@ -352,6 +347,8 @@ export default function HospitalReviewList() {
         </View>
     )
 }
+
+export default HospitalReviewList;
 
 
 /* 더미 데이터 */
