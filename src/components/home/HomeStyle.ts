@@ -7,6 +7,15 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'column',
     },
+    overlay: {
+        backgroundColor: 'rgba(35, 35, 35, 0.3)',
+        zIndex: 30,
+        position: 'absolute',
+        top: 0,
+        height: '100%',
+        width: '100%',
+        alignItems: 'center',
+    },
     header: {
         position: 'absolute',
         top: 52,
@@ -95,6 +104,7 @@ export const styles = StyleSheet.create({
     },
     postListContainer: {
         paddingHorizontal: 16,
+        width: '100%',
     },
     postItemContainer: {
         flex: 1,
@@ -153,10 +163,9 @@ export const styles = StyleSheet.create({
         marginLeft: 'auto',
     },
     fabLayout: {
-        position: "absolute",
+        position: 'absolute',
         top: 665,
         right: 10,
-        
     },
     fabIcon: {
         width: 62,

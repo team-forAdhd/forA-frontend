@@ -10,13 +10,17 @@ interface CarouselItem {
     name: string
 }
 
+interface CarouselProps {
+    setModalTitle: React.Dispatch<React.SetStateAction<string>>
+}
 // 함수형 컴포넌트와 props 타입 지정
-export default function CarouselComponent() {
+export default function CarouselComponent({ setModalTitle }: CarouselProps) {
     const navigation = useNavigation()
     const entries: CarouselItem[] = [
         { source: require('@/public/assets/carousel1.png'), name: '인스타' },
-        { source: require('@/public/assets/carousel2.png'), name: 'for A' },
-        { source: require('@/public/assets/carousel3.png'), name: '약탭' },
+        { source: require('@/public/assets/carousel2.png'), name: '약탭' },
+        { source: require('@/public/assets/carousel3.png'), name: '공지사항' },
+        { source: require('@/public/assets/carousel4.png'), name: '후원' },
     ]
 
     const renderItem = ({ item }: { item: CarouselItem }) => {
@@ -27,8 +31,13 @@ export default function CarouselComponent() {
                         console.log(item.name)
                         if (item.name === '약탭') {
                             navigation.navigate('MedicineMain' as never)
+                        } else if (item.name === '공지사항') {
+                            setModalTitle('notification')
+                        } else if (item.name === '후원') {
+                            setModalTitle('support')
                         }
                     }}
+                    style={{ aspectRatio: 16 / 9, width: '100%' }}
                 >
                     <Image source={item.source} style={styles.carouselImage} />
                 </TouchableOpacity>
