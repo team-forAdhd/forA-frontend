@@ -89,7 +89,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
         fetchPostDetail()
         fetchComments()
     }, [postId])
-
+    console.log(postDetail, 'state에 잘 들어가 있나?')
     const {
         category,
         images,
@@ -191,7 +191,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity
+                <TouchableOpacity //뒤로 가기 버튼이 안먹음
                     style={styles.gobackIcon}
                     onPress={handleGoback}
                 >
@@ -221,7 +221,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
             </View>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                 {/* 첨부 사진이 있는 경우 나타나는 첨부사진 view */}
-                {images && images.length > 0 && (
+                {/* {images && images.length > 0 && ( //첨부 사진 uri잘못인지 아래 컨테이너 위치가 밀림
                     <View>
                         {images.map(
                             (img: any, index: Key | null | undefined) => (
@@ -236,7 +236,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
                             <Text>{`1/${images.length}`}</Text>
                         </View>
                     </View>
-                )}
+                )} */}
 
                 <View style={styles.bodyConatiner}>
                     {/* 작성자 정보 */}

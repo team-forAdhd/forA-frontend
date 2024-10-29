@@ -13,6 +13,8 @@ import {
     getMainRealtimeApi,
     Post,
 } from '@/api/home/getPostsApi'
+import HomeModal from '../common/homemodal/homeModal'
+import { notification, support } from './homeModalData'
 
 export default function Home() {
     //랭킹 클릭 상태
@@ -21,7 +23,9 @@ export default function Home() {
     const [reRender, setReRender] = useState(false)
     //랭킹 리스트 띄울 이름 키 값
     const rankingList = ['실시간', '10대', '20대', '30대↑', '학부모']
-
+    //공지사항이나 후원 모달을 띄울 state
+    const [modal, setModal] = useState<boolean>(false)
+    const [modalTitle, setModalTitle] = useState<string>('')
     const { t } = useTranslation('home')
 
     const navigation = useNavigation()
@@ -75,6 +79,19 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
+            {modalTitle && (
+                <View style={styles.overlay}>
+                    <HomeModal
+                        setModalTitle={setModalTitle}
+                        modalTitle={modalTitle}
+                        modalContents={
+                            modalTitle === 'notification'
+                                ? notification
+                                : support
+                        }
+                    />
+                </View>
+            )}
             {/* 헤더 */}
             <View style={styles.header}>
                 <Image
@@ -107,9 +124,9 @@ export default function Home() {
                 </View>
             </View>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                {/* 광고 */}
+                {/* 캐러셀 */}
                 <View style={styles.carouselContainer}>
-                    <CarouselComponent />
+                    <CarouselComponent setModalTitle={setModalTitle} />
                 </View>
                 {/* 랭킹 리스트 */}
                 <View style={styles.rankingListContainer}>

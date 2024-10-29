@@ -10,8 +10,9 @@ import { Observer } from 'mobx-react'
 import { getSearch } from '@/api/search/searchApi'
 import { Login } from '@/api/login/loginApi'
 
-type PostData = {
+interface PostData {
     commentCount: number
+    id: number
     createdAt: number
     images: string[] | null // 이미지가 URL 문자열 배열로 가정
     likeCount: number
@@ -44,13 +45,13 @@ export default function SearchScreen() {
     const navigation = useNavigation()
 
     useEffect(() => {
-        const fetchHospitalData = async () => {
+        const fetchPostData = async () => {
             if (title) {
                 setLoading(true) // 데이터 요청 시작 전에 로딩 상태로 설정
                 try {
                     const search = await getSearch(title)
                     setSearchResultList(search)
-                    console.log('search result', search)
+                    console.log('검색 데이터 받아오기', search)
                 } catch (error) {
                     console.error('Error fetching data:', error)
                 } finally {
@@ -60,7 +61,7 @@ export default function SearchScreen() {
         }
 
         if (submit) {
-            fetchHospitalData()
+            fetchPostData()
         }
     }, [title])
 

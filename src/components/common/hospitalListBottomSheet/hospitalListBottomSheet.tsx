@@ -62,12 +62,6 @@ export default function HospitalBottomSheet({
                     translateY.flattenOffset() // offset과 현재 값을 합쳐서 새로운 절대 위치 설정
                     const listenerId = translateY.addListener(({ value }) => {
                         lastY.current = value // 현재 값을 lastY.current에 업데이트
-
-                        if (value < 650) {
-                            setSortVisible(true)
-                        } else {
-                            setSortVisible(false)
-                        }
                     })
 
                     Animated.spring(translateY, {
@@ -109,66 +103,62 @@ export default function HospitalBottomSheet({
                 source={require('@/public/assets/bottomsheetTop.png')}
             />
             <View style={styles.listContainer}>
-                {sortVisible && (
-                    <View style={styles.rankingListContainer}>
-                        {sortOrders.map((sortOrder, index) => {
-                            return (
-                                <Observer>
-                                    {() => (
-                                        <TouchableOpacity
-                                            key={index}
+                <View style={styles.rankingListContainer}>
+                    {sortOrders.map((sortOrder, index) => {
+                        return (
+                            <Observer>
+                                {() => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={
+                                            sortCLick === sortOrder
+                                                ? sortCLick ===
+                                                  '포에이 리본 병원'
+                                                    ? styles.forAClickContainer
+                                                    : styles.clickContainer
+                                                : styles.baseContainer
+                                        }
+                                        onPress={() => {
+                                            if (
+                                                sortOrder ===
+                                                    '포에이 리본 병원' &&
+                                                store.count === 0 //정렬에서 포에이 리본 병원을 처음 누른 경우
+                                            ) {
+                                                setDescription(true)
+                                                store.setCount(store.count + 1)
+                                            }
+                                            setSortCLick(sortOrder)
+                                            if (sortOrder == '위치순') {
+                                                setSort('distance,asc')
+                                            } else if (
+                                                sortOrder === '포에이 리본 병원'
+                                            ) {
+                                            } else {
+                                                setSort('reviewCount,desc')
+                                            }
+                                        }}
+                                    >
+                                        <Text
                                             style={
                                                 sortCLick === sortOrder
-                                                    ? sortCLick ===
-                                                      '포에이 리본 병원'
-                                                        ? styles.forAClickContainer
-                                                        : styles.clickContainer
-                                                    : styles.baseContainer
+                                                    ? text.clickText
+                                                    : text.basicText
                                             }
-                                            onPress={() => {
-                                                if (
-                                                    sortOrder ===
-                                                        '포에이 리본 병원' &&
-                                                    store.count === 0 //정렬에서 포에이 리본 병원을 처음 누른 경우
-                                                ) {
-                                                    setDescription(true)
-                                                    store.setCount(
-                                                        store.count + 1,
-                                                    )
-                                                }
-                                                setSortCLick(sortOrder)
-                                                if (sortOrder == '위치순') {
-                                                    setSort('distance,asc')
-                                                } else if (
-                                                    sortOrder ===
-                                                    '포에이 리본 병원'
-                                                ) {
-                                                } else {
-                                                    setSort('reviewCount,desc')
-                                                }
-                                            }}
                                         >
-                                            <Text
-                                                style={
-                                                    sortCLick === sortOrder
-                                                        ? text.clickText
-                                                        : text.basicText
-                                                }
-                                            >
-                                                {sortOrder}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </Observer>
-                            )
-                        })}
-                    </View>
-                )}
+                                            {sortOrder}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </Observer>
+                        )
+                    })}
+                </View>
+
                 <View
                     style={{
                         height: '100%',
                         position: 'absolute',
-                        top: sortVisible ? 90 : 10,
+                        top: 90,
                     }}
                 >
                     {hospitalList &&
