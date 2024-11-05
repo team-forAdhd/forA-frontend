@@ -408,6 +408,7 @@ export default function HospitalDetail({
                                         ))}
                                     {/*리뷰 쓰기 버튼 */}
                                     <TouchableOpacity
+                                        onPress={() => {navigation.navigate('CameraScreen') as never}}
                                         style={styles.writeReviewContainer}
                                     >
                                         <Text style={text.activeText}>
