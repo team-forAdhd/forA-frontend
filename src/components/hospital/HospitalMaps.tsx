@@ -179,6 +179,7 @@ export default function HospitalMaps() {
                 setSort={setSort}
                 reRender={reRender}
                 setRerender={setRerender}
+                location={location}
             />
             <TabBar />
         </View>

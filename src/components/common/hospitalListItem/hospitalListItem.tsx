@@ -5,12 +5,14 @@ import { useNavigation, NavigationProp } from '@react-navigation/native'
 import { Hospital } from '@/components/hospital/HospitalMaps'
 import { postBookmark } from '@/api/hospital/postBookmarkApi'
 import { useState } from 'react'
+import { LocationCoords } from '@/components/hospital/HospitalMaps'
 
 interface HospitalProps {
     hospital: Hospital
     setModal: React.Dispatch<React.SetStateAction<boolean>>
     setRerender: React.Dispatch<React.SetStateAction<boolean>>
     reRender: boolean
+    location: LocationCoords | null
 }
 
 type HospitalDetailParams = {
@@ -22,6 +24,7 @@ export default function HospitalListItem({
     setModal,
     setRerender,
     reRender,
+    location,
 }: HospitalProps) {
     const navigation = useNavigation<NavigationProp<HospitalDetailParams>>()
 
@@ -50,11 +53,11 @@ export default function HospitalListItem({
         <TouchableOpacity
             style={styles.container}
             onPress={() => {
-                if (hospital.longitude && hospital.latitude) {
+                if (location) {
                     navigation.navigate('HospitalDetail', {
                         hospitalId: hospital.hospitalId,
-                        latitude: hospital.latitude,
-                        longitude: hospital.longitude,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
                     })
                 } else {
                     console.log('Hospital data is not fully loaded yet.')

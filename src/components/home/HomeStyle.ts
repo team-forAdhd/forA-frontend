@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 52,
         width: '100%',
-        height: 36,
+        height: 35,
         justifyContent: 'space-between',
         flexDirection: 'row',
         paddingRight: 16,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     carouselContainer: {
         width: '100%',
         height: 380,
-        marginBottom: 20,
+        marginBottom: 50,
     },
     RefreshImage: {
         width: 23,
@@ -192,13 +192,14 @@ export const text = {
     baseText: {
         ...baseText,
         color: '#232323',
-        fontSize: 18,
-        letterSpacing: -0.7,
+        fontSize: 16,
+        lineHeight: 22.4,
     },
     clickText: {
         fontSize: 16,
         fontWeight: '500',
         color: '#52A55D',
+        lineHeight: 22.4,
     },
     rankingText: {
         fontSize: 18,

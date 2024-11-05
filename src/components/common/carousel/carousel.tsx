@@ -53,7 +53,8 @@ export default function CarouselComponent({ setModalTitle }: CarouselProps) {
             sliderWidth={Dimensions.get('window').width}
             itemWidth={382}
             autoplay={true}
-            autoplayInterval={4000}
+            autoplayInterval={4500}
+            enableMomentum={false}
         />
     )
 }

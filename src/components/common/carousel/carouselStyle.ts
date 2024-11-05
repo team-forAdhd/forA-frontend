@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 export const styles = StyleSheet.create({
     slide: {
         position: 'absolute',
-        top: 111,
+        top: 110,
         height: 260,
         justifyContent: 'center',
         alignItems: 'center',
