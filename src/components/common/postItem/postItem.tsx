@@ -122,7 +122,14 @@ export default function PostItem({ post, page }: PostProps) {
                             key={index}
                             style={styles.iconInnerContainer}
                         >
-                            <Image source={imageUri} style={styles.iconIamge} />
+                            <Image
+                                source={imageUri}
+                                style={
+                                    imageUri == require('@/public/assets/views.png')
+                                    ? [styles.iconImage, { marginRight: 2 }]
+                                    : styles.iconImage
+                                }
+                            />
                             <Text
                                 style={
                                     thisPage.text[index] === category
