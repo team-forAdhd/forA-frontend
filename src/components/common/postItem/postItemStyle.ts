@@ -11,8 +11,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'column',
     },
-    iconIamge: {
-        width: 16,
+    iconImage: {
+        width: 18,
         height: 16,
         objectFit: 'contain',
     },

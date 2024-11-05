@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './myPageStyle'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
@@ -94,8 +94,9 @@ export default function MyPage() {
             <View style={styles.header}>
                 <Text style={text.headerText}>{t('my-page')}</Text>
             </View>
-            {/* 배경에 깔리는 회색 배경  */}
-            <View style={styles.grayContainer}></View>
+
+            <View style={styles.scrollContainer}>
+            <ScrollView>
             {/* 프로필 컨테이너 */}
             <View style={styles.ProfileContainer}>
                 <View style={styles.ProfilePositionContainer}>
@@ -122,14 +123,13 @@ export default function MyPage() {
                     </View>
                 </View>
             </View>
+
             {/*내가 쓴 게시물들*/}
             <View
                 style={{
                     width: '100%',
                     alignItems: 'center',
                     zIndex: 3,
-                    position: 'absolute',
-                    top: 277,
                 }}
             >
                 <View style={styles.myWrittingContainer}>
@@ -231,8 +231,52 @@ export default function MyPage() {
                         </TouchableOpacity>
                     ))}
                 </View>
+
+                {/* 맨 밑 화면 (이용약관, 처리방침, 포에이로고, 사업자정보) */}
+                <View style={styles.bottomInfoContainer}>
+                    <TouchableOpacity>
+                        <Text style={text.bottomInfoText}>{t('terms-of-use')}</Text>
+                    </TouchableOpacity>
+                    <Text style={text.bottomInfoVector}>|</Text>
+                    <TouchableOpacity>
+                        <Text style={text.bottomInfoText}>{t('privacy-policy')}</Text>
+                    </TouchableOpacity>
+                    <Text style={text.bottomInfoVector}> | </Text>
+                    <TouchableOpacity>
+                        <Text style={text.bottomInfoText}>{t('locationInfo-termsOfUse')}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.foraContainer}>
+                    <Image
+                        source={require('@/public/assets/forA_gray.png')}
+                        style={styles.bottomInfoForaImage}
+                    />
+
+                    <Text style={text.bottomInfoText}>사업자: 포에이 | 대표자: 박세진</Text>
+                    <Text style={text.bottomInfoText}>사업자등록번호: 836-60-00650</Text>
+                    <Text style={text.bottomInfoText}>주소: 서울특별시 용산구 청파로47길 100 (청파동2가)</Text>
+                    <Text style={text.bottomInfoText}>이용문의/요청: sejin@foradhd.net</Text>
+
+                    <Text style={[text.bottomInfoText, { fontWeight: '700', marginTop: 30, marginBottom: 20 }]}>{t('copyright')}</Text>
+
+                    <Text style={text.bottomInfoText}>자사 사이트에 게시된 모든 콘텐츠 등 저작권은 포에이에게 있습니다.</Text>
+                    <Text style={text.bottomInfoText}>자사의 사이트의 무단적인 수집을 엄격히 금합니다.</Text>
+
+                    <Image
+                        source={require('@/public/assets/icon_group.png')}
+                        style={styles.bottomInfoIconImage}
+                    />
+                    
+                </View>
+
             </View>
+        
+            </ScrollView>
+            </View>
+
             <TabBar />
+            
         </View>
     )
 }
