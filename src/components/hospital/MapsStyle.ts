@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     },
     retryContainer: {
         width: 128,
-        height: 23,
+        height: 33,
         borderRadius: 29,
         backgroundColor: 'white',
         flexDirection: 'row',

@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, Image, Text } from 'react-native'
 import { useState, useEffect, useRef } from 'react'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { styles, text } from './MapsStyle'
 import { LocationCoords, Hospital } from './HospitalMaps'
 
@@ -19,6 +19,14 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
     )
     //위치 재검색
     const [retry, setRetry] = useState<boolean>(false)
+    const [isMapReady, setIsMapReady] = useState<boolean>(false)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsMapReady(true)
+        }, 1000)
+        return () => clearTimeout(timer)
+    }, [])
 
     return (
         <View style={styles.screen}>
@@ -37,7 +45,7 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
                 </TouchableOpacity>
             </View>
 
-            {location && (
+            {isMapReady && location && (
                 <MapView
                     style={styles.map}
                     initialRegion={{
@@ -46,7 +54,6 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
                         latitudeDelta: 0.01,
                         longitudeDelta: 0.01,
                     }}
-                    provider={PROVIDER_GOOGLE}
                 >
                     <Marker
                         coordinate={{

@@ -13,6 +13,7 @@ import HospitalListItem from '../hospitalListItem/hospitalListItem'
 import { foraRibbonStoreContext } from '@/state/forAribbonClickState'
 import { Observer } from 'mobx-react'
 import { Hospital } from '@/components/hospital/HospitalMaps'
+import { LocationCoords } from '@/components/hospital/HospitalMaps'
 
 interface DescriptionProps {
     setDescription: React.Dispatch<React.SetStateAction<boolean>>
@@ -21,6 +22,7 @@ interface DescriptionProps {
     setSort: React.Dispatch<React.SetStateAction<string>>
     setRerender: React.Dispatch<React.SetStateAction<boolean>>
     reRender: boolean
+    location: LocationCoords | null
 }
 
 export default function HospitalBottomSheet({
@@ -30,13 +32,13 @@ export default function HospitalBottomSheet({
     setSort,
     reRender,
     setRerender,
+    location,
 }: DescriptionProps) {
     //정렬 순서 클릭 상태
     const [sortCLick, setSortCLick] = useState<string>('위치순')
     // 폰 스크린 높이
     const screenHeight = Dimensions.get('window').height
-    //정렬순이 처음에는 보이면 안됨
-    const [sortVisible, setSortVisible] = useState<boolean>(false)
+
     // 현재 해당 컴포넌트의 y축 위치
     const translateY = useRef(new Animated.Value(471)).current
     //스크롤해서 내려간 마지막 위치 기억
@@ -169,6 +171,7 @@ export default function HospitalBottomSheet({
                                 setModal={setModal}
                                 setRerender={setRerender}
                                 reRender={reRender}
+                                location={location}
                             />
                         ))}
                 </View>
