@@ -47,10 +47,9 @@ export const styles = StyleSheet.create({
     },
     medList: {
         position: 'absolute',
-        top: 190,
-        width: '95%',
+        top: 200,
+        width: '100%',
         height: '65%',
-        left: 10,
         alignContent: 'center',
     },
     IconImage: {
@@ -61,15 +60,14 @@ export const styles = StyleSheet.create({
     toggle: {
         alignItems: 'center',
         flexDirection: 'row',
-        height: 58,
+        height: 73,
+        paddingLeft: 18,
         borderBottomWidth: 1,
-        borderTopWidth: 1,
-        borderBottomColor: '#BDDDC1',
-        borderTopColor: '#BDDDC1',
+        borderColor: '#BDDDC1',
     },
     toggleInside: {
-        borderBottomWidth: 20,
-        borderTopWidth: 30,
+        borderBottomWidth: 30,
+        borderTopWidth: 25,
         borderBottomColor: '#D6D6D3',
         borderTopColor: '#D6D6D3',
         backgroundColor: '#D6D6D3',
