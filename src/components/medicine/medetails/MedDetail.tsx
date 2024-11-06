@@ -252,13 +252,7 @@ export default function MedDetail(med : any) {
                     />
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate('MedNewReview', {
-                            medId: data.medicineId,
-                        })
-                        //console.log(data.medicineId)
-                        //navigation.navigate('MedReview', data.medicineId)
-                    }}
+                    onPress={() => {navigation.navigate('MedNewReview', data)}}
                     style={styles.reviewButton}
                 >
                     <Text style={text.reviewButtonText}>

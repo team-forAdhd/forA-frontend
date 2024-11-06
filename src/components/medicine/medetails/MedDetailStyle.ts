@@ -18,13 +18,6 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
       },
-    gobackIcon: {
-        position: 'absolute',
-    },
-    gobackSize: {
-        width: 36,
-        height: 36,
-    },
     header: {
         position: 'absolute',
         top: 52,

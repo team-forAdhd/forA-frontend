@@ -17,20 +17,27 @@ import * as ImagePicker from 'expo-image-picker'
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
 import MedSelectModal from './MedSelectModal/MedSelectModal'
 import medStore from '@/state/medState/medStore'
-import { getSingleMedInfoApi } from '@/api/medicine/medListApi'
 import { uploadImageApi } from '@/api/image/imageApi'
 
 interface MedNewReviewProps {
     medId: number
 }
 
-const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
+const truncateItemName = (name: string) => {
+    const bracketIndex = name.indexOf('(')
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
+}
+
+
+export default function MedNewReview(med : any) {
+    const data = med.route.params
+
     // prop으로 medId 받아와야 함
     const { t } = useTranslation('medicine')
 
     const navigation = useNavigation()
     const scrollViewRef = useRef<ScrollView>(null)
-    const [data, setData] = useState<any>(null)
+    //const [data, setData] = useState<any>(null)
 
     const [rating, setRating] = useState(0)
     const [isCoMed, setIsCoMed] = useState(false)
@@ -43,20 +50,6 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     const [age, setAge] = useState('')
     const [sex, setSex] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
-
-    useEffect(() => {
-        // API 호출
-        const fetchData = async () => {
-            try {
-                const medicine = await getSingleMedInfoApi(medId)
-                setData(medicine)
-            } catch (error) {
-                console.error('Error fetching medication data:', error)
-            }
-        }
-
-        fetchData()
-    }, [medId])
 
     const handleImageUpload = async (imageFile: any) => {
         try {
@@ -71,7 +64,8 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
 
     //MedDetail로 이동
     const gotoMedDetail = () => {
-        navigation.navigate('MedDetail' as never)
+        //navigation.navigate('MedDetail' as never)
+        navigation.goBack()
     }
 
     const handleReviewSend = async () => {
@@ -83,7 +77,7 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
             )
 
             const reviewData = {
-                medicineId: medId,
+                medicineId: data.medicineId,
                 coMedications:
                     isCoMed && medStore.selectedMed
                         ? [medStore.selectedMed.id]
@@ -170,22 +164,22 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
             {/* 헤더 */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    style={styles.gobackIcon}
-                    onPress={gotoMedDetail}
+                    onPress={() => {navigation.goBack()}}
                 >
                     <Image
-                        style={styles.gobackSize}
+                        style={styles.gobackIcon}
                         source={require('@/public/assets/cancel-black.png')}
                     />
                 </TouchableOpacity>
-                <View style={styles.titleStyle}>
-                    <Text style={text.titleText}>{t('review-title')}</Text>
-                </View>
+                <Text style={text.titleText}>{t('review-title')}</Text>
+                <View style={styles.gobackIcon} />
             </View>
+
+
             <ScrollView ref={scrollViewRef} style={styles.scrollStyle}>
                 {/* 약 이름, 약 사진 */}
                 <View style={styles.contentBox1}>
-                    <Text style={text.medTitleText}>{data.itemName}</Text>
+                    <Text style={text.medTitleText}>{truncateItemName(data.itemName)}</Text>
                     <View style={styles.imageContainer}>
                         <Image
                             source={{
@@ -532,5 +526,3 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
         </View>
     )
 }
-
-export default MedNewReview
