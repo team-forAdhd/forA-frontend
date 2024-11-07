@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { View, Text, Image, TouchableOpacity, TextInput } from 'react-native'
 import { styles, text } from './changeNickNameStyle'
 import { useNavigation } from '@react-navigation/native'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ProfileStoreContext } from '@/state/signupState'
 
 export default function ChangeNickName() {
@@ -11,6 +11,11 @@ export default function ChangeNickName() {
     const { t } = useTranslation('AccountSettings')
 
     const navigation = useNavigation()
+
+    useEffect(() => {
+        console.log(store)
+    })
+
 
     return (
         <View style={styles.container}>

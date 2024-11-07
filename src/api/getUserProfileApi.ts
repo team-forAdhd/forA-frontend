@@ -1,5 +1,5 @@
-import axios, { AxiosError } from 'axios';
-import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from './login/loginApi'
 
 interface UserProfile {
   accessToken: string;
@@ -9,23 +9,28 @@ interface UserProfile {
   profileImageUrl: string;
 }
 
-export const getUserProfileApi = async (accessToken: string): Promise<UserProfile> => {
+
+export const getUserProfileApi = async () => {
   try {
-    const response = await axios.get<UserProfile>(`${API_URL}/api/v1/user/profile/detail`, {
+    const token = await AsyncStorage.getItem('accessToken')
+
+    const response = await apiClient.get<UserProfile>(`/user`, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       timeout: 5000, // 5초 타임아웃 설정
     });
 
-    return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      throw new Error('Error while fetching user profile: ' + axiosError.message);
+    if (response.status === 200) {
+      console.log('유저 상세 프로필 불러오기 성공')
+
+      return response.data
+
     } else {
-      throw new Error('Unknown error occurred while fetching user profile.');
+      console.log('응답 실패, 상태 코드:', response.status)
     }
+  } catch (error) {
+    console.error('Error fetching user profile detail:', error)
+    throw error
   }
 };
