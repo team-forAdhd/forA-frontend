@@ -12,12 +12,14 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import MedReview from './MedReview'
 import { RootStackParamList } from '@/components/navigation'
+import { medBookmarkApi } from '@/api/medicine/medBookmarkApi'
 
 
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('(')
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
+
 
 export default function MedDetail(med : any) {
     const data = med.route.params
@@ -27,10 +29,20 @@ export default function MedDetail(med : any) {
     const { t: dataT } = useTranslation('medDetail')
     const [activeTab, setActiveTab] = useState('정보')
     const [activeButton, setActiveButton] = useState('all')
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(med.route.params.favorite)
     const scrollViewRef = useRef<ScrollView>(null)
     const sectionPositions = useRef<{ [key: string]: number }>({})
     
     const medInfoList = ['effect', 'usage', 'precaution', 'med-info', 'company']
+
+    const postBookmark = async (medId : number) => {
+        const bookmark = await medBookmarkApi(medId)
+        setIsBookmarked(true)
+    }
+
+    useEffect(() => {
+        setIsBookmarked(isBookmarked)
+    })
 
     const handleLeftArrowPress = () => {
         //navigation.navigate('MedicineMain' as never)
@@ -240,17 +252,22 @@ export default function MedDetail(med : any) {
 
             {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
-                <TouchableOpacity>
+                {data.favorite || isBookmarked
+                ? (
                     <Image
-                        source={
-                            require('@/public/assets/scrabButton.png')
-                            // .isBookmarked
-                            //     ? require('@/public/assets/clickScrabButton.png')
-                            //     : require('@/public/assets/scrabButton.png')
-                        }
+                        source={require('@/public/assets/clickScrabButton.png')}
                         style={styles.scrapIamge}
                     />
-                </TouchableOpacity>
+                )
+                : (
+                    <TouchableOpacity onPress={() => {postBookmark(data.medicineId)}}>
+                    <Image
+                        source={require('@/public/assets/scrabButton.png')}
+                        style={styles.scrapIamge}
+                    />
+                    </TouchableOpacity>
+                )}
+
                 <TouchableOpacity
                     onPress={() => {navigation.navigate('MedNewReview', data)}}
                     style={styles.reviewButton}
