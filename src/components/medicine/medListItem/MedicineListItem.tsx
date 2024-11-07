@@ -37,8 +37,6 @@ const MedicineListItem: React.FC<MedicineListItemProps> = ({ item }) => {
         array.push(name.substring(0, index))
         array.push(name.substring(index, name.length))
 
-        console.log(array)
-
         return array
     }
 
