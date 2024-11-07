@@ -29,7 +29,7 @@ export default function MedDetail(med : any) {
     const { t: dataT } = useTranslation('medDetail')
     const [activeTab, setActiveTab] = useState('정보')
     const [activeButton, setActiveButton] = useState('all')
-    const [isBookmarked, setIsBookmarked] = useState<boolean>(med.route.params.favorite)
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite)
     const scrollViewRef = useRef<ScrollView>(null)
     const sectionPositions = useRef<{ [key: string]: number }>({})
     

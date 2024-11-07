@@ -40,7 +40,7 @@ export default function MedNewReview(med : any) {
     //const [data, setData] = useState<any>(null)
 
     const [rating, setRating] = useState(0)
-    const [isCoMed, setIsCoMed] = useState(false)
+    const [isCoMed, setIsCoMed] = useState(true)
     const [coMedName, setCoMedName] = useState('')
     const [coMedId, setCoMedId] = useState(0)
     const [content, setContent] = useState('')
@@ -87,7 +87,6 @@ export default function MedNewReview(med : any) {
                 grade: rating,
             }
             await sendMedReviewApi(reviewData)
-            navigation.navigate('MedDetail' as never)
             console.log('Review sent successfully:', reviewData)
         } catch (error) {
             console.error('Error sending review:', error)
@@ -96,7 +95,7 @@ export default function MedNewReview(med : any) {
 
     const handleReviewButton = () => {
         handleReviewSend()
-        navigation.navigate('MedDetail' as never)
+        navigation.navigate('Home' as never)
     }
 
     const onRatingCompleted = (rating: number) => {
@@ -158,6 +157,24 @@ export default function MedNewReview(med : any) {
             (isCoMed ? coMedName.length > 0 : true)
         )
     }
+
+    useEffect (() => {
+        setRating(rating)
+        setIsCoMed(isCoMed)
+        setContent(content)
+        setAttachedPhotos(attachedPhotos)
+        setAge(age)
+        setSex(sex)
+        /*
+        console.log(rating)
+        console.log(isCoMed)
+        console.log(coMedId)
+        console.log(content)
+        console.log(attachedPhotos)
+        console.log(age)
+        console.log(sex)
+        */
+    })
 
     return (
         <View style={styles.container}>
@@ -223,13 +240,13 @@ export default function MedNewReview(med : any) {
                     {/* 있/없 확인 */}
                     <TouchableOpacity
                         style={styles.coMedClick}
-                        onPress={handleCoMed}
+                        onPress={() => {handleCoMed()}}
                     >
                         <Image
                             source={
                                 isCoMed
-                                    ? require('@/public/assets/check-icon.png')
-                                    : require('@/public/assets/checkbox-icon.png')
+                                    ? require('@/public/assets/checkbox-icon.png')
+                                    : require('@/public/assets/check-icon.png')
                             }
                             style={styles.checkboxIcon}
                         />
