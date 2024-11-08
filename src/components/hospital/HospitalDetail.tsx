@@ -9,6 +9,7 @@ import { RootStackParamList } from '../navigation'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { getHospitalDetails } from '@/api/hospital/getHospitalDetailApi'
 import HospitalReviewList from './HospitalReviewList'
+import { postBookmark } from '@/api/hospital/postBookmarkApi'
 
 interface HospitalProps {
     hospitalId: string
@@ -78,6 +79,25 @@ export default function HospitalDetail({
     const [latitudeState, setLatitude] = useState<number>(latitude)
     const [longtitudeState, setLongtitude] = useState<number>(longitude)
     const [doctorProfile, setDoctorProfile] = useState<string>('')
+
+    // 북마크 상태
+    const [bookmark, setBookmark] = useState<boolean>(false)
+    const [reRender, setRerender] = useState<boolean>(false)
+
+    const handleToggleBookmark = async () => {
+        try {
+            // 북마크 상태 반전
+            const newBookmarkState = !hospital?.isBookmarked
+            setBookmark(newBookmarkState)
+            // 반전된 상태에 따라 API 호출
+            const response = await postBookmark(hospitalId, newBookmarkState)
+            console.log('Bookmark status updated:', response)
+
+            setRerender(!reRender) //아이콘 ui반응 빨리 업데이트 시키려고 부모 컴포넌트의 state를 변경해서 리렌더링해주기
+        } catch (error) {
+            console.error('Error updating bookmark:', error)
+        }
+    }
     useEffect(() => {
         const fetchHospitalData = async () => {
             setIsLoading(true)
@@ -209,6 +229,7 @@ export default function HospitalDetail({
                                             longitude: hospital.longitude,
                                         }}
                                         image={require('@/public/assets/clickLocation.png')}
+                                        style={styles.IconImage}
                                     />
                                 </MapView>
                             )}
@@ -262,7 +283,7 @@ export default function HospitalDetail({
                             <Text style={[text.doctorText, { marginRight: 6 }]}>
                                 {hospital && hospital.operationStatus === 'OPEN'
                                     ? '진료중'
-                                    : '쉬는중'}
+                                    : '진료종료'}
                             </Text>
                             <Text style={text.timeText}>
                                 {(hospital && hospital.operationStartHour) || 0}
@@ -427,6 +448,15 @@ export default function HospitalDetail({
                                     <Text style={text.faintText}>
                                         {t('not-ready')}
                                     </Text>
+                                    {/*리뷰 쓰기 버튼 */}
+                                    <TouchableOpacity
+                                        style={styles.writeReviewContainer}
+                                    >
+                                        <Text style={text.activeText}>
+                                            {t('write-review')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <View style={{ height: 33 }} />
                                 </View>
                             )}
                         </View>
@@ -452,7 +482,7 @@ export default function HospitalDetail({
 
             {/*병원 평가하고 스크랩할 수 있는 버튼 바 */}
             <View style={[styles.flex, styles.ButtonsContainer]}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleToggleBookmark}>
                     <Image
                         source={
                             hospital && hospital.isBookmarked

@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: 20,
         shadowColor: 'f5f5f5', // 그림자 색상 설정
         shadowOffset: { width: 0, height: -2 }, // 그림자 위치를 위쪽으로 설정
-        shadowOpacity: 0.85, // 그림자 투명도 설정
+        shadowOpacity: 0.45, // 그림자 투명도 설정
         shadowRadius: 3.84, // 그림자의 blur 반경 설정
         zIndex: 30,
     },

@@ -1,6 +1,13 @@
 import HomeAccount from './homeAccount'
 import { styles, text } from './homeModalStyle'
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    Linking,
+    Pressable,
+} from 'react-native'
 
 interface HomeModalProps {
     modalTitle: string
@@ -37,9 +44,33 @@ export default function HomeModal({
                         {object.title && (
                             <Text style={text.borderText}>{object.title}</Text>
                         )}
-                        {object.content && (
-                            <Text style={text.basicText}>{object.content}</Text>
-                        )}
+                        {object.content &&
+                            (object.title == '문의사항' ? (
+                                <Pressable
+                                    onPress={async () => {
+                                        const url =
+                                            object.content.split(': ')[1]
+
+                                        const supported =
+                                            await Linking.canOpenURL(url)
+                                        if (supported) {
+                                            await Linking.openURL(url)
+                                        } else {
+                                            console.log(
+                                                `Can't open URL: ${url}`,
+                                            )
+                                        }
+                                    }}
+                                >
+                                    <Text style={text.basicText}>
+                                        {object.content}
+                                    </Text>
+                                </Pressable>
+                            ) : (
+                                <Text style={text.basicText}>
+                                    {object.content}
+                                </Text>
+                            ))}
                     </View>
                 ))}
             {modalTitle === 'support' && <HomeAccount />}

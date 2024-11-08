@@ -34,7 +34,10 @@ export const support = [
     },
     {
         title: '문의사항',
-        content:
-            '포에이 카카오톡 채널: http://pf.kakao.com/_HGqln 포에이 이메일: foradhd2024@gmail.com',
+        content: '포에이 카카오톡 채널: http://pf.kakao.com/_HGqln',
+    },
+    {
+        title: '',
+        content: '포에이 이메일: foradhd2024@gmail.com',
     },
 ]
