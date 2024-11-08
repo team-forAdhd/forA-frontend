@@ -192,7 +192,7 @@ export default function MyPage() {
                             onPress={() => {
                                 setting === '계정 설정' &&
                                     navigation.navigate(
-                                        'AccountSettings' as never,
+                                        'AccountSettings' as never
                                     )
                             }}
                         >
