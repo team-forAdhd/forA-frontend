@@ -1,32 +1,41 @@
 import { TitleTextIcon } from '@/public/assets/SvgComponents'
 import { StyleProp, StyleSheet, TextStyle } from 'react-native'
 
+//자주 반복되는 색 객체로 빼서 사용
+const color = {
+  primary: '#52A35D',
+  inactive: '#949494',
+  inactiveBottom: '#EFEFF0',
+  ribbon: '#FF5D5D',
+  normal: '#232323',
+  faintBlack: '#555555',
+  backgroundGray: '#EDEDEA',
+  faintGray: '#EEEEEE',
+}
+
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
       },
-    gobackIcon: {
+    header: {
         position: 'absolute',
-    },
-    gobackSize: {
-        width: 36,
-        height: 36,
-    },
-      header: {
-        top: 50,
-        marginBottom: 50,
-        height: 36,
+        top: 52,
         width: '100%',
+        height: 36,
         flexDirection: 'row',
-      },
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        zIndex: 2, //ZIndex를 조정해서 터치 이벤트 문제 해소 , 캐러셀 컴포넌트가 터치이벤트를 가로채서 헤더에 있는 아이콘의 터치가 안먹고 있었음
+    },
       titleStyle: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
       },
       tabContainer: {
-        width: '95%',
+        width: '100%',
         left: 11,
         alignItems: 'center',
         flexDirection: 'row',
@@ -40,6 +49,40 @@ export const styles = StyleSheet.create({
       activeTab: {
         borderBottomWidth: 2,
         borderBottomColor: '#52A35D',
+      },
+      topButtonContainer: {
+          position: 'absolute',
+          top: 106,
+          flexDirection: 'row',
+          alignSelf: 'center',
+          width: '92%',
+      },
+      activeContainer: {
+          flex: 1,
+          width: '50%',
+          height: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+          borderBottomColor: color.primary,
+          borderBottomWidth: 4,
+      },
+      inactiveContainer: {
+          flex: 1,
+          width: '50%',
+          height: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+          borderBottomColor: color.inactiveBottom,
+          borderBottomWidth: 2,
+      },
+      scrollContainer: {
+        position: 'absolute',
+        top: 146,
+        width: '100%',
+        height: 590,
+        paddingTop: 10,
       },
       infoContainer: {
         padding: 16,
@@ -62,8 +105,8 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-       marginTop: 5,
-       marginBottom: 20,
+        marginTop: 15,
+        marginBottom: 40,
       },
       clickedButton: {
         borderColor: '#52A35D',
@@ -78,28 +121,40 @@ export const styles = StyleSheet.create({
         width: '33%',
         alignItems: 'center',
       },
-      revivewButtonContainer:{
-        flexDirection: 'row',
-        position: 'absolute',
+      contentTitle: {
         width: '100%',
-        height: 100,
+        height: 55,
+      },
+      revivewButtonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 16,
+        backgroundColor: 'white',
+        shadowColor: color.inactive,
+        shadowOffset: {
+            // 그림자의 위치
+            width: 0,
+            height: -2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        zIndex: 3,
+        paddingTop: 18,
+        paddingBottom: 34,
+        position: 'absolute',
         bottom: 0,
         justifyContent: 'space-around',
-        backgroundColor: 'white',
-        shadowColor: 'f5f5f5', // 그림자 색상 설정
-        shadowOffset: { width: 0, height: -2 }, // 그림자 위치를 위쪽으로 설정
-        shadowOpacity: 0.1, // 그림자 투명도 설정
-        shadowRadius: 3.84, // 그림자의 blur 반경 설정
-        zIndex: 30,
+        height: 100,
       },
       reviewButton: {
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
         alignItems: 'center',
-        top: 16,
-        width: '80%',
+        width: '78.5%',
         height: 48,
+        backgroundColor: color.primary,
         borderRadius: 8,
-        backgroundColor: '#52A55D',
     },
     bookmarkContainer: {
         top: 16,
@@ -108,40 +163,52 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: -15,
     },
+    IconImage: {
+        width: 35,
+        height: 35,
+        objectFit: 'contain',
+    },
     scrapIamge: {
         width: 48,
         height: 48,
     },
 })
 
+const baseText = {
+  fontFamily: 'Pretendard',
+  fontStyle: 'normal',
+  fontWeight: '400',
+}
+
 export const text = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
-    titleText: {
-        color: '#000',
+    headerText: {
+        color: color.normal,
         fontSize: 18,
-        fontWeight: '600',
+        fontWeight: 'bold',
+        letterSpacing: -0.7,
         lineHeight: 22.4,
-        // marginBottom: -5,
+        textAlign: 'center',
     },
     activeTabText: {
-        color: '#52A55D',
-        fontSize: 18,
-        fontWeight: '600',
-        lineHeight: 22.4,
+      fontWeight: '800',
+      color: color.primary,
+      fontSize: 18,
+      lineHeight: 22.4,
     },
     inactiveTabText: {
-        color: '#949494',
-        fontSize: 18,
-        fontWeight: '500',
-        lineHeight: 22.4,
+      ...baseText,
+      color: color.inactive,
+      fontSize: 18,
+      lineHeight: 22.4,
     },
     itemNameText: {
         color: '#232323',
         fontSize: 20,
         fontWeight: '600',
         lineHeight: 28,
-        marginBottom: -5,
+        marginBottom: -10,
     },
     itemEngNameText: {
         color: '#232323',
@@ -159,14 +226,14 @@ export const text = {
     },
     activeButtonText:{
         color: '#52A55D',
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
         lineHeight: 30.6,
         letterSpacing: -0.7
     },
     inactiveButtonText:{
         color: '#555',
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
         lineHeight: 30.6,
         letterSpacing: -0.7

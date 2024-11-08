@@ -17,23 +17,30 @@ import * as ImagePicker from 'expo-image-picker'
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
 import MedSelectModal from './MedSelectModal/MedSelectModal'
 import medStore from '@/state/medState/medStore'
-import { getSingleMedInfoApi } from '@/api/medicine/medListApi'
 import { uploadImageApi } from '@/api/image/imageApi'
 
 interface MedNewReviewProps {
     medId: number
 }
 
-const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
+const truncateItemName = (name: string) => {
+    const bracketIndex = name.indexOf('(')
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
+}
+
+
+export default function MedNewReview(med : any) {
+    const data = med.route.params
+
     // prop으로 medId 받아와야 함
     const { t } = useTranslation('medicine')
 
     const navigation = useNavigation()
     const scrollViewRef = useRef<ScrollView>(null)
-    const [data, setData] = useState<any>(null)
+    //const [data, setData] = useState<any>(null)
 
     const [rating, setRating] = useState(0)
-    const [isCoMed, setIsCoMed] = useState(false)
+    const [isCoMed, setIsCoMed] = useState(true)
     const [coMedName, setCoMedName] = useState('')
     const [coMedId, setCoMedId] = useState(0)
     const [content, setContent] = useState('')
@@ -43,20 +50,6 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
     const [age, setAge] = useState('')
     const [sex, setSex] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
-
-    useEffect(() => {
-        // API 호출
-        const fetchData = async () => {
-            try {
-                const medicine = await getSingleMedInfoApi(medId)
-                setData(medicine)
-            } catch (error) {
-                console.error('Error fetching medication data:', error)
-            }
-        }
-
-        fetchData()
-    }, [medId])
 
     const handleImageUpload = async (imageFile: any) => {
         try {
@@ -71,7 +64,8 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
 
     //MedDetail로 이동
     const gotoMedDetail = () => {
-        navigation.navigate('MedDetail' as never)
+        //navigation.navigate('MedDetail' as never)
+        navigation.goBack()
     }
 
     const handleReviewSend = async () => {
@@ -83,7 +77,7 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
             )
 
             const reviewData = {
-                medicineId: medId,
+                medicineId: data.medicineId,
                 coMedications:
                     isCoMed && medStore.selectedMed
                         ? [medStore.selectedMed.id]
@@ -93,7 +87,6 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
                 grade: rating,
             }
             await sendMedReviewApi(reviewData)
-            navigation.navigate('MedDetail' as never)
             console.log('Review sent successfully:', reviewData)
         } catch (error) {
             console.error('Error sending review:', error)
@@ -102,7 +95,7 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
 
     const handleReviewButton = () => {
         handleReviewSend()
-        navigation.navigate('MedDetail' as never)
+        navigation.navigate('Home' as never)
     }
 
     const onRatingCompleted = (rating: number) => {
@@ -165,27 +158,45 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
         )
     }
 
+    useEffect (() => {
+        setRating(rating)
+        setIsCoMed(isCoMed)
+        setContent(content)
+        setAttachedPhotos(attachedPhotos)
+        setAge(age)
+        setSex(sex)
+        /*
+        console.log(rating)
+        console.log(isCoMed)
+        console.log(coMedId)
+        console.log(content)
+        console.log(attachedPhotos)
+        console.log(age)
+        console.log(sex)
+        */
+    })
+
     return (
         <View style={styles.container}>
             {/* 헤더 */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    style={styles.gobackIcon}
-                    onPress={gotoMedDetail}
+                    onPress={() => {navigation.goBack()}}
                 >
                     <Image
-                        style={styles.gobackSize}
+                        style={styles.gobackIcon}
                         source={require('@/public/assets/cancel-black.png')}
                     />
                 </TouchableOpacity>
-                <View style={styles.titleStyle}>
-                    <Text style={text.titleText}>{t('review-title')}</Text>
-                </View>
+                <Text style={text.titleText}>{t('review-title')}</Text>
+                <View style={styles.gobackIcon} />
             </View>
+
+
             <ScrollView ref={scrollViewRef} style={styles.scrollStyle}>
                 {/* 약 이름, 약 사진 */}
                 <View style={styles.contentBox1}>
-                    <Text style={text.medTitleText}>{data.itemName}</Text>
+                    <Text style={text.medTitleText}>{truncateItemName(data.itemName)}</Text>
                     <View style={styles.imageContainer}>
                         <Image
                             source={{
@@ -229,13 +240,13 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
                     {/* 있/없 확인 */}
                     <TouchableOpacity
                         style={styles.coMedClick}
-                        onPress={handleCoMed}
+                        onPress={() => {handleCoMed()}}
                     >
                         <Image
                             source={
                                 isCoMed
-                                    ? require('@/public/assets/check-icon.png')
-                                    : require('@/public/assets/checkbox-icon.png')
+                                    ? require('@/public/assets/checkbox-icon.png')
+                                    : require('@/public/assets/check-icon.png')
                             }
                             style={styles.checkboxIcon}
                         />
@@ -532,5 +543,3 @@ const MedNewReview: React.FC<MedNewReviewProps> = ({ medId }) => {
         </View>
     )
 }
-
-export default MedNewReview

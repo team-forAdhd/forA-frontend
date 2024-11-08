@@ -178,7 +178,13 @@ export default function MedScreen() {
                                     fetchMedListByIngredient(ingredient)
                                 }
                             >
-                                <View style={styles.toggle}>
+                                <View
+                                    style={
+                                        ingredient === ingredientList[0]
+                                            ? [styles.toggle, { borderTopWidth: 1, borderColor: '#BDDDC1' }]
+                                            : styles.toggle
+                                    }
+                                >
                                     <Text style={text.ingredientText}>
                                         {ingredient}
                                     </Text>

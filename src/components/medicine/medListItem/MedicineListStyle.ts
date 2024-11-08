@@ -6,11 +6,12 @@ export const styles = StyleSheet.create({
         borderWidth: 20,
         borderColor: 'white',
         borderRadius: 20,
-        width: '100%',
-        height: 90,
+        width: '92%',
+        height: 100,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-start',
+        alignSelf: 'center',
         alignItems: 'center',
         paddingHorizontal: 9,
         paddingVertical: 10,
@@ -61,6 +62,7 @@ export const text = {
         fontWeight: '500',
         lineHeight: 30.6,
         letterSpacing: -0.6,
+        top: -10,
     },
 } as {
     [key: string]: StyleProp<TextStyle>

@@ -12,12 +12,14 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import MedReview from './MedReview'
 import { RootStackParamList } from '@/components/navigation'
+import { medBookmarkApi } from '@/api/medicine/medBookmarkApi'
 
 
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('(')
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
+
 
 export default function MedDetail(med : any) {
     const data = med.route.params
@@ -27,8 +29,20 @@ export default function MedDetail(med : any) {
     const { t: dataT } = useTranslation('medDetail')
     const [activeTab, setActiveTab] = useState('정보')
     const [activeButton, setActiveButton] = useState('all')
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite)
     const scrollViewRef = useRef<ScrollView>(null)
     const sectionPositions = useRef<{ [key: string]: number }>({})
+    
+    const medInfoList = ['effect', 'usage', 'precaution', 'med-info', 'company']
+
+    const postBookmark = async (medId : number) => {
+        const bookmark = await medBookmarkApi(medId)
+        setIsBookmarked(true)
+    }
+
+    useEffect(() => {
+        setIsBookmarked(isBookmarked)
+    })
 
     const handleLeftArrowPress = () => {
         //navigation.navigate('MedicineMain' as never)
@@ -111,59 +125,49 @@ export default function MedDetail(med : any) {
             {/* 헤더 */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    style={styles.gobackIcon}
-                    onPress={handleLeftArrowPress}
+                    onPress={() => {
+                        navigation.goBack()
+                    }}
                 >
                     <Image
-                        style={styles.gobackSize}
                         source={require('@/public/assets/goback.png')}
+                        style={styles.IconImage}
                     />
                 </TouchableOpacity>
-                <View style={styles.titleStyle}>
-                    <Text style={text.titleText}>
-                        {data ? truncateItemName(data.itemName) : t('review')}
-                    </Text>
-                </View>
+                <Text style={text.headerText}>
+                    {data ? truncateItemName(data.itemName) : t('review')}
+                </Text>
+                <View style={styles.IconImage} />
             </View>
-            <View style={styles.tabContainer}>
-                <TouchableOpacity
+
+            {/* 상단 버튼탭 */}
+            <View style={styles.topButtonContainer}>
+                {['정보', '리뷰'].map((tab) => (
+                    <TouchableOpacity
+                        onPress={() => setActiveTab(tab)}
                     style={[
-                        styles.tab,
-                        activeTab === '정보' && styles.activeTab,
+                        activeTab === tab
+                            ? styles.activeContainer
+                            : styles.inactiveContainer
                     ]}
-                    onPress={() => setActiveTab('정보')}
-                >
-                    <Text
-                        style={
-                            activeTab === '정보'
-                                ? text.activeTabText
-                                : text.inactiveTabText
-                        }
                     >
-                        {t('info')}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === '리뷰' && styles.activeTab,
-                    ]}
-                    onPress={() => setActiveTab('리뷰')}
-                >
-                    <Text
-                        style={
-                            activeTab === '리뷰'
-                                ? text.activeTabText
-                                : text.inactiveTabText
-                        }
-                    >
-                        {t('review')}
-                    </Text>
-                </TouchableOpacity>
+                        <Text
+                            style={
+                                activeTab === tab
+                                    ? text.activeTabText
+                                    : text.inactiveTabText
+                            }
+                        >
+                            {tab}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
             </View>
 
             {/* 바디 */}
-            <ScrollView ref={scrollViewRef}>
+            <ScrollView ref={scrollViewRef}
+                        style={styles.scrollContainer}
+            >
                 {activeTab === '정보' ? (
                     <View style={styles.infoContainer}>
                         <View style={styles.imageContainer}>
@@ -204,145 +208,42 @@ export default function MedDetail(med : any) {
                                     {t('all')}
                                 </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    activeButton === 'effect'
-                                        ? styles.clickedButton
-                                        : styles.generalButton
-                                }
-                                onPress={() => handleScrollToSection('effect')}
-                            >
-                                <Text
+
+                            {medInfoList.map((info) => (
+                                <TouchableOpacity
                                     style={
-                                        activeButton === 'effect'
-                                            ? text.activeButtonText
-                                            : text.inactiveButtonText
+                                        activeButton === info
+                                            ? styles.clickedButton
+                                            : styles.generalButton
                                     }
+                                    onPress={() => handleScrollToSection(info)}
                                 >
-                                    {t('effect')}
+                                    <Text
+                                        style={
+                                            activeButton === info
+                                                ? text.activeButtonText
+                                                : text.inactiveButtonText
+                                        }
+                                    >
+                                    {t(info)}
                                 </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    activeButton === 'usage'
-                                        ? styles.clickedButton
-                                        : styles.generalButton
-                                }
-                                onPress={() => handleScrollToSection('usage')}
-                            >
-                                <Text
-                                    style={
-                                        activeButton === 'usage'
-                                            ? text.activeButtonText
-                                            : text.inactiveButtonText
-                                    }
-                                >
-                                    {t('usage')}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        
+                        {medInfoList.map((info) => (
+                            <View onLayout={handleLayout(info)}>
+                                <View style={styles.contentTitle}>
+                                    <Text style={text.contentTitleText}>
+                                        {t(info)}
+                                    </Text>
+                                </View>
+                                <Text style={text.contentText}>
+                                    {dataT(getTranslationKey(med.medId, info))}
                                 </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    activeButton === 'precaution'
-                                        ? styles.clickedButton
-                                        : styles.generalButton
-                                }
-                                onPress={() =>
-                                    handleScrollToSection('precaution')
-                                }
-                            >
-                                <Text
-                                    style={
-                                        activeButton === 'precaution'
-                                            ? text.activeButtonText
-                                            : text.inactiveButtonText
-                                    }
-                                >
-                                    {t('precaution')}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    activeButton === 'med-info'
-                                        ? styles.clickedButton
-                                        : styles.generalButton
-                                }
-                                onPress={() =>
-                                    handleScrollToSection('med-info')
-                                }
-                            >
-                                <Text
-                                    style={
-                                        activeButton === 'med-info'
-                                            ? text.activeButtonText
-                                            : text.inactiveButtonText
-                                    }
-                                >
-                                    {t('med-info')}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    activeButton === 'company'
-                                        ? styles.clickedButton
-                                        : styles.generalButton
-                                }
-                                onPress={() => handleScrollToSection('company')}
-                            >
-                                <Text
-                                    style={
-                                        activeButton === 'company'
-                                            ? text.activeButtonText
-                                            : text.inactiveButtonText
-                                    }
-                                >
-                                    {t('company')}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View onLayout={handleLayout('effect')}>
-                            <Text style={text.contentTitleText}>
-                                {t('effect')}
-                            </Text>
-                            <Text style={text.contentText}>
-                                {dataT(getTranslationKey(med.medId, 'effect'))}
-                            </Text>
-                        </View>
-                        <View onLayout={handleLayout('usage')}>
-                            <Text style={text.contentTitleText}>
-                                {t('usage')}
-                            </Text>
-                            <Text style={text.contentText}>
-                                {dataT(getTranslationKey(med.medId, 'usage'))}{' '}
-                                {/* 번역 처리 */}
-                            </Text>
-                        </View>
-                        <View onLayout={handleLayout('precaution')}>
-                            <Text style={text.contentTitleText}>
-                                {t('precaution')}
-                            </Text>
-                            <Text style={text.contentText}>
-                                {dataT(getTranslationKey(med.medId, 'precaution'))}{' '}
-                                {/* 번역 처리 */}
-                            </Text>
-                        </View>
-                        <View onLayout={handleLayout('med-info')}>
-                            <Text style={text.contentTitleText}>
-                                {t('med-info')}
-                            </Text>
-                            <Text style={text.contentText}>
-                                {dataT(getTranslationKey(med.medId, 'med-info'))}{' '}
-                                {/* 번역 처리 */}
-                            </Text>
-                        </View>
-                        <View onLayout={handleLayout('company')}>
-                            <Text style={text.contentTitleText}>
-                                {t('company')}
-                            </Text>
-                            <Text style={text.contentText}>
-                                {dataT(getTranslationKey(med.medId, 'company'))}{' '}
-                                {/* 번역 처리 */}
-                            </Text>
-                        </View>
+                            </View>
+                        ))}
+
                     </View>
                 ) : (
                     <MedReview medId={data.medicineId} />
@@ -351,37 +252,32 @@ export default function MedDetail(med : any) {
 
             {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
-                <View style={styles.bookmarkContainer}>
-                    <TouchableOpacity>
-                        <Image
-                            source={
-                                require('@/public/assets/scrabButton.png')
-                                // .isBookmarked
-                                //     ? require('@/public/assets/clickScrabButton.png')
-                                //     : require('@/public/assets/scrabButton.png')
-                            }
-                            style={styles.scrapIamge}
-                        />
+                {data.favorite || isBookmarked
+                ? (
+                    <Image
+                        source={require('@/public/assets/clickScrabButton.png')}
+                        style={styles.scrapIamge}
+                    />
+                )
+                : (
+                    <TouchableOpacity onPress={() => {postBookmark(data.medicineId)}}>
+                    <Image
+                        source={require('@/public/assets/scrabButton.png')}
+                        style={styles.scrapIamge}
+                    />
                     </TouchableOpacity>
-                </View>
-                {/* 리뷰버튼탭 */}
-                <View style={styles.reviewButton}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            
-                            navigation.navigate('MedNewReview', {
-                                medId: data.medicineId,
-                            })
-                            //console.log(data.medicineId)
-                            //navigation.navigate('MedReview', data.medicineId)
-                        }}
-                    >
-                        <Text style={text.reviewButtonText}>
-                            {t('review-write-1')}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                )}
+
+                <TouchableOpacity
+                    onPress={() => {navigation.navigate('MedNewReview', data)}}
+                    style={styles.reviewButton}
+                >
+                    <Text style={text.reviewButtonText}>
+                        {t('review-write-1')}
+                    </Text>
+                </TouchableOpacity>
             </View>
+
         </View>
     )
 }

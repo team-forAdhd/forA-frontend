@@ -1,5 +1,16 @@
-import { TitleTextIcon } from '@/public/assets/SvgComponents'
 import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+
+//자주 반복되는 색 객체로 빼서 사용
+const color = {
+  primary: '#52A35D',
+  inactive: '#949494',
+  inactiveBottom: '#EFEFF0',
+  ribbon: '#FF5D5D',
+  normal: '#232323',
+  faintBlack: '#555555',
+  backgroundGray: '#EDEDEA',
+  faintGray: '#EEEEEE',
+}
 
 export const styles = StyleSheet.create({
     container: {
@@ -7,27 +18,28 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
       },
     scrollStyle: {
-        paddingBottom: 300,
-        flex:1,
+      position: 'absolute',
+      top: 100,
+      height: 660,
+      paddingBottom: 300,
+      alignSelf: 'center',
+      flex: 1,
     },
     gobackIcon: {
-        position: 'absolute',
-        marginTop: 55,
-        marginLeft: 12,
-    },
-    gobackSize: {
-        width: 24,
-        height: 24,
+        width: 28,
+        height: 28,
+        objectFit: 'contain',
     },
       header: {
-        top: 0,
-        height: 90,
+        position: 'absolute',
+        top: 52,
         width: '100%',
+        height: 36,
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderBottomColor: '#EEEEEE',
-        borderBottomWidth: 2,
-        zIndex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        zIndex: 2,
       },
       titleStyle: {
         justifyContent: 'center',
@@ -260,11 +272,12 @@ export const text = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     titleText: {
-        color: '#000',
-        fontSize: 18,
-        fontWeight: '600',
-        lineHeight: 22.4,
-        marginTop: 50,
+      color: color.normal,
+      fontSize: 18,
+      fontWeight: 'bold',
+      letterSpacing: -0.7,
+      lineHeight: 22.4,
+      textAlign: 'center',
     },
     medTitleText: {
         color: '#232323',
