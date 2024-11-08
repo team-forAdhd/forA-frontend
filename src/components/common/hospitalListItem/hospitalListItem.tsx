@@ -60,7 +60,7 @@ export default function HospitalListItem({
                         longitude: location.longitude,
                     })
                 } else {
-                    console.log('Hospital data is not fully loaded yet.')
+                    console.log('병원 데이터 로드 안됨')
                 }
             }}
         >

@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
         zIndex: 10,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 2 },
-        shadowOpacity: 0.75,
+        shadowOpacity: 0.45,
         shadowRadius: 3.84,
     },
     IconImage: {

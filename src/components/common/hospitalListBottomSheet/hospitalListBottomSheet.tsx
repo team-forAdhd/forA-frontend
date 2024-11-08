@@ -23,6 +23,8 @@ interface DescriptionProps {
     setRerender: React.Dispatch<React.SetStateAction<boolean>>
     reRender: boolean
     location: LocationCoords | null
+    setRadius: React.Dispatch<React.SetStateAction<number>>
+    setFilter: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function HospitalBottomSheet({
@@ -33,6 +35,8 @@ export default function HospitalBottomSheet({
     reRender,
     setRerender,
     location,
+    setRadius,
+    setFilter,
 }: DescriptionProps) {
     //정렬 순서 클릭 상태
     const [sortCLick, setSortCLick] = useState<string>('위치순')
@@ -40,43 +44,53 @@ export default function HospitalBottomSheet({
     const screenHeight = Dimensions.get('window').height
 
     // 현재 해당 컴포넌트의 y축 위치
-    const translateY = useRef(new Animated.Value(471)).current
+    const translateY = useRef(new Animated.Value(601)).current
     //스크롤해서 내려간 마지막 위치 기억
     const lastY = useRef<number>(0)
     //포에이 리본 병원 설명을 띄우기 위해 클릭 카운트를 확인하기 위한 store
     const store = useContext(foraRibbonStoreContext)
 
+    const minTranslateY = 325 // 최상단 위치 제한
+    const maxTranslateY = 601 // 최하단 위치 제한
+
     // 팬 리스폰더 설정
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => true, //터치 시작시 응답할지 결정
+            onStartShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
-                translateY.setOffset(lastY.current) // 드래그 시작 시 현재 위치를 기준으로 설정
-                translateY.setValue(0) // 현재 이동 값 초기화
-            }, //사용자가 요소 드래그 시작할 때 설정
+                translateY.setOffset(lastY.current)
+                translateY.setValue(0)
+            },
             onPanResponderMove: Animated.event([null, { dy: translateY }], {
                 useNativeDriver: false,
-            }), //드래그할 때마다
+            }),
             onPanResponderRelease: (_, gestureState) => {
-                const minDragVelocity = 0.5
-                if (gestureState.dy < 0 || gestureState.dy > 0) {
-                    //스크롤 하는 경우
-                    translateY.flattenOffset() // offset과 현재 값을 합쳐서 새로운 절대 위치 설정
+                const newTranslateY = lastY.current + gestureState.dy
+
+                // 이동할 값을 minTranslateY와 maxTranslateY 사이로 제한
+                const boundedTranslateY = Math.max(
+                    minTranslateY,
+                    Math.min(newTranslateY, maxTranslateY),
+                )
+
+                // 스크롤 드래그 동작
+                if (gestureState.dy !== 0) {
+                    translateY.flattenOffset()
                     const listenerId = translateY.addListener(({ value }) => {
-                        lastY.current = value // 현재 값을 lastY.current에 업데이트
+                        lastY.current = value
                     })
 
                     Animated.spring(translateY, {
-                        toValue: lastY.current + gestureState.dy, //마지막 수지 위치에 드래그한 길이만큼 더해서 이동
+                        toValue: boundedTranslateY,
                         friction: 3,
                         useNativeDriver: true,
                     }).start(() => {
                         translateY.removeListener(listenerId)
                     })
                 } else {
-                    // 바텀 시트 터치만 하는 경우 바로 위로 올라가게
+                    // 터치만 한 경우 특정 위치로 이동
                     Animated.spring(translateY, {
-                        toValue: 500,
+                        toValue: maxTranslateY, // maxTranslateY 범위로 이동
                         friction: 3,
                         useNativeDriver: true,
                     }).start()
@@ -135,6 +149,8 @@ export default function HospitalBottomSheet({
                                             } else if (
                                                 sortOrder === '포에이 리본 병원'
                                             ) {
+                                                setFilter('')
+                                                setRadius(5000)
                                             } else {
                                                 setSort('reviewCount,desc')
                                             }

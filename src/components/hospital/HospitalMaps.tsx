@@ -11,6 +11,7 @@ import { getNearHospitals } from '@/api/hospital/getNearHospitalListApi'
 import { Login } from '@/api/login/loginApi'
 import { GOOGLE_GEOCODING_API_KEY } from '@env'
 import getCurrentAddress from '@/api/hospital/getCurrentAddressApi'
+import { add } from 'date-fns'
 export interface LocationCoords {
     latitude: number
     longitude: number
@@ -45,9 +46,9 @@ export default function HospitalMaps() {
 
     const [dataList, setDataList] = useState<Hospital[]>([])
 
-    const [radius, setRadius] = useState<number>(1000) // 기본값 설정 (예: 1000미터)
+    const [radius, setRadius] = useState<number>(3000) // 기본값 설정 (예: 1000미터)
     const [page, setPage] = useState<number>(0) // 페이지 기본값 설정
-    const [size, setSize] = useState<number>(10) // 한 번에 가져올 데이터의 개수
+    const [size, setSize] = useState<number>(4) // 한 번에 가져올 데이터의 개수
     const [sort, setSort] = useState<string>('reviewCount,desc') // 정렬 옵션
     const [filter, setFilter] = useState<string>('ALL') // 필터 옵션
     //위도 경도 값으로 가져올 주소
@@ -120,10 +121,15 @@ export default function HospitalMaps() {
                 )
                 setAddress(result)
             }
-
             fetchAddress()
         }
     }, [location])
+
+    useEffect(() => {
+        if (address && address.includes('대한민국')) {
+            setAddress(address.replace('대한민국', '').trim())
+        }
+    }, [address])
 
     let txt = 'Waiting..'
     if (errorMsg) {
@@ -180,6 +186,8 @@ export default function HospitalMaps() {
                 reRender={reRender}
                 setRerender={setRerender}
                 location={location}
+                setFilter={setFilter}
+                setRadius={setRadius}
             />
             <TabBar />
         </View>

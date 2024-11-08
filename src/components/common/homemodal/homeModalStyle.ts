@@ -48,9 +48,13 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         width: 326,
         height: 76,
-        justifyContent: 'flex-start',
-        paddingHorizontal: 25,
+        paddingHorizontal: 15,
         marginTop: 22,
+    },
+    accountFlex: {
+        alignItems: 'flex-start',
+        width: '100%',
+        height: '100%',
     },
 })
 
@@ -75,7 +79,8 @@ export const text = {
         lineHeight: 19.6,
         letterSpacing: -0.5,
         color: color.normal,
-        marginTop: 17,
+        marginTop: 13,
+        marginBottom: 7,
     },
     basicText: {
         ...baseText,
@@ -83,7 +88,7 @@ export const text = {
         lineHeight: 26,
         letterSpacing: -0.5,
         color: color.normal,
-        marginTop: 4,
+        marginBottom: 2,
     },
 } as {
     [key: string]: StyleProp<TextStyle>

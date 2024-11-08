@@ -60,6 +60,7 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
                             latitude: location.latitude,
                             longitude: location.longitude,
                         }}
+                        style={styles.IconImage}
                         image={require('@/public/assets/currentLocation.png')}
                     />
                     {hospitalList &&
@@ -75,6 +76,7 @@ export default function GoogleMap({ hospitalList, location }: MapProps) {
                                         ? require('@/public/assets/clickLocation.png')
                                         : require('@/public/assets/unclickLocation.png')
                                 }
+                                style={styles.IconImage}
                                 onPress={() => {
                                     const temp = Array(
                                         hospitalList.length,
