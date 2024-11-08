@@ -30,8 +30,7 @@ export const getShapeColorSearchResult = async (shape: string, tabletType: strin
     let queryParams = [];
 
     if (tabletType) {
-      queryParams.push(`tabletType=${encodeURIComponent(tabletType)}`);
-      //queryParams.push(`tabletType=${tabletType}`);
+      queryParams.push(`tabletType=${tabletType}`);
     }
     if (shape) {
       queryParams.push(`shape=${encodeURIComponent(shape)}`);
@@ -39,13 +38,12 @@ export const getShapeColorSearchResult = async (shape: string, tabletType: strin
     if (color) {
       queryParams.push(`color1=${encodeURIComponent(color)}`);
     }
-
+    
     // 셋 중 하나는 반드시 있음
     const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
-    console.log(queryString)
 
     const token = await AsyncStorage.getItem('accessToken')
-    const response = await apiClient.get(`/medicines/sorted${queryString}`,
+    const response = await apiClient.get(`/medicines/search?${queryString}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,10 +52,8 @@ export const getShapeColorSearchResult = async (shape: string, tabletType: strin
     )
 
     if (response.status === 200) {
-      console.log('모양별 약 찾기 성공')
-
-      console.log(response.data)
-      return response.data.medicineList
+      console.log('모양, 색상별 약 찾기 성공')
+      return response.data
 
       return response.data.medicineList.map((med: {
         id: number;

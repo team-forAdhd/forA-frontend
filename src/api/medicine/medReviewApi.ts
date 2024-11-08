@@ -42,7 +42,7 @@ export const medReviewHelpApi = async (reviewId: number) => {
 export const sendMedReviewApi = async (reviewData: { medicineId: number; coMedications: number[]; content: string; images: string[]; grade: number; }) => {
   try {
     const token = await AsyncStorage.getItem('accessToken')
-    const response = await apiClient.get(`medicines/reviews`,
+    const response = await apiClient.post(`medicines/reviews`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

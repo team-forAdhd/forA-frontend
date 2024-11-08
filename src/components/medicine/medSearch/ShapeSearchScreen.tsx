@@ -152,7 +152,7 @@ const ShapeSearchScreen = () => {
 
             // 선택된 필터 값들도 resultList에 포함해서 MedSearchResult로 전달
             navigation.navigate('MedSearchResult', {
-                resultList: searchResult,
+                resultList: searchResult.data,
                 searchInputValue: resultString,
             })
         } catch (error) {
