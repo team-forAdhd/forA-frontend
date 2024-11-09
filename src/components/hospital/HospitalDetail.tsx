@@ -472,9 +472,7 @@ export default function HospitalDetail({
                         }}
                     >
                         <HospitalReviewList
-                            hospitalId={
-                                hospitalId /*'064377163e0611ef87e706a9c1a84c57'*/
-                            }
+                            hospitalId={hospitalId} /*'064377163e0611ef87e706a9c1a84c57'*/
                         />
                     </View>
                 )}
@@ -517,7 +515,7 @@ export default function HospitalDetail({
                     <>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('HospitalReview')
+                                navigation.navigate('CameraScreen')
                             }}
                             style={styles.forARibbonContainer}
                         >
