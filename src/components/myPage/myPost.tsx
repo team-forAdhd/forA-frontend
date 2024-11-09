@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import TabBar from '../common/tabBar/tabBar'
 import PostItem from '../common/postItem/postItem'
-import RangeBottomSheet from '../common/rangeBottomSheet/rangeBottomSheet'
+import BottomSheet from '../medicine/medBottomSheet/BottomSheet'
 import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '../navigation'
 import { getMyComment } from '@/api/myPage/mycommentApi'
@@ -87,14 +87,21 @@ export default function MyPost({ route }: PostProps) {
 
     // 게시판 선택
     const [boardClick, setBoardClick] = useState<string>(categoryList[0])
+
+    // 정렬 기준 리스트
+    const rangeList = [
+        '최신순',
+        '오래된 순',
+        '조회수 순',
+        '좋아요 순',
+    ]
     // 정렬 선택 _ 기본 최신순
-    const [range, setRange] = useState<string>('최신순')
+    const [range, setRange] = useState<string>(rangeList[0])
+
     // 정렬 클릭시 나올 바텀시트 상태
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
 
-    const [sortOption, setsortOption] = useState<
-        'NEWEST_FIRST' | 'OLDEST_FIRST'
-    >('NEWEST_FIRST')
+    const [sortOption, setsortOption] = useState<'NEWEST_FIRST' | 'OLDEST_FIRST'>('NEWEST_FIRST')
 
     const [token, setToken] = useState<string>('')
     //받아온 데이터
@@ -234,10 +241,12 @@ export default function MyPost({ route }: PostProps) {
                             ))}
                     </View>
                     {rangeBottomSheet && (
-                        <RangeBottomSheet
-                            setBottomSheet={setRangeBottomSheet}
-                            range={range}
-                            setRange={setRange}
+                        <BottomSheet
+                            visible={rangeBottomSheet}
+                            onClose={() => setRangeBottomSheet(false)}
+                            options={rangeList}
+                            onSelect={setRange}
+                            selectedOption={range}
                         />
                     )}
                 </>

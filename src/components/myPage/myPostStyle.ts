@@ -68,8 +68,6 @@ export const styles = StyleSheet.create({
     rangeContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'row',
-        marginLeft: 16,
     },
     postsContainer: {
         position: 'absolute',
