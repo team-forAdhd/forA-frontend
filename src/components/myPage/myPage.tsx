@@ -8,6 +8,8 @@ import { ProfileStoreContext } from '@/state/signupState'
 import { Observer } from 'mobx-react'
 import getUser from '@/api/myPage/getUser'
 import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'
+import { getUserProfileApi } from '@/api/getUserProfileApi'
+
 
 interface UserProfile {
     email: string // 이메일 주소
@@ -49,6 +51,15 @@ export default function MyPage() {
             t('push-noti'),
             t('allow-locationInfo'),
         ],
+    }
+
+    useEffect(() => {
+        getUserProfile()
+    })
+    const getUserProfile = async () => {
+        const data = await getUserProfileApi()
+        
+        console.log(data)
     }
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -181,7 +192,7 @@ export default function MyPage() {
                             onPress={() => {
                                 setting === '계정 설정' &&
                                     navigation.navigate(
-                                        'AccountSettings' as never,
+                                        'AccountSettings' as never
                                     )
                             }}
                         >
