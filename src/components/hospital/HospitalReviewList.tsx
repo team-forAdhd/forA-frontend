@@ -26,7 +26,7 @@ interface HospitalReviewListProps {
     */
 }
 
-const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) => {
+export default function HospitalReviewList (hospitalId : any) {
 
     const navigation = useNavigation()
     const { t: t } = useTranslation('hospitalReviewList')
@@ -348,7 +348,6 @@ const HospitalReviewList: React.FC<HospitalReviewListProps> = ({ hospitalId }) =
     )
 }
 
-export default HospitalReviewList;
 
 
 /* 더미 데이터 */

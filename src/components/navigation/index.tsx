@@ -63,7 +63,7 @@ export type RootStackParamList = {
     MedicineMain: undefined
     Onboard: undefined
     HospitalReview: undefined
-    HospitalReviewList: undefined
+    HospitalReviewList: { hospitalId: string }
     SavedHospitals: { postType: 'savedHospitals' }
     SavedPharmacies: { postType: 'savedPharmacies' }
     MedSearch: undefined

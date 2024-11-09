@@ -13,13 +13,28 @@ import { useNavigation } from '@react-navigation/native'
 import { ProfileStoreContext } from '@/state/signupState'
 import * as ImagePicker from 'expo-image-picker'
 import ChoiceModal from '../common/choiceModal/choiceModal'
+import { getUserProfileApi } from '@/api/getUserProfileApi'
 
 export default function AccountSettings() {
     const store = useContext(ProfileStoreContext)
 
     const { t } = useTranslation('AccountSettings')
+    const [data, setData] = useState<any>()
 
     const navigation = useNavigation()
+
+    useEffect(() => {
+        //getUserProfile()
+        setData(data)
+        console.log(store.nickname)
+    })
+    const getUserProfile = async () => {
+        const userProfile = await getUserProfileApi()
+        
+        //console.log(userProfile)
+        setData(userProfile)
+        console.log(store.nickname)
+    }
 
     const userProfileList = [
         { label: t('nickname'), value: '코코벤' }, //store.nickName
