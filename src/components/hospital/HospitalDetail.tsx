@@ -429,7 +429,11 @@ export default function HospitalDetail({
                                         ))}
                                     {/*리뷰 쓰기 버튼 */}
                                     <TouchableOpacity
-                                        onPress={() => {navigation.navigate('CameraScreen') as never}}
+                                        onPress={() => {
+                                            navigation.navigate(
+                                                'CameraScreen',
+                                            ) as never
+                                        }}
                                         style={styles.writeReviewContainer}
                                     >
                                         <Text style={text.activeText}>
@@ -451,6 +455,11 @@ export default function HospitalDetail({
                                     {/*리뷰 쓰기 버튼 */}
                                     <TouchableOpacity
                                         style={styles.writeReviewContainer}
+                                        onPress={() => {
+                                            navigation.navigate(
+                                                'CameraScreen',
+                                            ) as never
+                                        }}
                                     >
                                         <Text style={text.activeText}>
                                             {t('write-review')}
