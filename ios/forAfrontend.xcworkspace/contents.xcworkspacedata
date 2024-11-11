@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/yooni/expo/forA-frontend/ios/forAfrontend/Supporting/InfoPlist.strings">
+   </FileRef>
+   <FileRef
       location = "group:forAfrontend.xcodeproj">
    </FileRef>
    <FileRef

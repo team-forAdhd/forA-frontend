@@ -264,10 +264,12 @@ export default function MyPage() {
                         style={styles.bottomInfoForaImage}
                     />
 
-                    <Text style={text.bottomInfoText}>사업자: 포에이 | 대표자: 박세진</Text>
-                    <Text style={text.bottomInfoText}>사업자등록번호: 836-60-00650</Text>
-                    <Text style={text.bottomInfoText}>주소: 서울특별시 용산구 청파로47길 100 (청파동2가)</Text>
-                    <Text style={text.bottomInfoText}>이용문의/요청: sejin@foradhd.net</Text>
+                    <Text style={text.bottomInfoText}>forA</Text>
+                    <Text style={text.bottomInfoText}>포에이</Text>
+                    <Text style={text.bottomInfoText}>주소: 서울시 용산구 청파로 47길 90 창업보육센터 501호</Text>
+                    <Text style={text.bottomInfoText}>제휴문의: foradhd2024@gmail.com</Text>
+                    <Text style={text.bottomInfoText}>이용문의/요청: foradhd2024@gmail.com</Text>
+                    <Text style={text.bottomInfoText}>혹은 카카오톡채널 '포에이' (http://pf.kakao.com/_HGqln)</Text>
 
                     <Text style={[text.bottomInfoText, { fontWeight: '700', marginTop: 30, marginBottom: 20 }]}>{t('copyright')}</Text>
 
