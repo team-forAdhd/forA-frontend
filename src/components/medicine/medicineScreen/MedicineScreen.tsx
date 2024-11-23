@@ -210,12 +210,21 @@ export default function MedScreen() {
                             )}
                         </View>
                     ))}
+                    <View style={styles.warning}>
+                        <Text style={text.warningTitleText}>{t('warning-title')}</Text>
+                        <Text style={text.warningContentText}>{t('warning-content')}</Text>
+                    </View>
                 </ScrollView>
             ) : (
                 <ScrollView style={styles.medList}>
                     {sortMedList().map((med) => (
                         <MedicineListItem key={med.medicineId} item={med} />
                     ))}
+
+                    <View style={styles.warning}>
+                        <Text style={text.warningTitleText}>{t('warning-title')}</Text>
+                        <Text style={text.warningContentText}>{t('warning-content')}</Text>
+                    </View>
                 </ScrollView>
             )}
 
