@@ -264,17 +264,17 @@ export default function MyPage() {
                         style={styles.bottomInfoForaImage}
                     />
 
-                    <Text style={text.bottomInfoText}>forA</Text>
-                    <Text style={text.bottomInfoText}>포에이</Text>
-                    <Text style={text.bottomInfoText}>주소: 서울시 용산구 청파로 47길 90 창업보육센터 501호</Text>
-                    <Text style={text.bottomInfoText}>제휴문의: foradhd2024@gmail.com</Text>
-                    <Text style={text.bottomInfoText}>이용문의/요청: foradhd2024@gmail.com</Text>
-                    <Text style={text.bottomInfoText}>혹은 카카오톡채널 '포에이' (http://pf.kakao.com/_HGqln)</Text>
+                    <Text style={text.bottomTextBold}>포에이</Text>
+                    <Text style={text.bottomTextBold}>대표: 박세진</Text>
+                    <Text style={text.bottomTextBold}>010-3370-8506</Text>
+                    <Text style={text.bottomTextBold}>주소: 서울시 용산구 청파로 47길 90 창업보육센터 501호</Text>
+                    <Text style={text.bottomTextBold}>제휴문의/이용문의: foradhd2024@gmail.com 혹은 카카오톡 채널 ‘포에이’</Text>
+                    <Text style={text.bottomTextBold}>(http://pf.kakao.com/_HGqln)</Text>
 
-                    <Text style={[text.bottomInfoText, { fontWeight: '700', marginTop: 30, marginBottom: 20 }]}>{t('copyright')}</Text>
+                    <Text style={{ fontWeight: '700', fontSize: 12, marginTop: 30, marginBottom: 20 }}>{t('copyright')}</Text>
 
-                    <Text style={text.bottomInfoText}>자사 사이트에 게시된 모든 콘텐츠 등 저작권은 포에이에게 있습니다.</Text>
-                    <Text style={text.bottomInfoText}>자사의 사이트의 무단적인 수집을 엄격히 금합니다.</Text>
+                    <Text style={text.bottomTextNormal}>자사 사이트에 게시된 모든 콘텐츠 등 저작권은 포에이에게 있습니다.</Text>
+                    <Text style={text.bottomTextNormal}>자사의 사이트의 무단적인 수집을 엄격히 금합니다.</Text>
 
                     <Image
                         source={require('@/public/assets/icon_group.png')}

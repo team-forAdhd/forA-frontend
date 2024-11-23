@@ -210,7 +210,14 @@ export const text = {
         fontSize: 18,
         letterSpacing: -0.5,
     },
-    bottomInfoText: {
+    bottomTextBold: {
+        fontWeight: '600',
+        fontSize: 12,
+        color: '#555555',
+        letterSpacing: -0.6,
+        lineHeight: 16.8
+    },
+    bottomTextNormal: {
         ...baseText,
         fontSize: 12,
         color: '#555555',
