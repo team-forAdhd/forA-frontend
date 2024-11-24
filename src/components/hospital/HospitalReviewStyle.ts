@@ -97,6 +97,8 @@ export const styles = StyleSheet.create({
         lineHeight: 24,
         letterSpacing: -0.5,
         fontFamily: 'Pretendard',
+        textAlign: 'left',
+        textAlignVertical: 'top',
     },
     uploadButton: {
         width: 100,

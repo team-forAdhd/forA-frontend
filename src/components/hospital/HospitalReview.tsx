@@ -1,25 +1,16 @@
 import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
     TouchableOpacity,
     Text,
     View,
     TextInput,
     Image,
-    Modal,
     ScrollView,
 } from 'react-native'
-import {
-    LeftArrowIcon,
-    DefaultCameraIcon,
-    DeleteIcon,
-} from '@/public/assets/SvgComponents'
-import AlertModal from '../common/alertModal/AlertModal'
+import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
 import { useNavigation } from '@react-navigation/native'
 import { styles, text } from './HospitalReviewStyle'
 import * as ImagePicker from 'expo-image-picker'
-import { sendNewPostApi } from '@/api/home/sendNewPostApi'
-import userStore from '@/store/userStore/userStore'
 
 export default function HospitalReview() {
     const navigation = useNavigation()
@@ -72,7 +63,7 @@ export default function HospitalReview() {
                         style={styles.cancelIcon}
                     />
                 </TouchableOpacity>
-                <Text style={text.titleText}>리뷰작성하기</Text>
+                <Text style={text.titleText}>칭찬남기기</Text>
                 <View style={styles.cancelIcon} />
             </View>
             <View
@@ -135,7 +126,7 @@ export default function HospitalReview() {
             >
                 <TextInput
                     placeholder={
-                        'ADHD에 대해 잘 헤아려 주셨나요? 상세한 경험을 공유해주세요!'
+                        'ADHD에 대해 잘 헤아려 주셨나요?\n상세한 경험을 공유해주세요!'
                     }
                     multiline={true}
                     numberOfLines={7}
@@ -151,6 +142,14 @@ export default function HospitalReview() {
                     placeholderTextColor="#949494"
                     maxLength={5000}
                 />
+            </View>
+            <View
+                style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <Text style={text.inputCountText}>
                     {inputValue.length + '/5000'}
                 </Text>

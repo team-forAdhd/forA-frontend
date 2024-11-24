@@ -36,31 +36,31 @@ export default function LoginScreen() {
     const [inputFocused, setInputFocused] = useState(false)
     const [loginFailed, setLoginFailed] = useState(false)
 
-    const handleSocialLogin = async (
-        socialLoginApi: () => Promise<ApiResponse>,
-    ) => {
-        try {
-            const response = await socialLoginApi()
-            if (response.accessToken) {
-                const userProfile = await getUserProfileApi(
-                    response.accessToken,
-                )
-                userStore.login(
-                    userProfile.accessToken,
-                    userProfile.userId,
-                    userProfile.nickname,
-                    userProfile.profileImageUrl,
-                )
-                setShowWebView(false)
-                loginFinished()
-            } else {
-                setLoginFailed(true)
-            }
-        } catch (error) {
-            console.error('Error during social login:', error)
-            setLoginFailed(true)
-        }
-    }
+    // const handleSocialLogin = async (
+    //     socialLoginApi: () => Promise<ApiResponse>,
+    // ) => {
+    //     try {
+    //         const response = await socialLoginApi()
+    //         if (response.accessToken) {
+    //             const userProfile = await getUserProfileApi(
+    //                 response.accessToken,
+    //             )
+    //             userStore.login(
+    //                 userProfile.accessToken,
+    //                 userProfile.userId,
+    //                 userProfile.nickname,
+    //                 userProfile.profileImageUrl,
+    //             )
+    //             setShowWebView(false)
+    //             loginFinished()
+    //         } else {
+    //             setLoginFailed(true)
+    //         }
+    //     } catch (error) {
+    //         console.error('Error during social login:', error)
+    //         setLoginFailed(true)
+    //     }
+    // }
     const handleWebViewNavigationStateChange = (
         navState: WebViewNavigation,
     ) => {
@@ -89,15 +89,14 @@ export default function LoginScreen() {
         try {
             const response = await loginApi(email, password)
             if (response.accessToken) {
-                const userProfile = await getUserProfileApi(
-                    response.accessToken,
-                )
-                userStore.login(
-                    userProfile.accessToken,
-                    userProfile.userId,
-                    userProfile.nickname,
-                    userProfile.profileImageUrl,
-                )
+                const userProfile = await getUserProfileApi()
+                userProfile &&
+                    userStore.login(
+                        userProfile.accessToken,
+                        userProfile.userId,
+                        userProfile.nickname,
+                        userProfile.profileImageUrl,
+                    )
                 loginFinished()
             } else {
                 setLoginFailed(true)

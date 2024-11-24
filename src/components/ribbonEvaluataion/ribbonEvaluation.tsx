@@ -26,7 +26,7 @@ export default function RibbonEvaluation({
     const { t } = useTranslation('ribbonEvaluation')
     return !finish ? (
         <View style={styles.container}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ flex: 1 }}>
                 {/*헤더 */}
                 <View style={styles.header}>
                     <TouchableOpacity

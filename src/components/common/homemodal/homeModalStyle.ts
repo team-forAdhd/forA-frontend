@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
         height: 'auto',
         borderRadius: 12,
         padding: 23,
+        flex: 1,
     },
     flexContainer: {
         flexDirection: 'row',

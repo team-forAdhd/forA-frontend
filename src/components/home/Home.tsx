@@ -175,6 +175,13 @@ export default function Home() {
 
                 {/* 게시글 목록 */}
                 <ScrollView style={styles.postListContainer}>
+                    {rankingClick === '실시간' && (
+                        <PostListItem
+                            key={-1}
+                            post={writeNotification}
+                            index={-1}
+                        />
+                    )}
                     {posts.slice(0, visiblePostsCount).map((post, index) => (
                         <PostListItem key={post.id} post={post} index={index} />
                     ))}
@@ -206,4 +213,15 @@ export default function Home() {
             <TabBar />
         </View>
     )
+}
+
+const writeNotification = {
+    id: -1,
+    userId: 'admin',
+    title: '오늘탭 작성가이드 (필독!)',
+    category: '공지',
+    viewCount: 0,
+    likeCount: 0,
+    formattedCreatedAt: '',
+    images: [],
 }
