@@ -52,6 +52,12 @@ export const styles = StyleSheet.create({
         height: '65%',
         alignContent: 'center',
     },
+    warning: {
+        alignItems: 'center',
+        height: 100,
+        marginVertical: 40,
+        marginHorizontal: 20,
+    },
     IconImage: {
         width: 28,
         height: 28,
@@ -120,6 +126,17 @@ export const text = {
         fontWeight: '700',
         color: '#52A55D',
         lineHeight: 24,
+    },
+    warningTitleText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#949494',
+        marginBottom: 8,
+    },
+    warningContentText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#949494',
     },
 } as {
     [key: string]: StyleProp<TextStyle>
