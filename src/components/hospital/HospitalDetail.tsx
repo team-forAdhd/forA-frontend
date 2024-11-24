@@ -328,135 +328,165 @@ export default function HospitalDetail({
                                         },
                                     ]}
                                 >
-                                    <View
-                                        style={{
-                                            width: '100%',
-                                            flexDirection: 'row',
-                                            justifyContent: 'flex-start',
-                                            marginBottom: 14,
-                                        }}
-                                    >
-                                        <Text>
-                                            <Text style={text.semiboldText}>
-                                                {t('doctor-count')}
+                                    <ScrollView>
+                                        <View
+                                            style={{
+                                                width: '100%',
+                                                flexDirection: 'row',
+                                                justifyContent: 'flex-start',
+                                                marginBottom: 14,
+                                            }}
+                                        >
+                                            <Text>
+                                                <Text style={text.semiboldText}>
+                                                    {t('doctor-count')}
+                                                </Text>
+                                                <Text
+                                                    style={text.primaryboldText}
+                                                >
+                                                    {hospital?.doctorList &&
+                                                        hospital.doctorList
+                                                            .length}
+                                                </Text>
                                             </Text>
-                                            <Text style={text.primaryboldText}>
-                                                {hospital?.doctorList &&
-                                                    hospital.doctorList.length}
-                                            </Text>
-                                        </Text>
-                                    </View>
-                                    {hospital?.doctorList &&
-                                        hospital.doctorList.map((data) => (
-                                            <View
-                                                style={
-                                                    styles.doctorProfileContainer
-                                                }
-                                            >
-                                                <Image
-                                                    source={
-                                                        data.image
-                                                            ? {
-                                                                  uri: data.image,
-                                                              }
-                                                            : require('@/public/assets/defaultDoctor.png')
+                                        </View>
+                                        {hospital?.doctorList &&
+                                            hospital.doctorList.map((data) => (
+                                                <View
+                                                    style={
+                                                        styles.doctorProfileContainer
                                                     }
-                                                    style={styles.doctorImage}
-                                                />
-                                                <View>
-                                                    <Text>
-                                                        <Text
-                                                            style={
-                                                                text.doctorText
-                                                            }
-                                                        >
-                                                            {data.name}
+                                                >
+                                                    <Image
+                                                        source={
+                                                            data.image
+                                                                ? {
+                                                                      uri: data.image,
+                                                                  }
+                                                                : require('@/public/assets/defaultDoctor.png')
+                                                        }
+                                                        style={
+                                                            styles.doctorImage
+                                                        }
+                                                    />
+                                                    <View>
+                                                        <Text>
+                                                            <Text
+                                                                style={
+                                                                    text.doctorText
+                                                                }
+                                                            >
+                                                                {data.name}
+                                                            </Text>
+                                                            <Text
+                                                                style={
+                                                                    text.titleText
+                                                                }
+                                                            >
+                                                                {t('title')}
+                                                            </Text>
                                                         </Text>
-                                                        <Text
-                                                            style={
-                                                                text.titleText
-                                                            }
-                                                        >
-                                                            {t('title')}
-                                                        </Text>
-                                                    </Text>
-                                                    {data.profile && ( //약력이 있는 경우에만 뜨게끔
+                                                        {data.profile && ( //약력이 있는 경우에만 뜨게끔
+                                                            <TouchableOpacity
+                                                                onPress={() => {
+                                                                    data.profile &&
+                                                                        setDoctorProfile(
+                                                                            data.profile,
+                                                                        )
+                                                                }}
+                                                                style={
+                                                                    styles.profileContainer
+                                                                }
+                                                            >
+                                                                <Text
+                                                                    style={
+                                                                        text.profiletitleText
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'profile',
+                                                                    )}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        )}
+                                                    </View>
+                                                    {data.totalReviewCount && ( //리뷰가 있는 경우에만 뜨게끔
                                                         <TouchableOpacity
                                                             onPress={() => {
-                                                                data.profile &&
-                                                                    setDoctorProfile(
-                                                                        data.profile,
-                                                                    )
+                                                                console.log(
+                                                                    '리뷰 보여줘',
+                                                                )
                                                             }}
                                                             style={
-                                                                styles.profileContainer
+                                                                styles.showReviewContainer
                                                             }
                                                         >
                                                             <Text
                                                                 style={
-                                                                    text.profiletitleText
+                                                                    text.showReviewText
                                                                 }
                                                             >
-                                                                {t('profile')}
+                                                                {t(
+                                                                    'show-review',
+                                                                ) +
+                                                                    '(' +
+                                                                    data.totalReviewCount +
+                                                                    ')'}
                                                             </Text>
                                                         </TouchableOpacity>
                                                     )}
                                                 </View>
-                                                {data.totalReviewCount && ( //리뷰가 있는 경우에만 뜨게끔
-                                                    <TouchableOpacity
-                                                        onPress={() => {
-                                                            console.log(
-                                                                '리뷰 보여줘',
-                                                            )
-                                                        }}
-                                                        style={
-                                                            styles.showReviewContainer
-                                                        }
-                                                    >
-                                                        <Text
-                                                            style={
-                                                                text.showReviewText
-                                                            }
-                                                        >
-                                                            {t('show-review') +
-                                                                '(' +
-                                                                data.totalReviewCount +
-                                                                ')'}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                )}
-                                            </View>
-                                        ))}
-                                    {/*리뷰 쓰기 버튼 */}
-                                    <TouchableOpacity
-                                        onPress={() => {navigation.navigate('CameraScreen') as never}}
-                                        style={styles.writeReviewContainer}
-                                    >
-                                        <Text style={text.activeText}>
-                                            {t('write-review')}
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <View style={{ height: 33 }} />
+                                            ))}
+                                        {/*리뷰 쓰기 버튼 */}
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                navigation.navigate(
+                                                    'CameraScreen',
+                                                ) as never
+                                            }}
+                                            style={styles.writeReviewContainer}
+                                        >
+                                            <Text style={text.activeText}>
+                                                {t('write-review')}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <View style={{ height: 33 }} />
+                                    </ScrollView>
                                 </View>
                             ) : (
                                 //의사 선생님 정보가 준비되지 않은 경우
                                 <View style={styles.notReadyContainer}>
-                                    <Image
-                                        source={require('@/public/assets/notReady.png')}
-                                        style={styles.notReadyImage}
-                                    />
-                                    <Text style={text.faintText}>
-                                        {t('not-ready')}
-                                    </Text>
-                                    {/*리뷰 쓰기 버튼 */}
-                                    <TouchableOpacity
-                                        style={styles.writeReviewContainer}
+                                    <ScrollView
+                                        contentContainerStyle={{
+                                            flex: 1,
+                                            minHeight: '100%',
+                                            minWidth: '100%',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
                                     >
-                                        <Text style={text.activeText}>
-                                            {t('write-review')}
+                                        <Image
+                                            source={require('@/public/assets/notReady.png')}
+                                            style={styles.notReadyImage}
+                                        />
+                                        <Text style={text.faintText}>
+                                            {t('not-ready')}
                                         </Text>
-                                    </TouchableOpacity>
-                                    <View style={{ height: 33 }} />
+                                        {/*리뷰 쓰기 버튼 */}
+                                        <TouchableOpacity
+                                            style={styles.writeReviewContainer}
+                                            onPress={() => {
+                                                navigation.navigate(
+                                                    'CameraScreen',
+                                                ) as never
+                                            }}
+                                        >
+                                            <Text style={text.activeText}>
+                                                {t('write-review')}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <View style={{ height: 33 }} />
+                                    </ScrollView>
                                 </View>
                             )}
                         </View>
@@ -472,7 +502,9 @@ export default function HospitalDetail({
                         }}
                     >
                         <HospitalReviewList
-                            hospitalId={hospitalId} /*'064377163e0611ef87e706a9c1a84c57'*/
+                            hospitalId={
+                                hospitalId
+                            } /*'064377163e0611ef87e706a9c1a84c57'*/
                         />
                     </View>
                 )}
@@ -494,7 +526,7 @@ export default function HospitalDetail({
                     <>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('HospitalReview' as never)
+                                setRibbonOpen(!ribbonOpen)
                             }}
                             style={styles.forARibbonContainer}
                         >

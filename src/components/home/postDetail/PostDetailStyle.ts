@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     gobackIcon: {
         position: 'absolute',
         left: 10,
+        zIndex: 30,
     },
     isAuthorButtonBox: {
         position: 'absolute',
@@ -152,7 +153,7 @@ export const styles = StyleSheet.create({
         borderRadius: 500,
         borderColor: '#949494',
         borderWidth: 1,
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
     },
     anonymousIcon: {
         width: 17,
@@ -164,12 +165,12 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     commentButton: {
-        position:'absolute',
+        position: 'absolute',
         right: 7,
         width: 28,
         height: 28,
     },
-    sendIcon:{
+    sendIcon: {
         width: 28,
         height: 28,
         justifyContent: 'flex-end',
@@ -178,7 +179,7 @@ export const styles = StyleSheet.create({
     endOfPostBox: {
         width: '100%',
         height: 40,
-        backgroundColor: '#EEE'
+        backgroundColor: '#EEE',
     },
     commentContainer: {
         marginTop: 16,
@@ -198,8 +199,8 @@ export const styles = StyleSheet.create({
     endOfCommentBox: {
         width: '100%',
         height: 20,
-        backgroundColor: '#EEE'
-    }
+        backgroundColor: '#EEE',
+    },
 })
 
 export const text = {
@@ -255,7 +256,7 @@ export const text = {
         lineHeight: 26,
         letterSpacing: -0.9,
     },
-    commentCountText:{
+    commentCountText: {
         color: '#232323',
         fontSize: 18,
         fontWeight: '600',
@@ -283,7 +284,7 @@ export const text = {
         fontWeight: '400',
         lineHeight: 22.4,
         letterSpacing: -0.8,
-    }
+    },
 } as {
     [key: string]: StyleProp<TextStyle>
 }

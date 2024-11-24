@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        justifyContent: 'center',
         flexDirection: 'column',
     },
     header: {
@@ -203,7 +204,7 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 80,
         width: '100%',
-        height: 368,
+        height: 300,
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
