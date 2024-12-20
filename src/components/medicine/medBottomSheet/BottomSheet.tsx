@@ -38,7 +38,9 @@ export default function BottomSheet({
                             style={styles.topLine}
                             source={require('@/public/assets/rangeTop.png')}
                         />
-                        <Text style={text.titleText}>정렬 옵션</Text>
+                        {selectedOption != '차단하기' && (
+                            <Text style={text.titleText}>정렬 옵션</Text>
+                        )}
                     </View>
                     <View style={styles.flatList}>
                         <FlatList

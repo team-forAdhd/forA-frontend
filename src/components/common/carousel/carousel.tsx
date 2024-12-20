@@ -20,7 +20,7 @@ export default function CarouselComponent({ setModalTitle }: CarouselProps) {
         { source: require('@/public/assets/carousel1.png'), name: '인스타' },
         { source: require('@/public/assets/carousel2.png'), name: '약탭' },
         { source: require('@/public/assets/carousel3.png'), name: '공지사항' },
-        { source: require('@/public/assets/carousel4.png'), name: '후원' },
+        //{ source: require('@/public/assets/carousel4.png'), name: '후원' },
     ]
 
     const renderItem = ({ item }: { item: CarouselItem }) => {
@@ -34,7 +34,7 @@ export default function CarouselComponent({ setModalTitle }: CarouselProps) {
                         } else if (item.name === '공지사항') {
                             setModalTitle('notification')
                         } else if (item.name === '후원') {
-                            setModalTitle('support')
+                            //setModalTitle('support')
                         }
                     }}
                     style={{ aspectRatio: 16 / 9, width: '100%' }}

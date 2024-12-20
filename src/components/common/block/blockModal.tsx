@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import { Modal, View, Text, TouchableOpacity } from 'react-native'
-import { styles, text } from './choiceModalStyles'
-import { logout } from '@/api/login/logout'
+import { styles, text } from './blockModalStyles'
 import { postBlockUser } from '@/api/home/postBlockApi'
-import { deleteUserAccount } from '@/api/user/deleteUserAccount'
 
 interface ModalProps {
     modalVisible: boolean
     setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
     question: string
+    userId: string
 }
 
-export default function ChoiceModal({
+export default function BlockModal({
     modalVisible,
     setModalVisible,
     question,
+    userId,
 }: ModalProps) {
     return (
         <Modal
@@ -28,27 +28,28 @@ export default function ChoiceModal({
                 <View style={styles.ModalContainer}>
                     <View style={styles.modalView}>
                         <View style={styles.questionContainer}>
-                            <Text style={text.modalText}>{question}</Text>
+                            <Text style={text.modalText}>
+                                멤버를 차단하시겠습니까?
+                            </Text>
+                            <Text style={text.questionText}>{question}</Text>
                         </View>
                         <View style={styles.buttonGroup}>
                             <TouchableOpacity
                                 style={styles.yesButton}
                                 onPress={async () => {
                                     setModalVisible(!modalVisible)
-                                    if (question.includes('로그아웃')) {
-                                        await logout()
-                                    } else if (question.includes('회원탈퇴')) {
-                                        await deleteUserAccount()
-                                    }
                                 }}
                             >
-                                <Text style={text.yestextStyle}>예</Text>
+                                <Text style={text.yestextStyle}>취소</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.noButton}
-                                onPress={() => setModalVisible(!modalVisible)}
+                                onPress={async () => {
+                                    await postBlockUser('', true)
+                                    setModalVisible(!modalVisible)
+                                }}
                             >
-                                <Text style={text.notextStyle}>아니요</Text>
+                                <Text style={text.notextStyle}>차단하기</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

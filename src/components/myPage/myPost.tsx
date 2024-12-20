@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './myPostStyle'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import TabBar from '../common/tabBar/tabBar'
 import PostItem from '../common/postItem/postItem'
@@ -89,19 +89,16 @@ export default function MyPost({ route }: PostProps) {
     const [boardClick, setBoardClick] = useState<string>(categoryList[0])
 
     // 정렬 기준 리스트
-    const rangeList = [
-        '최신순',
-        '오래된 순',
-        '조회수 순',
-        '좋아요 순',
-    ]
+    const rangeList = ['최신순', '오래된 순', '조회수 순', '좋아요 순']
     // 정렬 선택 _ 기본 최신순
     const [range, setRange] = useState<string>(rangeList[0])
 
     // 정렬 클릭시 나올 바텀시트 상태
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
 
-    const [sortOption, setsortOption] = useState<'NEWEST_FIRST' | 'OLDEST_FIRST'>('NEWEST_FIRST')
+    const [sortOption, setsortOption] = useState<
+        'NEWEST_FIRST' | 'OLDEST_FIRST'
+    >('NEWEST_FIRST')
 
     const [token, setToken] = useState<string>('')
     //받아온 데이터
@@ -184,7 +181,7 @@ export default function MyPost({ route }: PostProps) {
                 <View style={styles.IconImage} />
             </View>
             {dataList && dataList.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
-                <>
+                <Fragment>
                     {/* 게시판 리스트 */}
                     <View style={styles.topContainer}>
                         <View style={styles.boardListContainer}>
@@ -249,7 +246,7 @@ export default function MyPost({ route }: PostProps) {
                             selectedOption={range}
                         />
                     )}
-                </>
+                </Fragment>
             ) : (
                 // 아무것도 없는 경우에 띄울 화면
                 <View style={styles.emptyContainer}>
