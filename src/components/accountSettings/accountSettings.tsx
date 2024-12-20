@@ -15,31 +15,45 @@ import * as ImagePicker from 'expo-image-picker'
 import ChoiceModal from '../common/choiceModal/choiceModal'
 import { getUserProfileApi } from '@/api/getUserProfileApi'
 
+export interface User {
+    email: string
+    nickname: string
+    profileImage?: string
+    forAdhdType?: string
+}
+
 export default function AccountSettings() {
     const store = useContext(ProfileStoreContext)
 
     const { t } = useTranslation('AccountSettings')
-    const [data, setData] = useState<any>()
+    const [user, setUser] = useState<User>({
+        email: '',
+        nickname: '',
+        profileImage: '',
+        forAdhdType: '',
+    })
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        //getUserProfile()
-        setData(data)
-        console.log(store.nickname)
-    })
-    const getUserProfile = async () => {
-        const userProfile = await getUserProfileApi()
-        
-        //console.log(userProfile)
-        setData(userProfile)
-        console.log(store.nickname)
-    }
+        const getUserProfile = async () => {
+            try {
+                const response = await getUserProfileApi()
+                if (response) {
+                    setUser(response)
+                }
+            } catch (error) {
+                console.error('Failed to fetch user profile:', error)
+            }
+        }
+
+        getUserProfile()
+    }, [])
 
     const userProfileList = [
-        { label: t('nickname'), value: '코코벤' }, //store.nickName
+        { label: t('nickname'), value: user.nickname }, //store.nickName
         { label: t('birthdate'), value: '2001.08.07' }, //store.birthYearMonth
-        { label: t('email'), value: 'example@forA.kr' }, //store.email
+        { label: t('email'), value: user.email }, //store.email
     ]
     //권한 접근
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
@@ -187,7 +201,15 @@ export default function AccountSettings() {
                     style={styles.ProfileImageContainer}
                 >
                     <Image
-                        source={require('@/public/assets/defaultProfile.png')}
+                        source={
+                            user.profileImage
+                                ? {
+                                      uri:
+                                          'https://d37m2jfdnaemwx.cloudfront.net' +
+                                          user.profileImage,
+                                  }
+                                : require('@/public/assets/defaultProfile.png')
+                        }
                         style={styles.ProfileImage}
                     />
                     <View style={styles.blackZone}>
@@ -246,28 +268,38 @@ export default function AccountSettings() {
                         }
                     </View>
                 ))}
-                <TouchableOpacity
-                    onPress={() => {
-                        store.setPassword(passwordText[0], passwordText[-1])
+                <View
+                    style={{
+                        width: '100%',
+                        marginTop: 140,
+                        justifyContent: 'center',
                     }}
-                    style={
-                        edit && //수정 중이고 모두 타당한 경우
-                        validPassword.every((element) => element === true)
-                            ? styles.activateEditButton
-                            : styles.editButton
-                    }
                 >
-                    <Text
+                    <TouchableOpacity
+                        onPress={() => {
+                            store.setPassword(passwordText[0], passwordText[-1])
+                        }}
                         style={
                             edit && //수정 중이고 모두 타당한 경우
                             validPassword.every((element) => element === true)
-                                ? text.activateButtonText
-                                : text.buttonText
+                                ? styles.activateEditButton
+                                : styles.editButton
                         }
                     >
-                        변경
-                    </Text>
-                </TouchableOpacity>
+                        <Text
+                            style={
+                                edit && //수정 중이고 모두 타당한 경우
+                                validPassword.every(
+                                    (element) => element === true,
+                                )
+                                    ? text.activateButtonText
+                                    : text.buttonText
+                            }
+                        >
+                            변경
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             {/*로그아웃 회원탈퇴 */}
             <View style={styles.bottomContainer}>

@@ -1,9 +1,7 @@
 import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native'
 import { styles, text } from './ribbonEvaluationStyle'
-import { useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import TabBar from '../common/tabBar/tabBar'
 import EvaluationFinish from '../evaluationFinish/evaluationFinish'
 
 interface RibbonEvaluationProp {

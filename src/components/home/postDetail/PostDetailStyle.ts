@@ -7,6 +7,17 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'column',
     },
+    bottomActivatedContainer: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        zIndex: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        opacity: 10,
+        justifyContent: 'center',
+        flexDirection: 'column',
+    },
     header: {
         position: 'absolute',
         top: 52,
@@ -17,6 +28,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
+        zIndex: 20,
     },
     gobackIcon: {
         position: 'absolute',

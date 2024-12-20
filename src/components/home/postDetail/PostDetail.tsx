@@ -36,6 +36,8 @@ import { handleScrapApi } from '@/api/home/postScrappedApi'
 import { API_URL } from '@env'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { RootStackParamList } from '@/components/navigation'
+import BottomSheet from '@/components/medicine/medBottomSheet/BottomSheet'
+import BlockModal from '@/components/common/block/blockModal'
 
 interface PostDetailProps {
     postId: number
@@ -65,7 +67,11 @@ export default function PostDetail({ postId }: PostDetailProps) {
     const [commentIsAnonymous, setCommentIsAnonymous] = useState<boolean>(true)
     const [commentContent, setCommentContent] = useState<string>('')
     const [isAuthor, setIsAuthor] = useState(false)
-
+    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
+    const rangeList = ['차단하기', '공유하기']
+    const [modalVisible, setModalVisible] = useState<boolean>(false)
+    // 정렬 선택 _ 기본 차단하기
+    const [range, setRange] = useState<string>(rangeList[0])
     useEffect(() => {
         const fetchPostDetail = async () => {
             try {
@@ -199,24 +205,33 @@ export default function PostDetail({ postId }: PostDetailProps) {
 
     return (
         <View style={styles.container}>
+            {rangeBottomSheet ||
+                (modalVisible && (
+                    <View style={styles.bottomActivatedContainer}>
+                        <TouchableOpacity
+                            onPress={() => setRangeBottomSheet(false)}
+                            style={{ flex: 1 }}
+                        />
+                    </View>
+                ))}
             <View style={styles.header}>
-                <TouchableOpacity //뒤로 가기 버튼이 안먹음
+                <TouchableOpacity
                     style={styles.gobackIcon}
                     onPress={handleGoback}
                 >
                     <LeftArrowIcon />
                 </TouchableOpacity>
-                <Text
-                    style={[
-                        text.categoryText,
-                        (images &&
-                            images.length > 0 &&
-                            text.categoryWithImageText) ||
-                            null,
-                    ]}
+                <Text style={text.categoryText}>{category}</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        setRangeBottomSheet(true)
+                    }}
                 >
-                    {category}
-                </Text>
+                    <Image
+                        source={require('@/public/assets/more.png')}
+                        style={{ width: 24, height: 26 }}
+                    />
+                </TouchableOpacity>
                 {isAuthor && (
                     <View style={styles.isAuthorButtonBox}>
                         <TouchableOpacity onPress={handleEdit}>
@@ -454,6 +469,30 @@ export default function PostDetail({ postId }: PostDetailProps) {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+            {rangeBottomSheet && (
+                <BottomSheet
+                    visible={rangeBottomSheet}
+                    onClose={() => setRangeBottomSheet(false)}
+                    options={rangeList}
+                    onSelect={(range) => {
+                        setRange(range)
+                        if (range == '차단하기') {
+                            setModalVisible(!modalVisible)
+                        }
+                    }}
+                    selectedOption={range}
+                />
+            )}
+            {modalVisible && (
+                <BlockModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    question={
+                        '이 멤버가 포에이에서 쓴 글과 댓글이 보이지 않고,\n 알림도 발송되지 않습니다.\n(차단을 하면 다시 해제하실 수 없습니다.)'
+                    }
+                    userId=""
+                />
+            )}
         </View>
     )
 }
