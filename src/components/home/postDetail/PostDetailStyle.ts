@@ -43,13 +43,6 @@ export const styles = StyleSheet.create({
         width: 82,
         height: 35,
     },
-    modalContainer: {
-        position: 'absolute',
-        top: 360,
-        left: 13,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     overlay: {
         position: 'absolute',
         top: 0,
@@ -57,6 +50,41 @@ export const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // 흐림 효과를 위한 반투명 배경
+    },
+    modalContainer: {
+        position: 'absolute',
+        top: 360,
+        left: 13,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    reportModalContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 250,
+        height: 300,
+        borderRadius: 12,
+        backgroundColor: 'white',
+    },
+    reportModalLine: {
+        marginVertical: 10,
+        width: '100%',
+        height: 1,
+        backgroundColor: '#EDEDEA',
+    },
+    reportModalContent: {
+        marginVertical: 5,
+        paddingLeft: 15,
+        width: '100%',
+        height: 30,
+    },
+    reportModalExitContainer: {
+        marginTop: 10,
+        width: '100%',
+        alignItems: 'flex-end',
+    },
+    reportModalExit: {
+        marginRight: 15,
     },
     scrollViewContainer: {
         flexGrow: 1,
@@ -297,6 +325,21 @@ export const text = {
         lineHeight: 22.4,
         letterSpacing: -0.8,
     },
+    reportModalTitleText: {
+        color: '#52A35D',
+        fontSize: 20,
+        fontWeight: '700',
+    },
+    reportModalContentText: {
+        color: '#232323',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    reportModalExitText: {
+        color: '#232323',
+        fontSize: 16,
+        fontWeight: '500',
+    }
 } as {
     [key: string]: StyleProp<TextStyle>
 }
