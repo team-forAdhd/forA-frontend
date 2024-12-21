@@ -68,8 +68,28 @@ export default function PostDetail({ postId }: PostDetailProps) {
     const [commentContent, setCommentContent] = useState<string>('')
     const [isAuthor, setIsAuthor] = useState(false)
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
-    const rangeList = ['차단하기', '공유하기']
+    const rangeList = ['차단하기', '신고하기', '공유하기']
     const [modalVisible, setModalVisible] = useState<boolean>(false)
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+    const reportList = [
+        '특정인에 대한 욕설 및 비하',
+        '잘못된 정보',
+        '개인정보 유출',
+        '상업적 광고 및 판매글',
+        '타인에게 혐오감을 주는 게시글',
+    ]
+
+    useEffect(() => {
+        setIsModalVisible(isModalVisible)
+    }, []);
+
+    const handleReport = () => {
+        setIsModalVisible(false)
+        console.log("게시글 신고 완료")
+    }
+
+
+
     // 정렬 선택 _ 기본 차단하기
     const [range, setRange] = useState<string>(rangeList[0])
     useEffect(() => {
@@ -448,6 +468,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+
             {/* 공유하기 완료 모달 */}
             <Modal
                 visible={showSharedAlert}
@@ -469,6 +490,43 @@ export default function PostDetail({ postId }: PostDetailProps) {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+
+            {/* 신고하기 모달 */}
+            <Modal
+                transparent={true}
+                visible={isModalVisible}
+                animationType="fade"
+                onRequestClose={() => {setIsModalVisible(!isModalVisible)}}
+            >
+                <View style={[styles.overlay, {justifyContent: 'center', alignItems: 'center'}]}>
+                    <View style={styles.reportModalContainer}>
+                        <Text style={text.reportModalTitleText}>
+                            게시글 신고
+                        </Text>
+                        <View style={styles.reportModalLine}/>
+
+                        {reportList.map((report) => (
+                            <TouchableOpacity style={styles.reportModalContent}
+                                                onPress={handleReport}>
+                                <Text style={text.reportModalContentText}>
+                                    {report}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+
+                        <View style={styles.reportModalExitContainer}>
+                            <TouchableOpacity activeOpacity={1}
+                                                style={styles.reportModalExit}
+                                                onPress={() => {setIsModalVisible(!isModalVisible)}}>
+                                <Text style={text.reportModalExitText}>
+                                    닫기
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
             {rangeBottomSheet && (
                 <BottomSheet
                     visible={rangeBottomSheet}
@@ -478,6 +536,9 @@ export default function PostDetail({ postId }: PostDetailProps) {
                         setRange(range)
                         if (range == '차단하기') {
                             setModalVisible(!modalVisible)
+                        }
+                        if (range == '신고하기') {
+                            setIsModalVisible(true)
                         }
                     }}
                     selectedOption={range}
