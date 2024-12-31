@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useTranslation } from 'react-i18next'
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, text } from './HomeStyle'
@@ -68,7 +69,8 @@ export default function Home() {
     useEffect(() => {
         const login = async () => {
             try {
-                const fetchedToken = await Login()
+                //const fetchedToken = await Login()
+                const fetchedToken = await AsyncStorage.getItem('accessToken')
             } catch (error) {
                 console.error(error)
             }

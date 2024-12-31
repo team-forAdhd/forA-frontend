@@ -86,10 +86,14 @@ export default function LoginScreen() {
     }
 
     const handleLogin = async () => {
+        console.log(`email : ${email} || password : ${password}`)
         try {
             const response = await loginApi(email, password)
+            
             if (response.accessToken) {
-                const userProfile = await getUserProfileApi()
+                console.log(`로그인 성공 : ${response.accessToken}`)
+
+                const userProfile = await getUserProfileApi(response.accessToken)
                 userProfile &&
                     userStore.login(
                         userProfile.accessToken,
@@ -97,12 +101,16 @@ export default function LoginScreen() {
                         userProfile.nickname,
                         userProfile.profileImageUrl,
                     )
+                console.log(userProfile)
+                
                 loginFinished()
+
             } else {
                 setLoginFailed(true)
                 setEmail('')
                 setPassword('')
             }
+
         } catch (error) {
             console.error('Error while logging in:', error)
             setLoginFailed(true)
@@ -138,6 +146,7 @@ export default function LoginScreen() {
                     <Text style={text.inputTitleText}>{t('login-id')}</Text>
                     <TextInput
                         style={[
+                            { width: '100%', },
                             text.inputText,
                             inputFocused ? text.inputUserText : text.inputText,
                         ]}
@@ -161,11 +170,12 @@ export default function LoginScreen() {
                     </Text>
                     <TextInput
                         style={[
+                            { width: '100%', },
                             text.inputText,
                             inputFocused ? text.inputUserText : text.inputText,
                         ]}
                         placeholder={t('login-password-input')}
-                        secureTextEntry={true}
+                        //secureTextEntry={true}
                         caretHidden={true}
                         value={password}
                         onChangeText={setPassword}
