@@ -10,20 +10,19 @@ interface UserProfile {
 }
 
 
-export const getUserProfileApi = async () => {
+export const getUserProfileApi = async (accessToken : string) => {
   try {
-    const token = await AsyncStorage.getItem('accessToken')
-
-    const response = await apiClient.get<UserProfile>(`/user`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      timeout: 5000, // 5초 타임아웃 설정
-    });
+    //const token = await AsyncStorage.getItem('accessToken')
+    const response = await apiClient.get(`/user`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        timeout: 5000, // 5초 타임아웃 설정
+      });
 
     if (response.status === 200) {
       console.log('유저 상세 프로필 불러오기 성공')
-
       return response.data
 
     } else {
