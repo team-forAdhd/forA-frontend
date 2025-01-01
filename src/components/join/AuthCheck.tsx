@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
-import { TouchableOpacity, Text, View, TextInput } from 'react-native'
+import { TouchableOpacity, Text, View, TextInput, Keyboard, Pressable } from 'react-native'
 import { styles, text } from './JoinStyle'
 import { sendAuthApi } from '@/api/join/sendAuthApi'
 import { checkAuthApi } from '@/api/join/checkAuthApi'
@@ -61,6 +61,7 @@ export default function AuthCheck() {
 
     return (
         <View style={styles.container}>
+            <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
             <TouchableOpacity style={styles.header} onPress={gotoBeforeScreen}>
                 <ArrowIcon />
             </TouchableOpacity>
@@ -151,6 +152,7 @@ export default function AuthCheck() {
                     </Text>
                 </TouchableOpacity>
             </View>
+            </Pressable>
         </View>
     )
 }
