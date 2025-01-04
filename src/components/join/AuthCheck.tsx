@@ -45,7 +45,6 @@ export default function AuthCheck() {
 
     const handleCheckAuth = async () => {
         try {
-            await postAuthApi(email)
             const response = await checkAuthApi(email, authcode)
             if (response && response.accessToken) {
                 setAuthConfirmed(true)
