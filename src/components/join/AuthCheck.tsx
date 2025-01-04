@@ -2,9 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
-import { TouchableOpacity, Text, View, TextInput, Keyboard, Pressable } from 'react-native'
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    TextInput,
+    Keyboard,
+    Pressable,
+} from 'react-native'
 import { styles, text } from './JoinStyle'
 import { sendAuthApi } from '@/api/join/sendAuthApi'
+import { postAuthApi } from '@/api/join/postAuthApi'
 import { checkAuthApi } from '@/api/join/checkAuthApi'
 import profileStore from '@/state/signupState/profileStore'
 
@@ -37,6 +45,7 @@ export default function AuthCheck() {
 
     const handleCheckAuth = async () => {
         try {
+            await postAuthApi(email)
             const response = await checkAuthApi(email, authcode)
             if (response && response.accessToken) {
                 setAuthConfirmed(true)
@@ -62,96 +71,103 @@ export default function AuthCheck() {
     return (
         <View style={styles.container}>
             <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
-            <TouchableOpacity style={styles.header} onPress={gotoBeforeScreen}>
-                <ArrowIcon />
-            </TouchableOpacity>
-            <View style={styles.title}>
-                <Text style={text.titleText}>{t('auth-title')}</Text>
-                <Text style={text.descriptionText}>
-                    {t('auth-description')}
-                </Text>
-            </View>
-            <View style={styles.contents}>
-                <View style={styles.inputContainer}>
-                    <Text style={text.inputTitleText}>{t('auth')}</Text>
-                    <View style={{ flexDirection: 'row' }}>
-                        <TextInput
-                            style={[
-                                text.inputText,
-                                inputFocused
-                                    ? text.inputUserText
-                                    : text.inputText,
-                            ]}
-                            placeholder={t('auth-input')}
-                            value={authcode}
-                            onChangeText={(text) => {
-                                if (/^\d+$/.test(text)) {
-                                    setAuthCode(text)
-                                }
-                                if (text.length >= 6) {
-                                    setAuthChecked(true)
-                                }
-                            }}
-                            keyboardType="numeric"
-                            maxLength={6}
-                            onFocus={() => setInputFocused(true)}
-                            onBlur={() => setInputFocused(false)}
-                        />
-                        <Text style={[text.timerText, styles.timer]}>
-                            {formatTime(timer)}
-                        </Text>
-                    </View>
-                    <View
-                        style={[
-                            styles.inputBar,
-                            !inputFocused
-                                ? styles.inputBar
-                                : !authConfirmed && authChecked
-                                  ? {
-                                        ...styles.inputUserBar,
-                                        borderBottomColor: '#FE4E4E',
+                <TouchableOpacity
+                    style={styles.header}
+                    onPress={gotoBeforeScreen}
+                >
+                    <ArrowIcon />
+                </TouchableOpacity>
+                <View style={styles.title}>
+                    <Text style={text.titleText}>{t('auth-title')}</Text>
+                    <Text style={text.descriptionText}>
+                        {t('auth-description')}
+                    </Text>
+                </View>
+                <View style={styles.contents}>
+                    <View style={styles.inputContainer}>
+                        <Text style={text.inputTitleText}>{t('auth')}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <TextInput
+                                style={[
+                                    text.inputText,
+                                    inputFocused
+                                        ? text.inputUserText
+                                        : text.inputText,
+                                ]}
+                                placeholder={t('auth-input')}
+                                value={authcode}
+                                onChangeText={(text) => {
+                                    if (/^\d+$/.test(text)) {
+                                        setAuthCode(text)
                                     }
-                                  : styles.inputUserBar,
-                        ]}
-                    />
-                    {!authConfirmed && authChecked && (
-                        <Text style={[text.failedText, styles.authFailed]}>
-                            {t('auth-failed')}
-                        </Text>
-                    )}
-                    <View style={styles.authUnderDescription}>
-                        <Text style={text.underBarText}>{t('auth-re')}</Text>
-                        <TouchableOpacity onPress={handleGetAuthAgainButton}>
-                            <Text style={text.authAgainText}>
-                                {t('auth-re-button')}
+                                    if (text.length >= 6) {
+                                        setAuthChecked(true)
+                                    }
+                                }}
+                                keyboardType="numeric"
+                                maxLength={6}
+                                onFocus={() => setInputFocused(true)}
+                                onBlur={() => setInputFocused(false)}
+                            />
+                            <Text style={[text.timerText, styles.timer]}>
+                                {formatTime(timer)}
                             </Text>
-                        </TouchableOpacity>
+                        </View>
+                        <View
+                            style={[
+                                styles.inputBar,
+                                !inputFocused
+                                    ? styles.inputBar
+                                    : !authConfirmed && authChecked
+                                      ? {
+                                            ...styles.inputUserBar,
+                                            borderBottomColor: '#FE4E4E',
+                                        }
+                                      : styles.inputUserBar,
+                            ]}
+                        />
+                        {!authConfirmed && authChecked && (
+                            <Text style={[text.failedText, styles.authFailed]}>
+                                {t('auth-failed')}
+                            </Text>
+                        )}
+                        <View style={styles.authUnderDescription}>
+                            <Text style={text.underBarText}>
+                                {t('auth-re')}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={handleGetAuthAgainButton}
+                            >
+                                <Text style={text.authAgainText}>
+                                    {t('auth-re-button')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={[
-                        styles.nextButton,
-                        authChecked
-                            ? { backgroundColor: '#52A55D' }
-                            : { backgroundColor: '#EEE' },
-                    ]}
-                    disabled={!authChecked}
-                    onPress={handleCheckAuth}
-                >
-                    <Text
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
                         style={[
-                            text.buttonText,
+                            styles.nextButton,
                             authChecked
-                                ? { color: '#FFF' }
-                                : { color: '#232323' },
+                                ? { backgroundColor: '#52A55D' }
+                                : { backgroundColor: '#EEE' },
                         ]}
+                        disabled={!authChecked}
+                        onPress={handleCheckAuth}
                     >
-                        {t('auth-bottom-button')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                        <Text
+                            style={[
+                                text.buttonText,
+                                authChecked
+                                    ? { color: '#FFF' }
+                                    : { color: '#232323' },
+                            ]}
+                        >
+                            {t('auth-bottom-button')}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </Pressable>
         </View>
     )
