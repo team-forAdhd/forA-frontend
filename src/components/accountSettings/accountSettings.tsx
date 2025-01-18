@@ -14,6 +14,7 @@ import { ProfileStoreContext } from '@/state/signupState'
 import * as ImagePicker from 'expo-image-picker'
 import ChoiceModal from '../common/choiceModal/choiceModal'
 import { getUserProfileApi } from '@/api/getUserProfileApi'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export interface User {
     email: string
@@ -38,9 +39,12 @@ export default function AccountSettings() {
     useEffect(() => {
         const getUserProfile = async () => {
             try {
-                const response = await getUserProfileApi()
-                if (response) {
-                    setUser(response)
+                const token = await AsyncStorage.getItem('accessToken')
+                if (token) {
+                    const data = await getUserProfileApi(token)
+                    if (data) {
+                        setUser(data)
+                    }
                 }
             } catch (error) {
                 console.error('Failed to fetch user profile:', error)

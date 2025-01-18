@@ -215,7 +215,10 @@ const AppNavigator: React.FC<AppNavigatorProps> = ({ initialRoute }) => {
                     name="HospitalReview"
                     component={HospitalReview}
                 />
-                <Stack.Screen name="HospitalReviewList" component={HospitalReviewList} />
+                <Stack.Screen
+                    name="HospitalReviewList"
+                    component={HospitalReviewList}
+                />
                 <Stack.Screen name="CameraScreen" component={CameraScreen} />
                 <Stack.Screen name="ChooseDoctor" component={ChooseDoctor} />
                 <Stack.Screen

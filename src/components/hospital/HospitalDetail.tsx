@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native'
 import { styles, text } from './HospitalDetailStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { RootStackParamList } from '../navigation'
@@ -203,7 +203,7 @@ export default function HospitalDetail({
 
                 {/* 지도 들어갈 부분 */}
                 {button[0] ? (
-                    <>
+                    <React.Fragment>
                         <View
                             style={{
                                 position: 'absolute',
@@ -490,7 +490,7 @@ export default function HospitalDetail({
                                 </View>
                             )}
                         </View>
-                    </>
+                    </React.Fragment>
                 ) : (
                     <View
                         style={{
@@ -526,6 +526,7 @@ export default function HospitalDetail({
                     <>
                         <TouchableOpacity
                             onPress={() => {
+                                navigation.navigate('CameraScreen')
                                 setRibbonOpen(!ribbonOpen)
                             }}
                             style={styles.forARibbonContainer}
