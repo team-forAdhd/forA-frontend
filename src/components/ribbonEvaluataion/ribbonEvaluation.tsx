@@ -1,14 +1,22 @@
 import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native'
 import { styles, text } from './ribbonEvaluationStyle'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import EvaluationFinish from '../evaluationFinish/evaluationFinish'
+import { getRibbonHospitalQuestion } from '@/api/hospital/getRibbonHospitalQuestion'
 
 interface RibbonEvaluationProp {
     hospitalName: string
     setRibbonOpen: React.Dispatch<React.SetStateAction<boolean>>
     ribbonCount: number
 }
+
+interface hospitalQuestion {
+    hospitalEvaluationQuestionId: number
+    seq: number
+    question: string
+}
+
 export default function RibbonEvaluation({
     hospitalName,
     setRibbonOpen,
@@ -16,12 +24,32 @@ export default function RibbonEvaluation({
 }: RibbonEvaluationProp) {
     //병원 정보 체크할 배열
     const [hospitalCheck, setHospitalCheck] = useState<boolean[]>(
-        new Array(hospitalQuestions.length).fill(false),
+        new Array(hospitalQuestionsDummy.length).fill(false),
     )
+    const [hospitalQuestions, setHospitalQuestions] = useState<
+        hospitalQuestion[]
+    >([])
+
     //평가를 마친 경우 다음 화면을 띄우기 위한 상태
     const [finish, setFinish] = useState<boolean>(false)
 
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            try {
+                const questionData = await getRibbonHospitalQuestion()
+                setHospitalQuestions(questionData)
+                setHospitalCheck(new Array(questionData.length).fill(false))
+            } catch (error) {
+                console.error('Failed to fetch hospital questions:', error)
+                // 에러 처리 로직
+            }
+        }
+
+        fetchQuestions()
+    }, [])
+
     const { t } = useTranslation('ribbonEvaluation')
+
     return !finish ? (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -49,40 +77,41 @@ export default function RibbonEvaluation({
                 </View>
                 {/*체크 리스트 */}
                 <View style={styles.checkListContainer}>
-                    {hospitalQuestions.map((hospitalName, index) => (
-                        <TouchableOpacity
-                            onPress={() => {
-                                const temp = [...hospitalCheck]
-                                temp[index] = !temp[index]
-                                setHospitalCheck(temp)
-                            }}
-                            style={
-                                hospitalCheck[index]
-                                    ? [styles.flex, styles.active]
-                                    : [styles.flex, styles.inactive]
-                            }
-                            key={index}
-                        >
-                            <Text
+                    {hospitalQuestions &&
+                        hospitalQuestions.map((data, index) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const temp = [...hospitalCheck]
+                                    temp[index] = !temp[index]
+                                    setHospitalCheck(temp)
+                                }}
                                 style={
                                     hospitalCheck[index]
-                                        ? text.activeText
-                                        : text.inactiveText
+                                        ? [styles.flex, styles.active]
+                                        : [styles.flex, styles.inactive]
                                 }
+                                key={index}
                             >
-                                {index + 1 + '. ' + hospitalName}
-                            </Text>
+                                <Text
+                                    style={
+                                        hospitalCheck[index]
+                                            ? text.activeText
+                                            : text.inactiveText
+                                    }
+                                >
+                                    {data.seq + '. ' + data.question}
+                                </Text>
 
-                            <Image
-                                source={
-                                    hospitalCheck[index]
-                                        ? require('@/public/assets/checkRibbon.png')
-                                        : require('@/public/assets/uncheckRibbon.png')
-                                }
-                                style={styles.checkImage}
-                            />
-                        </TouchableOpacity>
-                    ))}
+                                <Image
+                                    source={
+                                        hospitalCheck[index]
+                                            ? require('@/public/assets/checkRibbon.png')
+                                            : require('@/public/assets/uncheckRibbon.png')
+                                    }
+                                    style={styles.checkImage}
+                                />
+                            </TouchableOpacity>
+                        ))}
                     <View
                         style={{
                             width: '100%',
@@ -132,7 +161,7 @@ export default function RibbonEvaluation({
     )
 }
 
-const hospitalQuestions = [
+const hospitalQuestionsDummy = [
     '해당 병원은 뇌파검사를 실시하고 있다.',
     '해당 병원은 CAT 검사를 실시하고 있다.',
     '해당 병원은 풀배터리 검사를 실시하고 있다.',

@@ -9,6 +9,7 @@ import { Observer } from 'mobx-react'
 import getUser from '@/api/myPage/getUser'
 import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'
 import { getUserProfileApi } from '@/api/getUserProfileApi'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface UserProfile {
     email: string // 이메일 주소
@@ -56,9 +57,11 @@ export default function MyPage() {
         getUserProfile()
     })
     const getUserProfile = async () => {
-        const data = await getUserProfileApi()
+        const token = await AsyncStorage.getItem('accessToken')
 
-        console.log(data)
+        if (token) {
+            const data = await getUserProfileApi(token)
+        }
     }
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
