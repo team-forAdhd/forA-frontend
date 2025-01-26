@@ -5,12 +5,7 @@ import { apiClient } from '../login/loginApi'
 
 export const getSavedPharmacies = async () => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.get(`/medicine/bookmarks/my`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const response = await apiClient.get(`/medicine/bookmarks/my`)
         return response.data
     } catch (error) {
         console.error('Error fetching comments:', error)

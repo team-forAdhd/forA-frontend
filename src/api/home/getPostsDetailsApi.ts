@@ -49,14 +49,8 @@ interface PostDetail {
 
 export const getPostDetail = async (postId: number): Promise<PostDetail> => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
         const response: AxiosResponse<PostDetail> = await axios.get(
             `${API_URL}/api/v1/posts/${postId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
         )
 
         const postDetail = response.data

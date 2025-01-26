@@ -2,68 +2,50 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiClient } from '../login/loginApi'
 
 export const getMedListApi = async () => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken')
-    const response = await apiClient.get(`/medicines/sorted`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    if (response.status === 200) {
-      console.log('약 목록 불러오기 성공')
+    try {
+        const response = await apiClient.get(`/medicines/sorted`)
+        if (response.status === 200) {
+            console.log('약 목록 불러오기 성공')
 
-      return response.data.medicineList
-
-    } else {
-      console.log('응답 실패, 상태 코드:', response.status)
+            return response.data.medicineList
+        } else {
+            console.log('응답 실패, 상태 코드:', response.status)
+        }
+    } catch (error) {
+        console.error('Error fetching medicine list:', error)
+        throw error
     }
-  } catch (error) {
-    console.error('Error fetching medicine list:', error)
-    throw error
-  }
 }
 
 export const getSingleMedInfoApi = async (medId: number) => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken')
-    const response = await apiClient.get(`/medicines/${medId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
+    try {
+        const response = await apiClient.get(`/medicines/${medId}`)
 
-    if (response.status === 200) {
-      console.log(`약 상세정보 불러오기 성공 (Med Id: ${medId})`)
+        if (response.status === 200) {
+            console.log(`약 상세정보 불러오기 성공 (Med Id: ${medId})`)
 
-      return response.data
-
-    } else {
-      console.log('응답 실패, 상태 코드:', response.status)
+            return response.data
+        } else {
+            console.log('응답 실패, 상태 코드:', response.status)
+        }
+    } catch (error) {
+        console.error('Error fetching single medication info:', error)
+        throw error
     }
-  } catch (error) {
-    console.error('Error fetching single medication info:', error);
-    throw error;
-  }
 }
 
 export const getMedListByIngredientApi = async (ingredientType: string) => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken')
-    const response = await apiClient.get(`/medicines/sorted-by-ingredient?ingredientType=${ingredientType}`, {
-      params: { ingredientType },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+        const response = await apiClient.get(
+            `/medicines/sorted-by-ingredient?ingredientType=${ingredientType}`,
+            {
+                params: { ingredientType },
+            },
+        )
 
-    return response.data.medicineList
-
-  } catch (error) {
-    console.error('Error fetching medicine list by ingredient:', error);
-    return [];
-  }
-};
+        return response.data.medicineList
+    } catch (error) {
+        console.error('Error fetching medicine list by ingredient:', error)
+        return []
+    }
+}

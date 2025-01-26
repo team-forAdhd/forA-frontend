@@ -11,14 +11,8 @@ export const getNearHospitals = async (
     filter: string, // 기본적으로 'ALL' 사용
 ) => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
         const response = await apiClient.get(
             `/hospitals/nearby?latitude=${latitude}&longitude=${longitude}&radius=${radius}&page=${page}&size=${size}&sort=${sort}&filter=${filter}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
         )
         if (response.status === 200) {
             console.log('응답 성공:', response.data)

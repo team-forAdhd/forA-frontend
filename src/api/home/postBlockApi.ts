@@ -6,19 +6,10 @@ export const postBlockUser = async (
     isBlocked: boolean,
 ) => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.post(
-            '/user/block',
-            {
-                blockedUserId: blockedUserId,
-                isBlocked: isBlocked,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+        const response = await apiClient.post('/user/block', {
+            blockedUserId: blockedUserId,
+            isBlocked: isBlocked,
+        })
         console.log('차단 상태:', response.data)
     } catch (error) {
         console.error('Error blocking user:', error)

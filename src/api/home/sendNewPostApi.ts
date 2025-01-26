@@ -20,13 +20,7 @@ export const sendNewPostApi = async (postInfo: any): Promise<void> => {
             category: convertCategory(postInfo.category),
         }
         console.log(`${API_URL}/api/v1/posts`)
-        const token = await AsyncStorage.getItem('accessToken')
-        await axios.post(`${API_URL}/api/v1/posts`, transformedPostInfo, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        })
+        await axios.post(`${API_URL}/api/v1/posts`, transformedPostInfo)
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError

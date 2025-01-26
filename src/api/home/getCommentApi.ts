@@ -35,17 +35,9 @@ export const getCommentsApi = async (
     sortOption: string = 'NEWEST_FIRST',
 ): Promise<CommentResponse> => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
         const apiUrl = `${API_URL}/api/v1/comments/posts/${postId}?sortOption=${sortOption}`
 
-        const response: AxiosResponse<CommentResponse> = await axios.get(
-            apiUrl,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+        const response: AxiosResponse<CommentResponse> = await axios.get(apiUrl)
 
         return response.data
     } catch (error: unknown) {

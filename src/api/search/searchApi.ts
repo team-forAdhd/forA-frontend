@@ -3,12 +3,7 @@ import { apiClient } from '../login/loginApi'
 
 export const getSearch = async (title: string) => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.get(`/posts/search?title=${title}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const response = await apiClient.get(`/posts/search?title=${title}`)
 
         if (response.status === 200) {
             console.log('검색 응답 성공:', response.data.data)

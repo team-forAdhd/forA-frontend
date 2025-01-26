@@ -10,15 +10,9 @@ const updatePushNotificationApprovals = async (approvalData: {
     pushNotificationApprovals: PushNotificationApproval[]
 }) => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
         const response = await apiClient.put(
             `/user/push-notification-approvals`,
             approvalData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
         )
         console.log('Push notification approval updated:', response.status)
         return response.data

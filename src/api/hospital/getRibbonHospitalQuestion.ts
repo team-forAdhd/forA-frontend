@@ -1,19 +1,9 @@
 ///api/v1/hospitals/evaluation-questions
-
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiClient } from '../login/loginApi'
 
 export const getRibbonHospitalQuestion = async () => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.get(
-            `/hospitals/evaluation-questions`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+        const response = await apiClient.get(`/hospitals/evaluation-questions`)
         if (response.status === 200) {
             console.log(
                 '응답 성공:',

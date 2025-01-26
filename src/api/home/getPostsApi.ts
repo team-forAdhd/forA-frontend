@@ -58,12 +58,7 @@ interface ApiResponse {
 
 export const getMainRealtimeApi = async () => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
-        const response = await apiClient.get(`/posts/main/top`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const response = await apiClient.get(`/posts/main/top`)
         if (response.status === 200) {
             console.log('홈 랭킹별 게시글 불러오기 성공')
             const transformedData = response.data.postList.map((post: any) => ({
@@ -106,14 +101,8 @@ export const getMainRealtimeApi = async () => {
 
 export const getMainCategoryApi = async (category: string) => {
     try {
-        const token = await AsyncStorage.getItem('accessToken')
         const response = await apiClient.get(
             `/posts/main/top/category?category=${category}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
         )
         if (response.status === 200) {
             console.log('홈 카테고리별 게시글 불러오기 성공')
