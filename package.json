@@ -17,6 +17,7 @@
     "@gorhom/bottom-sheet": "^4.6.4",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "date-fns": "^3.6.0",
@@ -28,6 +29,7 @@
     "expo-font": "^11.10.3",
     "expo-image-picker": "~14.7.1",
     "expo-location": "~16.5.5",
+    "expo-splash-screen": "~0.26.5",
     "expo-status-bar": "~1.11.1",
     "google-spreadsheet": "^3.3.0",
     "i18next": "^23.10.1",
@@ -59,7 +61,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
-    "react-native-webview": "13.6.4"
+    "react-native-webview": "13.6.4",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
