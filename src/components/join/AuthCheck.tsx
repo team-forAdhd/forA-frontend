@@ -31,7 +31,7 @@ export default function AuthCheck() {
     const [timer, setTimer] = useState(180)
     const [inputFocused, setInputFocused] = useState(false)
     const [authChecked, setAuthChecked] = useState(false)
-    const [authConfirmed, setAuthConfirmed] = useState(false)
+    const [authConfirmError, setAuthConfirmError] = useState(false)
 
     const handleGetAuthAgainButton = async () => {
         try {
@@ -46,13 +46,13 @@ export default function AuthCheck() {
     const handleCheckAuth = async () => {
         try {
             const response = await checkAuthApi(email, authcode)
-            if (response && response.accessToken) {
-                setAuthConfirmed(true)
-                gotoNextScreen
+            if (response) {
+                gotoNextScreen()
             } else {
-                setAuthConfirmed(false)
+                setAuthConfirmError(true)
             }
         } catch (error) {
+            setAuthConfirmError(true)
             console.error('Error while checking auth code: ', error)
         }
     }
@@ -96,12 +96,14 @@ export default function AuthCheck() {
                                 placeholder={t('auth-input')}
                                 value={authcode}
                                 onChangeText={(text) => {
-                                    if (/^\d+$/.test(text)) {
+                                    if (/^\d*$/.test(text)) {
                                         setAuthCode(text)
                                     }
                                     if (text.length >= 6) {
                                         setAuthChecked(true)
                                     }
+                                    if (authConfirmError)
+                                        setAuthConfirmError(false)
                                 }}
                                 keyboardType="numeric"
                                 maxLength={6}
@@ -117,7 +119,7 @@ export default function AuthCheck() {
                                 styles.inputBar,
                                 !inputFocused
                                     ? styles.inputBar
-                                    : !authConfirmed && authChecked
+                                    : authConfirmError
                                       ? {
                                             ...styles.inputUserBar,
                                             borderBottomColor: '#FE4E4E',
@@ -125,7 +127,7 @@ export default function AuthCheck() {
                                       : styles.inputUserBar,
                             ]}
                         />
-                        {!authConfirmed && authChecked && (
+                        {authConfirmError && (
                             <Text style={[text.failedText, styles.authFailed]}>
                                 {t('auth-failed')}
                             </Text>
