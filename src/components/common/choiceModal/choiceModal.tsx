@@ -1,9 +1,8 @@
-import { useState } from 'react'
 import { Modal, View, Text, TouchableOpacity } from 'react-native'
 import { styles, text } from './choiceModalStyles'
 import { logout } from '@/api/login/logout'
-import { postBlockUser } from '@/api/home/postBlockApi'
 import { deleteUserAccount } from '@/api/user/deleteUserAccount'
+import { useAuthStore } from '@/store/authStore'
 
 interface ModalProps {
     modalVisible: boolean
@@ -16,6 +15,7 @@ export default function ChoiceModal({
     setModalVisible,
     question,
 }: ModalProps) {
+    const logoutInLocal = useAuthStore((state) => state.logout)
     return (
         <Modal
             transparent={true}
@@ -37,8 +37,10 @@ export default function ChoiceModal({
                                     setModalVisible(!modalVisible)
                                     if (question.includes('로그아웃')) {
                                         await logout()
+                                        logoutInLocal()
                                     } else if (question.includes('회원탈퇴')) {
                                         await deleteUserAccount()
+                                        await logout()
                                     }
                                 }}
                             >

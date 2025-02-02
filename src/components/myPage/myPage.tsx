@@ -10,6 +10,8 @@ import getUser from '@/api/myPage/getUser'
 import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'
 import { getUserProfileApi } from '@/api/getUserProfileApi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import userStore from '@/store/userStore/userStore'
+import { useAuthStore } from '@/store/authStore'
 
 interface UserProfile {
     email: string // 이메일 주소
@@ -20,6 +22,7 @@ interface UserProfile {
 
 export default function MyPage() {
     const store = useContext(ProfileStoreContext)
+    const updateUser = useAuthStore((state) => state.updateUser)
 
     const { t } = useTranslation('MyPage')
 
@@ -56,12 +59,10 @@ export default function MyPage() {
     useEffect(() => {
         getUserProfile()
     })
-    const getUserProfile = async () => {
-        const token = await AsyncStorage.getItem('accessToken')
 
-        if (token) {
-            const data = await getUserProfileApi(token)
-        }
+    const getUserProfile = async () => {
+        const data = await getUserProfileApi()
+        updateUser(data)
     }
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -120,7 +121,7 @@ export default function MyPage() {
                                         userInfo?.profileImage
                                             ? {
                                                   uri:
-                                                      'https://d37m2jfdnaemwx.cloudfront.net' +
+                                                      'https://d37m2jfdnaemwx.cloudfront.net/' +
                                                       userInfo?.profileImage,
                                               }
                                             : require('@/public/assets/defaultProfile.png')
@@ -202,10 +203,9 @@ export default function MyPage() {
                             {user.settings.map((setting, index) => (
                                 <TouchableOpacity
                                     onPress={() => {
-                                        setting === '계정 설정' &&
-                                            navigation.navigate(
-                                                'AccountSettings' as never,
-                                            )
+                                        navigation.navigate(
+                                            'AccountSettings' as never,
+                                        )
                                     }}
                                 >
                                     <View

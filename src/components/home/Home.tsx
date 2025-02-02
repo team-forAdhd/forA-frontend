@@ -66,19 +66,6 @@ export default function Home() {
         setVisiblePostsCount((prevCount) => prevCount + 5)
     }
 
-    useEffect(() => {
-        const login = async () => {
-            try {
-                //const fetchedToken = await Login()
-                const fetchedToken = await AsyncStorage.getItem('accessToken')
-            } catch (error) {
-                console.error(error)
-            }
-        }
-
-        login()
-    }, [])
-
     return (
         <View style={styles.container}>
             {modalTitle && (

@@ -1,27 +1,20 @@
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-    TouchableOpacity,
-    Text,
-    View,
-    TextInput,
-    Image,
-    Modal,
-} from 'react-native'
+import { TouchableOpacity, Text, View, TextInput, Modal } from 'react-native'
 import { styles, text } from './LoginStyle'
-import { ArrowIcon, TitleTextIcon } from '@/public/assets/SvgComponents'
+import { TitleTextIcon } from '@/public/assets/SvgComponents'
 import { useNavigation } from '@react-navigation/native'
 import { loginApi } from '@/api/loginApi'
 import { getUserProfileApi } from '@/api/getUserProfileApi'
-import {
-    naverLoginApi,
-    kakaoLoginApi,
-    googleLoginApi,
-    appleLoginApi,
-    ApiResponse,
-} from '@/api/socialLoginApi'
+// import {
+//     naverLoginApi,
+//     kakaoLoginApi,
+//     googleLoginApi,
+//     appleLoginApi,
+//     ApiResponse,
+// } from '@/api/socialLoginApi'
 import { WebView, WebViewNavigation } from 'react-native-webview'
-import userStore from '@/store/userStore/userStore'
+import { useAuthStore } from '@/store/authStore'
 
 export default function LoginScreen() {
     const { t } = useTranslation('login-join')
@@ -35,6 +28,9 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('')
     const [inputFocused, setInputFocused] = useState(false)
     const [loginFailed, setLoginFailed] = useState(false)
+
+    const login = useAuthStore((state) => state.login)
+    const updateUser = useAuthStore((state) => state.updateUser)
 
     // const handleSocialLogin = async (
     //     socialLoginApi: () => Promise<ApiResponse>,
@@ -89,39 +85,31 @@ export default function LoginScreen() {
         console.log(`email : ${email} || password : ${password}`)
         try {
             const response = await loginApi(email, password)
-            
+
             if (response.accessToken) {
                 console.log(`로그인 성공 : ${response.accessToken}`)
+                login(response.accessToken)
 
-                const userProfile = await getUserProfileApi(response.accessToken)
+                const userProfile = await getUserProfileApi()
+
                 userProfile &&
-                    userStore.login(
-                        userProfile.accessToken,
-                        userProfile.userId,
-                        userProfile.nickname,
-                        userProfile.profileImageUrl,
-                    )
+                    updateUser({
+                        nickname: userProfile.nickname,
+                        profileImageUrl: userProfile.profileImageUrl,
+                        userId: userProfile.userId,
+                    })
                 console.log(userProfile)
-                
-                loginFinished()
-
             } else {
                 setLoginFailed(true)
                 setEmail('')
                 setPassword('')
             }
-
         } catch (error) {
             console.error('Error while logging in:', error)
             setLoginFailed(true)
-            setEmail('')
-            setPassword('')
         }
     }
 
-    const loginFinished = () => {
-        navigation.navigate('Home' as never)
-    }
     const gotoJoinScreen = () => {
         navigation.navigate('EmailDuplicateCheck' as never)
     }
@@ -131,12 +119,12 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.header}
                 onPress={() => console.log('Home Button pressed')}
             >
                 <ArrowIcon />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View style={styles.title}>
                 <Text style={text.titleText}>{t('intro')}</Text>
                 <TitleTextIcon />
@@ -146,12 +134,11 @@ export default function LoginScreen() {
                     <Text style={text.inputTitleText}>{t('login-id')}</Text>
                     <TextInput
                         style={[
-                            { width: '100%', },
+                            { width: '100%' },
                             text.inputText,
                             inputFocused ? text.inputUserText : text.inputText,
                         ]}
                         placeholder={t('login-id-input')}
-                        caretHidden={true}
                         value={email}
                         onChangeText={setEmail}
                         onFocus={() => setInputFocused(true)}
@@ -170,14 +157,14 @@ export default function LoginScreen() {
                     </Text>
                     <TextInput
                         style={[
-                            { width: '100%', },
+                            { width: '100%' },
                             text.inputText,
                             inputFocused ? text.inputUserText : text.inputText,
                         ]}
                         placeholder={t('login-password-input')}
                         //secureTextEntry={true}
-                        caretHidden={true}
                         value={password}
+                        secureTextEntry={true}
                         onChangeText={setPassword}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
@@ -212,7 +199,7 @@ export default function LoginScreen() {
                                 {t('join-button')}
                             </Text>
                         </TouchableOpacity>
-                        <View style={styles.bar} />
+                        {/* <View style={styles.bar} />
                         <TouchableOpacity
                             style={styles.passwordButton}
                             onPress={() =>
@@ -222,7 +209,7 @@ export default function LoginScreen() {
                             <Text style={text.bottomText}>
                                 {t('password-button')}
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View>
             </View>
