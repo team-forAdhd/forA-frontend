@@ -28,8 +28,8 @@ export default function EmailDuplicateCheck() {
     }
     const gotoNextScreen = () => {
         saveUserdInfo()
-        navigation.navigate('AuthCheck' as never)
         sendAuthApi(email)
+        navigation.navigate('AuthCheck' as never)
     }
     const genderInputRef = useRef<TextInput>(null)
 
@@ -41,18 +41,12 @@ export default function EmailDuplicateCheck() {
 
     const handleCheckButton = async () => {
         try {
-            const isExistingMember = await checkExistingMemberApi(email)
+            const isValidEmail = await checkExistingMemberApi(email)
             setEmailChecked(true)
-
-            if (!isExistingMember) {
-                setEmailConfirmed(true)
-            } else {
-                setEmailConfirmed(false)
-            }
+            setEmailConfirmed(isValidEmail)
         } catch (error) {
             console.error('Error while checking email in: ', error)
-            // setEmailChecked(false)
-            setEmailConfirmed(true) // test용
+            setEmailConfirmed(false)
         }
     }
 
@@ -90,6 +84,7 @@ export default function EmailDuplicateCheck() {
                         }}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
+                        maxLength={20}
                     />
                     {nameChecked && (
                         <Image
@@ -145,10 +140,11 @@ export default function EmailDuplicateCheck() {
                                 placeholder={'- 0 ∙ ∙ ∙ ∙ ∙ ∙'}
                                 value={gender}
                                 onChangeText={(text) => {
-                                    if (/^\d+$/.test(text)) {
-                                        setGender(text)
-                                        setGenderChecked(true)
-                                    }
+                                    setGender(text)
+                                    profileStore.setGender(
+                                        +text % 2 === 0 ? 'FEMALE' : 'MALE',
+                                    )
+                                    setGenderChecked(true)
                                 }}
                                 onFocus={() => setInputFocused(true)}
                                 onBlur={() => setInputFocused(false)}
@@ -173,13 +169,21 @@ export default function EmailDuplicateCheck() {
 
                 <View style={styles.inputDescriptionContainer}>
                     <Text style={text.inputTitleText}>{t('join-email')}</Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'space-between',
+                        }}
+                    >
                         <TextInput
                             style={[
                                 text.inputText,
                                 inputFocused
                                     ? text.inputUserText
                                     : text.inputText,
+                                { width: '70%' },
                             ]}
                             placeholder={t('join-email-input')}
                             value={email}
