@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import TabBar from '../common/tabBar/tabBar'
 import GoogleMap from './Maps'
 import HospitalBottomSheet from '../common/hospitalListBottomSheet/hospitalListBottomSheet'
@@ -56,17 +56,17 @@ export default function HospitalMaps() {
     // 현재 위치를 가져오는 useEffect
     useEffect(() => {
         const fetchLocation = async () => {
-            await Login()
+            // await Login()
 
             // 위치 권한 요청
             let { status } = await Location.requestForegroundPermissionsAsync()
             if (status !== 'granted') {
+                Alert.alert('위치 정보를 허용해야만 서비스 이용이 가능합니다')
                 setErrorMsg('위치 정보 허용이 거절당했습니다.')
                 return
             }
 
             try {
-                // 현재 사용자 위치 받아오기
                 let currentLocation = await Location.getCurrentPositionAsync({})
                 setLocation({
                     latitude: currentLocation.coords.latitude,
