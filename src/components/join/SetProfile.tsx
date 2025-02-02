@@ -2,12 +2,20 @@ import React, { useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigation } from '@react-navigation/native'
 import { ArrowIcon } from '@/public/assets/SvgComponents'
-import { TouchableOpacity, Text, View, TextInput, Image } from 'react-native'
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    TextInput,
+    Image,
+    Alert,
+} from 'react-native'
 import { styles, text } from './JoinStyle'
 import { CameraIcon } from '@/public/assets/SvgComponents'
 import * as ImagePicker from 'expo-image-picker'
 import { ProfileStoreContext } from '@/state/signupState'
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024
 export default function SetProfile() {
     const { t } = useTranslation('login-join')
     const navigation = useNavigation()
@@ -20,7 +28,7 @@ export default function SetProfile() {
     }
     const [nickname, setNickname] = useState('')
     const [inputFocused, setInputFocused] = useState(false)
-    const [selectedImage, setSelectedImage] = useState(null)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
 
     const profileStore = useContext(ProfileStoreContext)
@@ -38,17 +46,25 @@ export default function SetProfile() {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images, //어떤 타입의 파일을 받을건지 - 이미지 파일로 설정
             allowsEditing: false, //추가 편집이 가능하게 할 것인지- 불가
-            quality: 1, //이미지 압축 여부 1이 가장 높은 화질의 이미지
+            quality: 0.2, //이미지 압축 여부 1이 가장 높은 화질의 이미지
             aspect: [1, 1], //이미지 비율 설정
         })
         if (result.canceled) {
             return null // 이미지 업로드 취소한 경우
         }
+        if (
+            result.assets[0].fileSize &&
+            result.assets[0].fileSize >= MAX_FILE_SIZE
+        ) {
+            Alert.alert('이미지가 너무 커 업로드할 수 없습니다.')
+            return
+        }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        profileStore.setImageUrl(result.assets[0].uri)
+        console.log(result.assets[0])
+        profileStore.setImageUrl(result.assets[0])
+        setSelectedImage(result.assets[0].uri)
         setRerendering(!reRendering)
     }
-
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.header} onPress={gotoBeforeScreen}>
@@ -97,6 +113,7 @@ export default function SetProfile() {
                         value={nickname}
                         onChangeText={(text) => {
                             setNickname(text)
+                            profileStore.setNickName(text)
                         }}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}

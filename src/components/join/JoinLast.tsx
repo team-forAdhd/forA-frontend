@@ -19,28 +19,24 @@ export default function JoinLast() {
         navigation.navigate('JoinDone' as never)
     }
 
-    const [selectedImages, setSelectedImages] = useState<string[]>([])
+    const [selectedImages, setSelectedImages] = useState<string>('')
     const [clickedImageIndex, setClickedImageIndex] = useState<number | null>(
         null,
     )
 
     const handleImageClick = (image: string, index: number) => {
-        const isSelected = selectedImages.includes(image)
-        setSelectedImages((prevImages) =>
-            isSelected
-                ? prevImages.filter((prevImage) => prevImage !== image)
-                : [...prevImages, image],
-        )
+        setSelectedImages(image)
         setClickedImageIndex(index)
     }
+
     const saveUserdInfo = () => {
         let valueToSend = ''
         if (selectedImages.includes('join-last-1')) {
-            valueToSend = '본인'
+            valueToSend = 'FOR_MY_ADHD'
         } else if (selectedImages.includes('join-last-2')) {
-            valueToSend = '자녀'
+            valueToSend = 'FOR_CHILDREN_ADHD'
         } else if (selectedImages.includes('join-last-3')) {
-            valueToSend = '주변'
+            valueToSend = 'FOR_AROUND_ADHD'
         }
 
         profileStore.setIsAdhd(valueToSend)
@@ -63,7 +59,6 @@ export default function JoinLast() {
                             style={[
                                 text.lastText,
                                 {
-                                    marginBottom: -10,
                                     color:
                                         clickedImageIndex === 0
                                             ? '#232323'
