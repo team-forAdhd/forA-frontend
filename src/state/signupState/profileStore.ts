@@ -2,16 +2,28 @@ import { makeAutoObservable } from 'mobx'
 
 class ProfileStore {
     nickname: string = ''
-    imageUrl: string = ''
+    imageUrl: any = null
     name: string = ''
     birthYearMonth: string = ''
     gender: string = ''
     email: string = ''
     password: string = ''
-    passwordConfirm: string = '' 
-    forAdhdType: string = '' 
-    termsApprovals: { termsId: number; approved: boolean }[] = []
-    pushNotificationApprovals: { pushNotificationApprovalId: number; approved: boolean }[] = []
+    passwordConfirm: string = ''
+    forAdhdType: string = ''
+    termsApprovals: { termsId: number; approved: boolean }[] = [
+        { termsId: 1, approved: true },
+        { termsId: 2, approved: true },
+        { termsId: 3, approved: true },
+    ]
+    pushNotificationApprovals: {
+        pushNotificationApprovalId: number
+        approved: boolean
+    }[] = [
+        {
+            pushNotificationApprovalId: 1,
+            approved: true,
+        },
+    ]
     isPushNotiOn = false
     isLocationAllowed = false
 
@@ -23,8 +35,8 @@ class ProfileStore {
         this.nickname = name
     }
 
-    setImageUrl(url: string) {
-        this.imageUrl = url
+    setImageUrl(image: any) {
+        this.imageUrl = image
     }
 
     setName(name: string) {
@@ -52,11 +64,18 @@ class ProfileStore {
         this.forAdhdType = forAdhdType
     }
 
-    setTermsApprovals(termsApprovals: { termsId: number; approved: boolean }[]) {
+    setTermsApprovals(
+        termsApprovals: { termsId: number; approved: boolean }[],
+    ) {
         this.termsApprovals = termsApprovals
     }
 
-    setPushNotificationApprovals(pushNotificationApprovals: { pushNotificationApprovalId: number; approved: boolean }[]) {
+    setPushNotificationApprovals(
+        pushNotificationApprovals: {
+            pushNotificationApprovalId: number
+            approved: boolean
+        }[],
+    ) {
         this.pushNotificationApprovals = pushNotificationApprovals
     }
 
