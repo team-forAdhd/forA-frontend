@@ -6,7 +6,7 @@ export const checkAuthApi = async (
     authCode: string,
 ): Promise<{ accessToken: string; refreshToken: string } | null> => {
     try {
-        const response = await axios.post(`${API_URL}/api/v1/user/phone-auth`, {
+        const response = await axios.put(`${API_URL}/api/v1/user/email-auth`, {
             email,
             authCode,
         })
