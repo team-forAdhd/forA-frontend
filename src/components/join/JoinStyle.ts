@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
         width: 20,
         height: 20,
         top: 29,
-        right:8,
+        right: 8,
     },
     inputBar: {
         width: '100%',
@@ -101,19 +101,15 @@ export const styles = StyleSheet.create({
         marginBottom: 12,
     },
     roundButtonDisabled: {
-        position: 'absolute',
-        left: 270,
-        width: 88,
         height: 40,
+        paddingHorizontal: 20,
         backgroundColor: '#EEE',
         borderRadius: 500,
         alignItems: 'center',
         justifyContent: 'center',
     },
     roundButtonAbled: {
-        position: 'absolute',
-        right: 1,
-        width: 88,
+        paddingHorizontal: 20,
         height: 40,
         backgroundColor: '#52A55D',
         borderRadius: 500,
@@ -126,11 +122,11 @@ export const styles = StyleSheet.create({
     },
     timer: {
         position: 'absolute',
-        left: 320
+        left: 320,
     },
     authFailed: {
         position: 'absolute',
-        top: 75
+        top: 75,
     },
     photoContainer: {
         flexDirection: 'column',
@@ -142,6 +138,7 @@ export const styles = StyleSheet.create({
         width: 145,
         height: 145,
         bottom: 13,
+        borderRadius: 9999,
     },
     photoUploadButton: {
         display: 'flex',
@@ -159,7 +156,7 @@ export const styles = StyleSheet.create({
     photoButtonContent: {
         flexDirection: 'row',
         alignItems: 'center',
-    },    
+    },
     buttonContainer: {
         position: 'absolute',
         width: '100%',
@@ -184,6 +181,8 @@ export const styles = StyleSheet.create({
         width: 382,
         height: 155,
         marginBottom: 25,
+        padding: 20,
+        justifyContent: 'center',
     },
     surveyButton: {
         width: 382,
@@ -206,8 +205,8 @@ export const styles = StyleSheet.create({
         width: 193.789,
         height: 161.22,
         flexShrink: 0,
-        marginBottom: 19.78
-    }
+        marginBottom: 19.78,
+    },
 })
 
 export const text = {
@@ -235,6 +234,7 @@ export const text = {
         letterSpacing: -0.6,
     },
     inputText: {
+        width: '80%',
         color: '#949494',
         fontSize: 16,
         fontWeight: '400',
@@ -262,15 +262,15 @@ export const text = {
     },
     succeedText: {
         color: '#52A55D',
-        fontSize:12,
+        fontSize: 12,
         fontWeight: '400',
         lineHeight: 16.8,
         letterSpacing: -0.6,
         marginTop: -5,
     },
-    underBarText : {
+    underBarText: {
         color: '#232323',
-        fontSize:12,
+        fontSize: 12,
         fontWeight: '400',
         lineHeight: 16.8,
         letterSpacing: -0.6,
@@ -331,10 +331,11 @@ export const text = {
     },
     lastText: {
         color: '#555',
-        fontSize: 14,
-        fontWeight: '400',
+        fontSize: 16,
+        fontWeight: '600',
         lineHeight: 20.4,
         letterSpacing: -0.7,
+        marginBottom: 10,
     },
     joinDoneText: {
         color: '#000',
@@ -349,10 +350,8 @@ export const text = {
         fontWeight: '400',
         lineHeight: 19.6,
         letterSpacing: -0.8,
-        textAlign: 'center'
-
+        textAlign: 'center',
     },
 } as {
     [key: string]: StyleProp<TextStyle>
-};
-
+}
