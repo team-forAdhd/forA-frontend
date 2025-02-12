@@ -1,123 +1,98 @@
-import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native'
-import { styles, text } from './HospitalDetailStyle'
-import { useNavigation } from '@react-navigation/native'
-import { useTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
-import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
-import { RootStackParamList } from '../navigation'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { getHospitalDetails } from '@/api/hospital/getHospitalDetailApi'
-import HospitalReviewList from './HospitalReviewList'
-import { postBookmark } from '@/api/hospital/postBookmarkApi'
+import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native';
+import { styles, text } from './HospitalDetailStyle';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
+import RibbonEvaluation from '../ribbonEvaluataion/ribbonEvaluation';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { getHospitalDetails } from '@/api/hospital/getHospitalDetailApi';
+import HospitalReviewList from './HospitalReviewList';
+import { postBookmark } from '@/api/hospital/postBookmarkApi';
+import { HospitalInfo } from '@/components/hospital/types';
+import { HospitalStackParams } from '@/navigation/stacks/hospitalStack';
 
 interface HospitalProps {
-    hospitalId: string
-    latitude: number
-    longitude: number
+    hospitalId: string;
+    latitude: number;
+    longitude: number;
 }
 
 type HospitalDetailNavigationProp = StackNavigationProp<
-    RootStackParamList,
+    HospitalStackParams,
     'HospitalDetail'
->
-interface HospitalInfo {
-    address: string
-    distance: number
-    doctorList: Array<Doctor> // Doctor 타입을 따로 정의해야 합니다.
-    hospitalId: string
-    isBookmarked: boolean
-    isEvaluationReviewed: boolean
-    latitude: number
-    longitude: number
-    name: string
-    operationEndHour: number
-    operationEndMin: number
-    operationStartHour: number
-    operationStartMin: number
-    operationStatus: 'UNKNOWN' | 'OPEN' | 'CLOSED' // 가능한 값이 더 있다면 추가하세요.
-    phone: string
-    totalEvaluationReviewCount: number
-    totalReceiptReviewCount: number
-}
-
-type Doctor = {
-    name: string // 의사 이름
-    image?: string // 의사 프로필 사진 URL (선택적)
-    profile?: string // 의사의 약력 (선택적)
-    totalReviewCount?: number // 의사에 대한 총 리뷰 수 (선택적)
-}
+>;
 
 export default function HospitalDetail({
     hospitalId,
     latitude,
     longitude,
 }: HospitalProps) {
-    const ribbonCount = 1
+    const ribbonCount = 1;
 
-    const navigation = useNavigation<HospitalDetailNavigationProp>()
+    const navigation = useNavigation<HospitalDetailNavigationProp>();
 
     // 병원정보와 리뷰 중 하나를 골라서 화면에 띄우기 위함
-    const [button, setButton] = useState<boolean[]>([true, false])
+    const [button, setButton] = useState<boolean[]>([true, false]);
     //포에이 리본 평가하기 창을 띄우기 위한 state
-    const [ribbonOpen, setRibbonOpen] = useState<boolean>(false)
+    const [ribbonOpen, setRibbonOpen] = useState<boolean>(false);
 
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
 
     //전화번호와 위치 아이콘 이미지를 담은 배열
     const contactsAndLocations = [
         require('@/public/assets/phone.png'),
         require('@/public/assets/location.png'),
-    ]
+    ];
 
-    const { t } = useTranslation('hospitalDetail')
+    const { t } = useTranslation('hospitalDetail');
 
-    const [hospital, setHospital] = useState<HospitalInfo>()
+    const [hospital, setHospital] = useState<HospitalInfo>();
 
-    const [hospitalIdState, setHospitalIdState] = useState<string>(hospitalId)
+    const [hospitalIdState, setHospitalIdState] = useState<string>(hospitalId);
     //
-    const [latitudeState, setLatitude] = useState<number>(latitude)
-    const [longtitudeState, setLongtitude] = useState<number>(longitude)
-    const [doctorProfile, setDoctorProfile] = useState<string>('')
+    const [latitudeState, setLatitude] = useState<number>(latitude);
+    const [longtitudeState, setLongtitude] = useState<number>(longitude);
+    const [doctorProfile, setDoctorProfile] = useState<string>('');
 
     // 북마크 상태
-    const [bookmark, setBookmark] = useState<boolean>(false)
-    const [reRender, setRerender] = useState<boolean>(false)
+    const [bookmark, setBookmark] = useState<boolean>(false);
+    const [reRender, setRerender] = useState<boolean>(false);
 
     const handleToggleBookmark = async () => {
         try {
             // 북마크 상태 반전
-            const newBookmarkState = !hospital?.isBookmarked
-            setBookmark(newBookmarkState)
+            const newBookmarkState = !hospital?.isBookmarked;
+            setBookmark(newBookmarkState);
             // 반전된 상태에 따라 API 호출
-            const response = await postBookmark(hospitalId, newBookmarkState)
-            console.log('Bookmark status updated:', response)
+            const response = await postBookmark(hospitalId, newBookmarkState);
+            console.log('Bookmark status updated:', response);
 
-            setRerender(!reRender) //아이콘 ui반응 빨리 업데이트 시키려고 부모 컴포넌트의 state를 변경해서 리렌더링해주기
+            setRerender(!reRender); //아이콘 ui반응 빨리 업데이트 시키려고 부모 컴포넌트의 state를 변경해서 리렌더링해주기
         } catch (error) {
-            console.error('Error updating bookmark:', error)
+            console.error('Error updating bookmark:', error);
         }
-    }
+    };
     useEffect(() => {
         const fetchHospitalData = async () => {
-            setIsLoading(true)
+            setIsLoading(true);
             try {
                 // 병원 데이터 가져오기
                 const hospitals = await getHospitalDetails(
                     hospitalId,
                     latitude,
                     longitude,
-                )
-                setHospital(hospitals)
-                console.log(hospitals, '병원 상세')
+                );
+                setHospital(hospitals);
+                console.log(hospitals, '병원 상세');
             } catch (error) {
-                console.error('Error fetching hospital data:', error)
+                console.error('Error fetching hospital data:', error);
             } finally {
-                setIsLoading(false) // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
+                setIsLoading(false); // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
             }
-        }
-        fetchHospitalData()
-    }, [hospitalIdState, latitudeState, longtitudeState])
+        };
+        fetchHospitalData();
+    }, [hospitalIdState, latitudeState, longtitudeState]);
 
     return !ribbonOpen ? ( //병원 이름을 내려줘야해서 네비게이션으로 이동 안하고 state변화를 통해 뜨게끔 함
         <View style={styles.container}>
@@ -130,7 +105,7 @@ export default function HospitalDetail({
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    setDoctorProfile('')
+                                    setDoctorProfile('');
                                 }}
                             >
                                 <Image
@@ -148,7 +123,7 @@ export default function HospitalDetail({
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.goBack()
+                            navigation.goBack();
                         }}
                     >
                         <Image
@@ -165,7 +140,7 @@ export default function HospitalDetail({
                 <View style={styles.topButtonContainer}>
                     <TouchableOpacity
                         onPress={() => {
-                            setButton([true, false])
+                            setButton([true, false]);
                         }}
                         style={
                             button[0]
@@ -183,7 +158,7 @@ export default function HospitalDetail({
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            setButton([false, true])
+                            setButton([false, true]);
                         }}
                         style={
                             button[1]
@@ -392,7 +367,7 @@ export default function HospitalDetail({
                                                                     data.profile &&
                                                                         setDoctorProfile(
                                                                             data.profile,
-                                                                        )
+                                                                        );
                                                                 }}
                                                                 style={
                                                                     styles.profileContainer
@@ -415,7 +390,7 @@ export default function HospitalDetail({
                                                             onPress={() => {
                                                                 console.log(
                                                                     '리뷰 보여줘',
-                                                                )
+                                                                );
                                                             }}
                                                             style={
                                                                 styles.showReviewContainer
@@ -440,9 +415,15 @@ export default function HospitalDetail({
                                         {/*리뷰 쓰기 버튼 */}
                                         <TouchableOpacity
                                             onPress={() => {
-                                                navigation.navigate(
-                                                    'CameraScreen',
-                                                ) as never
+                                                if (hospital) {
+                                                    navigation.navigate(
+                                                        'CameraScreen',
+                                                        {
+                                                            hospitalInfo:
+                                                                hospital,
+                                                        },
+                                                    ) as never;
+                                                }
                                             }}
                                             style={styles.writeReviewContainer}
                                         >
@@ -476,9 +457,15 @@ export default function HospitalDetail({
                                         <TouchableOpacity
                                             style={styles.writeReviewContainer}
                                             onPress={() => {
-                                                navigation.navigate(
-                                                    'CameraScreen',
-                                                ) as never
+                                                if (hospital) {
+                                                    navigation.navigate(
+                                                        'CameraScreen',
+                                                        {
+                                                            hospitalInfo:
+                                                                hospital,
+                                                        },
+                                                    );
+                                                }
                                             }}
                                         >
                                             <Text style={text.activeText}>
@@ -526,8 +513,12 @@ export default function HospitalDetail({
                     <>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('CameraScreen')
-                                setRibbonOpen(!ribbonOpen)
+                                if (hospital) {
+                                    navigation.navigate('CameraScreen', {
+                                        hospitalInfo: hospital,
+                                    });
+                                    setRibbonOpen(!ribbonOpen);
+                                }
                             }}
                             style={styles.forARibbonContainer}
                         >
@@ -548,7 +539,11 @@ export default function HospitalDetail({
                     <>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('CameraScreen')
+                                if (hospital) {
+                                    navigation.navigate('CameraScreen', {
+                                        hospitalInfo: hospital,
+                                    });
+                                }
                             }}
                             style={styles.forARibbonContainer}
                         >
@@ -566,5 +561,5 @@ export default function HospitalDetail({
             setRibbonOpen={setRibbonOpen}
             ribbonCount={ribbonCount}
         />
-    )
+    );
 }

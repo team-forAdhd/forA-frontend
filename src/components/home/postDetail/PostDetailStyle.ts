@@ -92,7 +92,12 @@ export const styles = StyleSheet.create({
     },
     imageBox: {
         width: '100%',
-        height: 414,
+        height: 300,
+        objectFit: 'contain',
+    },
+    imageContainer: {
+        flexDirection: 'column',
+        justifyContent: 'center',
     },
     imageCountBox: {
         width: 70,
@@ -195,6 +200,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         backgroundColor: '#FFF',
     },
+
     anonymousIcon: {
         width: 17,
         height: 17,
@@ -339,7 +345,7 @@ export const text = {
         color: '#232323',
         fontSize: 16,
         fontWeight: '500',
-    }
+    },
 } as {
     [key: string]: StyleProp<TextStyle>
 }

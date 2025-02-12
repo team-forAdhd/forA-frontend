@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 //자주 반복되는 색 객체로 빼서 사용
 const color = {
@@ -10,7 +10,7 @@ const color = {
     faintBlack: '#555555',
     backgroundGray: '#EDEDEA',
     faintGray: '#EEEEEE',
-}
+};
 
 export const styles = StyleSheet.create({
     container: {
@@ -249,13 +249,13 @@ export const styles = StyleSheet.create({
         width: '100%',
         height: 100,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -373,5 +373,5 @@ export const text = {
         color: 'white',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

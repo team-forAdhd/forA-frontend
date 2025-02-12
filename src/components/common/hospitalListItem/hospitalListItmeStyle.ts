@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         width: '92.3%',
-        height: '8.71%',
         borderBottomColor: color.faintGray,
         borderBottomWidth: 1,
         paddingBottom: '2.9%',
