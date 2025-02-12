@@ -3,18 +3,18 @@ import { TouchableOpacity, Text } from 'react-native'
 import { styles, text } from './NewPostStyle'
 
 interface CategoryButtonProps {
+    selected: string
     category: string
     onSelectCategory: (category: string) => void // 카테고리 선택 시 부모 컴포넌트로 전달할 콜백 함수
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
+    selected,
     category,
     onSelectCategory,
 }) => {
-    const [isSelected, setIsSelected] = useState<boolean>(false)
-
+    const isSelected = selected === category
     const handleCategorySelect = () => {
-        setIsSelected((prev) => !prev)
         onSelectCategory(category)
     }
 
