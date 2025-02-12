@@ -1,90 +1,75 @@
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity } from 'react-native'
-import { styles, text } from './tabBarStyle'
-import { useContext } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { TabBarStoreContext } from '@/state/tabBarState'
-import { Observer } from 'mobx-react'
-interface NavigationList {
-    [key: string]: string
-    'hospital-tab': string
-    'meds-tab': string
-    'home-tab': string
-    'MY-tab': string
-}
-export default function TabBar() {
-    // 클릭 상태 전역으로 관리 - 이전에는 state로 해서 리랜더링시 현재 클릭 상태 반영 X
-    const store = useContext(TabBarStoreContext)
+import { useTranslation } from 'react-i18next';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { styles, text } from './tabBarStyle';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { ImageSourcePropType } from 'react-native';
 
-    //t함수에 전달할 키 값과 아이콘 이미지 경로
-    const tabBarList = {
-        'hospital-tab': require('@/public/assets/hospital.png'),
-        'meds-tab': require('@/public/assets/meds.png'),
-        'home-tab': require('@/public/assets/Today.png'),
-        'MY-tab': require('@/public/assets/MY.png'),
-    }
+// 개별 탭 아이템 타입 정의
+type TabBarItem = {
+    activeImage: ImageSourcePropType;
+    defaultImage: ImageSourcePropType;
+};
 
-    const navigationList: NavigationList = {
-        'hospital-tab': 'HospitalMaps',
-        'MY-tab': 'MyPage',
-        'meds-tab': 'MedicineMain',
-        // 'meds-tab': 'MedSearch',
-        'home-tab': 'Home',
-    }
+// 탭바 리스트 타입 정의
+const tabBarList: Record<string, TabBarItem> = {
+    병원: {
+        activeImage: require('@/public/assets/clickHospital.png'),
+        defaultImage: require('@/public/assets/hospital.png'),
+    },
+    약: {
+        activeImage: require('@/public/assets/clickMeds.png'),
+        defaultImage: require('@/public/assets/meds.png'),
+    },
+    오늘: {
+        activeImage: require('@/public/assets/clickToday.png'),
+        defaultImage: require('@/public/assets/Today.png'),
+    },
+    MY: {
+        activeImage: require('@/public/assets/clickMY.png'),
+        defaultImage: require('@/public/assets/MY.png'),
+    },
+};
 
-    const clickTabIcons = [
-        require('@/public/assets/clickHospital.png'),
-        require('@/public/assets/clickMeds.png'),
-        require('@/public/assets/clickToday.png'),
-        require('@/public/assets/clickMY.png'),
-    ]
+export default function TabBar({
+    state,
+    navigation,
+    visible,
+}: BottomTabBarProps & { visible: boolean }) {
+    if (!visible) return null;
+    const { t } = useTranslation('home');
 
-    const { t } = useTranslation('home')
-
-    const navigation = useNavigation()
     return (
         <View style={styles.TabBar}>
-            {Object.entries(tabBarList).map(([tab, tabImage], index) => {
+            {state.routeNames.map((tab, index) => {
+                const isFocused = state.index === index;
+                const tabItem = tabBarList[tab];
+
                 return (
-                    <Observer>
-                        {() => (
-                            <TouchableOpacity
-                                style={styles.TabBarContainer}
-                                onPress={() => {
-                                    store.setClickTab(tab)
-                                    navigation.navigate(
-                                        navigationList[tab] as never,
-                                    ) //모바일에서 확인
-                                }}
-                                key={index}
-                            >
-                                <Image
-                                    source={
-                                        store.clickTab === tab
-                                            ? clickTabIcons[index]
-                                            : tabImage
-                                    }
-                                    // style={styles.TabBarImage}
-                                    style={
-                                        tab === 'home-tab'
-                                            ? styles.TodayTabImage
-                                            : styles.TabBarImage
-                                    }
-                                />
-                                <Text
-                                    style={
-                                        store.clickTab === tab
-                                            ? text.clickTabBarText
-                                            : text.tabBarText
-                                    }
-                                >
-                                    {t(tab)}
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    </Observer>
-                )
+                    <TouchableOpacity
+                        style={styles.TabBarContainer}
+                        onPress={() => {
+                            if (tabItem) {
+                                navigation.navigate(tab as never);
+                            }
+                        }}
+                        key={index}
+                    >
+                        <Image
+                            source={
+                                isFocused
+                                    ? tabItem?.activeImage
+                                    : tabItem?.defaultImage
+                            }
+                            style={
+                                tab === '오늘'
+                                    ? styles.TodayTabImage
+                                    : styles.TabBarImage
+                            }
+                        />
+                        <Text style={text.tabBarText}>{t(tab)}</Text>
+                    </TouchableOpacity>
+                );
             })}
         </View>
-    )
+    );
 }

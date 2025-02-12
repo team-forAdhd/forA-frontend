@@ -1,8 +1,7 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     TabBar: {
-        position: 'absolute',
         width: '100%',
         height: 100,
         bottom: 0,
@@ -37,13 +36,13 @@ export const styles = StyleSheet.create({
         top: 16,
         bottom: 5,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     tabBarText: {
@@ -65,5 +64,5 @@ export const text = {
         fontWeight: '600',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};
