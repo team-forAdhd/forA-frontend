@@ -1,21 +1,14 @@
-import axios from 'axios'
-import { API_URL } from '@env'
-import userStore from '@/store/userStore/userStore'
+import { API_URL } from '@env';
+import { apiClient } from '@/api/login/loginApi';
 
 interface CommentData {
-    postId: number
-    content: string
-    isAnonymous: boolean
+    postId: number;
+    content: string;
+    isAnonymous: boolean;
 }
 
-export const sendCommentApi = async (commentData: CommentData): Promise<void> => {
-    try {
-        await axios.post(`${API_URL}/api/v1/comments`, commentData, {
-            headers: {
-                'Authorization': `Bearer ${userStore.accessToken}`,
-            }
-        })
-    } catch (error) {
-        console.error('댓글 전송 실패:', error);
-    }
-}
+export const sendCommentApi = async (
+    commentData: CommentData,
+): Promise<void> => {
+    await apiClient.post(`${API_URL}/api/v1/comments`, commentData);
+};

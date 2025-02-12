@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { API_URL } from '@env'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { apiClient } from '@/api/login/loginApi'
 
 const categoryMap: { [key: string]: string } = {
     '10대': 'TEENS',
@@ -20,13 +20,13 @@ export const sendNewPostApi = async (postInfo: any): Promise<void> => {
             category: convertCategory(postInfo.category),
         }
         console.log(`${API_URL}/api/v1/posts`)
-        await axios.post(`${API_URL}/api/v1/posts`, transformedPostInfo)
+        await apiClient.post(`${API_URL}/api/v1/posts`, transformedPostInfo)
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError
             throw new Error(
                 'Error while sending authentication request: ' +
-                    axiosError.message,
+                    axiosError.response?.data,
             )
         } else {
             throw new Error(

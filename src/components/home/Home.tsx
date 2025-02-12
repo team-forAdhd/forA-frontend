@@ -1,45 +1,45 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, text } from './HomeStyle'
-import { useState, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { Login } from '@/api/login/loginApi'
-import TabBar from '../common/tabBar/tabBar'
-import CarouselComponent from '../common/carousel/carousel'
-import PostListItem from './postListItem/PostListItem'
-import FloatingButton from './FloatingButton'
+import { useTranslation } from 'react-i18next';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { styles, text } from './HomeStyle';
+import { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import CarouselComponent from '../common/carousel/carousel';
+import PostListItem from './postListItem/PostListItem';
+import FloatingButton from './FloatingButton';
 import {
     getMainCategoryApi,
     getMainRealtimeApi,
     Post,
-} from '@/api/home/getPostsApi'
-import HomeModal from '../common/homemodal/homeModal'
-import { notification, support } from './homeModalData'
+} from '@/api/home/getPostsApi';
+import HomeModal from '../common/homemodal/homeModal';
+import { notification, support } from './homeModalData';
+import { useAuthStore } from '@/store/authStore';
 
 export default function Home() {
+    const a = useAuthStore();
+    console.log(a);
     //랭킹 클릭 상태
-    const [rankingClick, setRankingClick] = useState<string>('실시간')
+    const [rankingClick, setRankingClick] = useState<string>('실시간');
     //새로고침 리랜더링
-    const [reRender, setReRender] = useState(false)
+    const [reRender, setReRender] = useState(false);
     //랭킹 리스트 띄울 이름 키 값
-    const rankingList = ['실시간', '10대', '20대', '30대↑', '학부모']
+    const rankingList = ['실시간', '10대', '20대', '30대↑', '학부모'];
     //공지사항이나 후원 모달을 띄울 state
-    const [modal, setModal] = useState<boolean>(false)
-    const [modalTitle, setModalTitle] = useState<string>('')
-    const { t } = useTranslation('home')
+    const [modal, setModal] = useState<boolean>(false);
+    const [modalTitle, setModalTitle] = useState<string>('');
+    const { t } = useTranslation('home');
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
-    const [posts, setPosts] = useState<Post[]>([])
-    const [visiblePostsCount, setVisiblePostsCount] = useState<number>(5)
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [visiblePostsCount, setVisiblePostsCount] = useState<number>(5);
 
     useEffect(() => {
         const fetchPosts = async () => {
-            let fetchedPosts: Post[] = []
+            let fetchedPosts: Post[] = [];
             try {
                 if (rankingClick === '실시간') {
-                    fetchedPosts = await getMainRealtimeApi()
+                    fetchedPosts = await getMainRealtimeApi();
                 } else {
                     const category =
                         rankingClick === '10대'
@@ -50,21 +50,21 @@ export default function Home() {
                                 ? 'THIRTIES_AND_ABOVE'
                                 : rankingClick === '학부모'
                                   ? 'PARENTS'
-                                  : ''
-                    fetchedPosts = await getMainCategoryApi(category)
+                                  : '';
+                    fetchedPosts = await getMainCategoryApi(category);
                 }
-                setPosts(fetchedPosts)
+                setPosts(fetchedPosts);
             } catch (error) {
-                console.error('Error fetching posts:', error)
-                setPosts([]) // 에러 발생 시 빈 배열로 설정
+                console.error('Error fetching posts:', error);
+                setPosts([]); // 에러 발생 시 빈 배열로 설정
             }
-        }
-        fetchPosts()
-    }, [rankingClick, reRender])
+        };
+        fetchPosts();
+    }, [rankingClick, reRender]);
 
     const handleLoadMore = () => {
-        setVisiblePostsCount((prevCount) => prevCount + 5)
-    }
+        setVisiblePostsCount((prevCount) => prevCount + 5);
+    };
 
     return (
         <View style={styles.container}>
@@ -90,8 +90,8 @@ export default function Home() {
                 <View style={styles.Flex}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('Search' as never)
-                            console.log('검색창')
+                            navigation.navigate('Search' as never);
+                            console.log('검색창');
                         }}
                     >
                         <Image
@@ -101,8 +101,8 @@ export default function Home() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('Notifications' as never)
-                            console.log('알림창 열기')
+                            navigation.navigate('Notifications' as never);
+                            console.log('알림창 열기');
                         }}
                     >
                         <Image
@@ -129,8 +129,8 @@ export default function Home() {
                                         : styles.baseContainer
                                 }
                                 onPress={() => {
-                                    setRankingClick(rankingName)
-                                    console.log(rankingName)
+                                    setRankingClick(rankingName);
+                                    console.log(rankingName);
                                 }}
                             >
                                 <Text
@@ -143,7 +143,7 @@ export default function Home() {
                                     {rankingName}
                                 </Text>
                             </TouchableOpacity>
-                        )
+                        );
                     })}
                 </View>
                 {/* 랭킹 */}
@@ -151,8 +151,8 @@ export default function Home() {
                     <Text style={text.rankingText}>{t('ranking')}</Text>
                     <TouchableOpacity
                         onPress={() => {
-                            console.log('새로고침하기')
-                            setReRender(!reRender)
+                            console.log('새로고침하기');
+                            setReRender(!reRender);
                         }}
                     >
                         <Image
@@ -197,11 +197,8 @@ export default function Home() {
                 style={styles.fabLayout}
                 iconStyle={styles.fabIcon}
             ></FloatingButton>
-
-            {/* 탭바 */}
-            <TabBar />
         </View>
-    )
+    );
 }
 
 const writeNotification = {
@@ -213,4 +210,4 @@ const writeNotification = {
     likeCount: 0,
     formattedCreatedAt: '',
     images: [],
-}
+};

@@ -1,56 +1,56 @@
-import React, { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, Modal } from 'react-native'
-import { styles, text } from './CommentStyle'
-import { deleteCommentApi, deleteReplyApi } from '@/api/home/deleteCommentApi'
-import { Timestamp } from 'react-native-reanimated/lib/typescript/reanimated2/commonTypes'
-import { formatDate } from '@/common/formatDate'
-import SimpleModal from '@/components/common/simpleModal/SimpleModal'
-import AlertModal from '@/components/common/alertModal/AlertModal'
-import userStore from '@/store/userStore/userStore'
-import { LikedIcon, ClikedLikedIcon } from '@/public/assets/SvgComponents'
-import { toggleCommentLike } from '@/api/home/commentLikedApi'
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { View, Text, Image, TouchableOpacity, Modal } from 'react-native';
+import { styles, text } from './CommentStyle';
+import { deleteCommentApi, deleteReplyApi } from '@/api/home/deleteCommentApi';
+import { formatDate } from '@/common/formatDate';
+import SimpleModal from '@/components/common/simpleModal/SimpleModal';
+import AlertModal from '@/components/common/alertModal/AlertModal';
+import userStore from '@/store/userStore/userStore';
+import { LikedIcon, ClikedLikedIcon } from '@/public/assets/SvgComponents';
+import { toggleCommentLike } from '@/api/home/commentLikedApi';
+import { imagePathMerge } from '@/utils/imagePathMerge';
 interface Reply {
-    id: number
-    userId: string
-    userProfileUrl: string
-    content: string
-    createdAt: number
-    anonymous: boolean
-    likeCount: number
+    id: number;
+    userId: string;
+    userProfileUrl: string;
+    content: string;
+    createdAt: number;
+    anonymous: boolean;
+    likeCount: number;
 }
 
 interface CommentProps {
     comment: {
-        id: number
-        userId: string
-        userProfileUrl: string
-        content: string
-        createdAt: number
-        anonymous: boolean
-        likeCount: number
-        children: Reply[]
-        nickname: string
-        profileImage: string
-    }
-    postId: number
-    onReply: (commentId: number) => void
+        id: number;
+        userId: string;
+        userProfileUrl: string;
+        content: string;
+        createdAt: number;
+        anonymous: boolean;
+        likeCount: number;
+        children: Reply[];
+        nickname: string;
+        profileImage: string;
+    };
+    postId: number;
+    onReply: (commentId: number) => void;
 }
 
 const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
-    const { t } = useTranslation('board')
-    const [showAlert, setShowAlert] = useState(false)
-    const [liked, setLiked] = useState(false)
-    const [likedCount, setLikedCount] = useState(comment.likeCount)
-    const [replyLiked, setReplyLiked] = useState<boolean[]>([])
-    const [replyLikedCount, setReplyLikedCount] = useState<number[]>([])
-    const [deleteId, setDeleteId] = useState<number | null>(null)
-    const [isReply, setIsReply] = useState(false)
+    const { t } = useTranslation('board');
+    const [showAlert, setShowAlert] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [likedCount, setLikedCount] = useState(comment.likeCount);
+    const [replyLiked, setReplyLiked] = useState<boolean[]>([]);
+    const [replyLikedCount, setReplyLikedCount] = useState<number[]>([]);
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [isReply, setIsReply] = useState(false);
 
     useEffect(() => {
-        setReplyLiked(comment.children.map(() => false))
-        setReplyLikedCount(comment.children.map((reply) => reply.likeCount))
-    }, [comment.children])
+        setReplyLiked(comment.children.map(() => false));
+        setReplyLikedCount(comment.children.map((reply) => reply.likeCount));
+    }, [comment.children]);
 
     const handleLike = async () => {
         try {
@@ -59,13 +59,13 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
                 postId,
                 comment.content,
                 comment.anonymous,
-            )
-            setLikedCount(newLikedCount)
-            setLiked(!liked)
+            );
+            setLikedCount(newLikedCount);
+            setLiked(!liked);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     const handleReplyLike = async (index: number, replyId: number) => {
         try {
@@ -74,48 +74,48 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
                 postId,
                 comment.content,
                 comment.anonymous,
-            )
+            );
             setReplyLikedCount((prev) => {
-                const newCounts = [...prev]
-                newCounts[index] = newReplyLikedCount
-                return newCounts
-            })
+                const newCounts = [...prev];
+                newCounts[index] = newReplyLikedCount;
+                return newCounts;
+            });
             setReplyLiked((prev) => {
-                const newLikes = [...prev]
-                newLikes[index] = !newLikes[index]
-                return newLikes
-            })
+                const newLikes = [...prev];
+                newLikes[index] = !newLikes[index];
+                return newLikes;
+            });
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     const isLoggedInUser =
-        userStore.isLoggedIn && userStore.userId === comment.userId
+        userStore.isLoggedIn && userStore.userId === comment.userId;
 
     const onDelete = (id: number, isReply: boolean) => {
-        setDeleteId(id)
-        setIsReply(isReply)
-        setShowAlert(true)
-    }
+        setDeleteId(id);
+        setIsReply(isReply);
+        setShowAlert(true);
+    };
 
     const handleDelete = async () => {
         if (deleteId !== null) {
             try {
                 if (isReply) {
-                    await deleteReplyApi(deleteId)
+                    await deleteReplyApi(deleteId);
                 } else {
-                    await deleteCommentApi(deleteId)
+                    await deleteCommentApi(deleteId);
                 }
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
         }
-    }
+    };
     const handleNothing = () => {
-        setShowAlert(false)
-    }
-
+        setShowAlert(false);
+    };
+    console.log(comment.children);
     return (
         <View style={styles.commentContainer}>
             <View style={styles.commentContent}>
@@ -191,7 +191,11 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
                                     />
                                 ) : (
                                     <Image
-                                        source={{ uri: reply.userProfileUrl }}
+                                        source={{
+                                            uri: imagePathMerge(
+                                                reply.userProfileUrl,
+                                            ),
+                                        }}
                                         style={styles.profileImage}
                                     />
                                 )}
@@ -208,22 +212,14 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
                                     }
                                 >
                                     <View style={styles.marginBox}>
-                                        {replyLiked ? (
+                                        <LikedIcon />
+                                        {/* {replyLiked ? (
                                             <ClikedLikedIcon />
                                         ) : (
                                             <LikedIcon />
-                                        )}
-                                        <Text
-                                            style={[
-                                                text.countText,
-                                                replyLiked[index] && {
-                                                    color: '#52A55D',
-                                                },
-                                            ]}
-                                        >
-                                            {replyLiked[index]
-                                                ? replyLikedCount[index] + 1
-                                                : replyLikedCount}
+                                        )} */}
+                                        <Text style={[text.countText]}>
+                                            {reply.likeCount}
                                         </Text>
                                     </View>
                                 </TouchableOpacity>
@@ -285,7 +281,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, postId }) => {
                 </View>
             </Modal>
         </View>
-    )
-}
+    );
+};
 
-export default Comment
+export default Comment;
