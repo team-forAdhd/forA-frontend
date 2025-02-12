@@ -1,30 +1,27 @@
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, text } from './myPageStyle'
-import { useContext, useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import TabBar from '../common/tabBar/tabBar'
-import { ProfileStoreContext } from '@/state/signupState'
-import { Observer } from 'mobx-react'
-import getUser from '@/api/myPage/getUser'
-import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'
-import { getUserProfileApi } from '@/api/getUserProfileApi'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import userStore from '@/store/userStore/userStore'
-import { useAuthStore } from '@/store/authStore'
+import { useTranslation } from 'react-i18next';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { styles, text } from './myPageStyle';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { ProfileStoreContext } from '@/state/signupState';
+import { Observer } from 'mobx-react';
+import getUser from '@/api/myPage/getUser';
+import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove';
+import { getUserProfileApi } from '@/api/getUserProfileApi';
+import { useAuthStore } from '@/store/authStore';
 
 interface UserProfile {
-    email: string // 이메일 주소
-    forAdhdType: 'FOR_MY_ADHD' // 고정된 값이라면, 문자열 리터럴 타입을 사용
-    nickname: string // 사용자 닉네임
-    profileImage: string // 프로필 이미지 경로 (URL 형태)
+    email: string; // 이메일 주소
+    forAdhdType: 'FOR_MY_ADHD'; // 고정된 값이라면, 문자열 리터럴 타입을 사용
+    nickname: string; // 사용자 닉네임
+    profileImage: string; // 프로필 이미지 경로 (URL 형태)
 }
 
 export default function MyPage() {
-    const store = useContext(ProfileStoreContext)
-    const updateUser = useAuthStore((state) => state.updateUser)
+    const store = useContext(ProfileStoreContext);
+    const updateUser = useAuthStore((state) => state.updateUser);
 
-    const { t } = useTranslation('MyPage')
+    const { t } = useTranslation('MyPage');
 
     //리스트에 들어갈 이름과 이미지 주소를 저장한 객체
     const myWrittings = {
@@ -40,7 +37,7 @@ export default function MyPage() {
             icon: require('@/public/assets/myReview.png'),
             navigator: 'MyPosts',
         },
-    }
+    };
     //유저의 저장 내역과 세팅에 담길 글 배열을 담고 있는 객체
     const user = {
         myScrab: [
@@ -54,40 +51,40 @@ export default function MyPage() {
             t('push-noti'),
             t('allow-locationInfo'),
         ],
-    }
+    };
 
     useEffect(() => {
-        getUserProfile()
-    })
+        getUserProfile();
+    });
 
     const getUserProfile = async () => {
-        const data = await getUserProfileApi()
-        updateUser(data)
-    }
+        const data = await getUserProfileApi();
+        updateUser(data);
+    };
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [userInfo, setUserInfo] = useState<UserProfile>()
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState<UserProfile>();
     useEffect(() => {
         const fetchHospitalData = async () => {
-            setIsLoading(true)
+            setIsLoading(true);
             try {
                 // 병원 데이터 가져오기
-                const userInfo = await getUser()
-                setUserInfo(userInfo)
-                console.log(userInfo, 'user Info')
+                const userInfo = await getUser();
+                setUserInfo(userInfo);
+                console.log(userInfo, 'user Info');
             } catch (error) {
-                console.error('Error fetching user data:', error)
+                console.error('Error fetching user data:', error);
             } finally {
-                setIsLoading(false) // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
+                setIsLoading(false); // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
             }
-        }
-        fetchHospitalData()
-    }, [])
-    const navigation = useNavigation()
+        };
+        fetchHospitalData();
+    }, []);
+    const navigation = useNavigation();
     //푸시 알림 핸들링
     const handlePushNotificationToggle = async () => {
         try {
-            store.setIsPushNotiOn()
+            store.setIsPushNotiOn();
 
             // 서버에 푸시 알림 설정 업데이트 요청 보내기
             await updatePushNotificationApprovals({
@@ -97,11 +94,11 @@ export default function MyPage() {
                         approved: store.isPushNotiOn,
                     },
                 ],
-            })
+            });
         } catch (error) {
-            console.error('Error updating push notification approval:', error)
+            console.error('Error updating push notification approval:', error);
         }
-    }
+    };
     return (
         <View style={styles.container}>
             {/* 헤더 */}
@@ -156,7 +153,7 @@ export default function MyPage() {
                                     onPress={() => {
                                         navigation.navigate(
                                             my[1].navigator as never,
-                                        )
+                                        );
                                     }}
                                 >
                                     <View style={styles.myInnerContainer}>
@@ -178,7 +175,7 @@ export default function MyPage() {
                                             user.myScrabNavigation[
                                                 index
                                             ] as never,
-                                        )
+                                        );
                                     }}
                                 >
                                     <View
@@ -205,7 +202,7 @@ export default function MyPage() {
                                     onPress={() => {
                                         navigation.navigate(
                                             'AccountSettings' as never,
-                                        )
+                                        );
                                     }}
                                 >
                                     <View
@@ -224,16 +221,16 @@ export default function MyPage() {
                                                     <TouchableOpacity
                                                         onPress={() => {
                                                             if (index === 1) {
-                                                                handlePushNotificationToggle()
+                                                                handlePushNotificationToggle();
                                                             } else if (
                                                                 index === 2
                                                             ) {
-                                                                store.setIsLocationAllowed()
+                                                                store.setIsLocationAllowed();
                                                             }
                                                             console.log(
                                                                 store.isPushNotiOn,
                                                                 store.isLocationAllowed,
-                                                            )
+                                                            );
                                                         }}
                                                     >
                                                         <Image
@@ -330,8 +327,6 @@ export default function MyPage() {
                     </View>
                 </ScrollView>
             </View>
-
-            <TabBar />
         </View>
-    )
+    );
 }
