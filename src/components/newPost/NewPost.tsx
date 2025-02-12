@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import axios from 'axios'
 import {
     TouchableOpacity,
     Text,
@@ -7,6 +8,7 @@ import {
     TextInput,
     Image,
     Modal,
+    Alert,
 } from 'react-native'
 import {
     LeftArrowIcon,
@@ -19,8 +21,10 @@ import { useNavigation } from '@react-navigation/native'
 import { styles, text } from './NewPostStyle'
 import * as ImagePicker from 'expo-image-picker'
 import { sendNewPostApi } from '@/api/home/sendNewPostApi'
-import userStore from '@/store/userStore/userStore'
 import { uploadImageApi } from '@/api/image/imageApi'
+import { useAuthStore } from '@/store/authStore'
+
+const FILE_UPLOAD_LIMIT = 5 * 1024 * 1024
 
 export default function NewPost() {
     const { t: t } = useTranslation('board')
@@ -29,11 +33,14 @@ export default function NewPost() {
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
-    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([])
+    const [attachedPhotos, setAttachedPhotos] = useState<
+        ImagePicker.ImagePickerAsset[]
+    >([])
     const [isAnonymous, setIsAnonymous] = useState(false)
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
     const [selectedCategory, setSelectedCategory] = useState<string>('')
     const [showAlert, setShowAlert] = useState(false)
+    const nickname = useAuthStore((state) => state.nickname)
 
     const handleLeftArrowPress = () => {
         setShowAlert(true)
@@ -49,7 +56,7 @@ export default function NewPost() {
     }
 
     const isUploadButtonDisabled = () => {
-        return !title.trim() || !content.trim() // 제목 또는 내용 중 하나라도 입력이 없으면 버튼 비활성
+        return !title.trim() || !content.trim() || !selectedCategory // 제목 또는 내용 중 하나라도 입력이 없으면 버튼 비활성
     }
 
     const uploadImage = async () => {
@@ -64,25 +71,24 @@ export default function NewPost() {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
-            quality: 1,
+            allowsMultipleSelection: true,
+            quality: 0.2,
+            selectionLimit: 10,
         })
+        if (
+            !result.assets?.every(
+                (asset) => asset.fileSize && asset.fileSize < FILE_UPLOAD_LIMIT,
+            )
+        ) {
+            Alert.alert('25MB 이상의 이미지는 업로드 할 수 없습니다.')
+            return
+        }
+
         if (result.canceled) {
             return null // 이미지 업로드 취소한 경우
         }
-        // 이미지 업로드 결과 및 이미지 경로 업데이트
 
-        setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
-    }
-
-    const handleImageUpload = async (imageFile: any) => {
-        try {
-            const response = await uploadImageApi(imageFile)
-            const imagePathList = response.imagePathList
-            return imagePathList
-        } catch (error) {
-            console.error('Error uploading image:', error)
-            throw error
-        }
+        setAttachedPhotos(result.assets)
     }
 
     const handleDeletePhoto = (index: number) => {
@@ -99,36 +105,20 @@ export default function NewPost() {
         setIsAnonymous((prev) => !prev)
     }
 
-    // const handlePostInfo = async () => {
-    //     try {
-    //         const postInfo = {
-    //             title: title,
-    //             nickname: userStore.nickname,
-    //             content: content,
-    //             images: attachedPhotos,
-    //             anonymous: isAnonymous,
-    //             category: selectedCategory,
-    //             createdAt: new Date(),
-    //         }
-    //         await sendNewPostApi(postInfo)
-    //         console.log('PostInfo sent successfully:', postInfo)
-    //     } catch (error) {
-    //         console.error('Error sending PostInfo:', error)
-    //     }
-    // }
     const handlePostInfo = async () => {
         try {
             const imagePathList = await Promise.all(
-                attachedPhotos.map((photo) =>
-                    handleImageUpload({ uri: photo }),
-                ),
+                attachedPhotos.map(async (photo) => {
+                    const { imagePathList } = await uploadImageApi(photo)
+                    return imagePathList[0]
+                }),
             )
 
             const postInfo = {
                 title: title,
-                nickname: userStore.nickname,
+                nickname: nickname,
                 content: content,
-                images: imagePathList.flat(),
+                images: imagePathList,
                 anonymous: isAnonymous,
                 category: selectedCategory,
                 createdAt: new Date(),
@@ -136,13 +126,19 @@ export default function NewPost() {
             await sendNewPostApi(postInfo)
             console.log('PostInfo sent successfully:', postInfo)
         } catch (error) {
-            console.error('Error sending PostInfo:', error)
+            if (axios.isAxiosError(error)) {
+                console.error('Error sending PostInfo:', error.response?.data)
+            }
+            throw error
         }
     }
-
-    const handleUploadButton = () => {
-        handlePostInfo()
-        navigation.navigate('Home' as never)
+    const handleUploadButton = async () => {
+        try {
+            await handlePostInfo()
+            navigation.navigate('Home' as never)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -193,14 +189,14 @@ export default function NewPost() {
                                 },
                             ]}
                         >
-                            {`${attachedPhotos.length}/20`}
+                            {`${attachedPhotos.length}/10`}
                         </Text>
                     </TouchableOpacity>
                     {/* 첨부된 사진 미리보기 */}
-                    {attachedPhotos.map((photoUri, index) => (
+                    {attachedPhotos.map((asset, index) => (
                         <View key={index} style={styles.photoPreview}>
                             <Image
-                                source={{ uri: photoUri }}
+                                source={{ uri: asset.uri }}
                                 style={{
                                     width: '100%',
                                     aspectRatio: 1,
@@ -220,18 +216,22 @@ export default function NewPost() {
                 {/* 카테고리 선택 */}
                 <View style={styles.categoryContainer}>
                     <CategoryButton
+                        selected={selectedCategory}
                         category={tabT('10s-tab')}
                         onSelectCategory={handleCategorySelect}
                     />
                     <CategoryButton
+                        selected={selectedCategory}
                         category={tabT('20s-tab')}
                         onSelectCategory={handleCategorySelect}
                     />
                     <CategoryButton
+                        selected={selectedCategory}
                         category={tabT('30s-tab')}
                         onSelectCategory={handleCategorySelect}
                     />
                     <CategoryButton
+                        selected={selectedCategory}
                         category={tabT('parents-tab')}
                         onSelectCategory={handleCategorySelect}
                     />
