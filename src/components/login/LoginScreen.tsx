@@ -1,62 +1,31 @@
-import React, { useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { TouchableOpacity, Text, View, TextInput, Modal } from 'react-native'
-import { styles, text } from './LoginStyle'
-import { TitleTextIcon } from '@/public/assets/SvgComponents'
-import { useNavigation } from '@react-navigation/native'
-import { loginApi } from '@/api/loginApi'
-import { getUserProfileApi } from '@/api/getUserProfileApi'
-// import {
-//     naverLoginApi,
-//     kakaoLoginApi,
-//     googleLoginApi,
-//     appleLoginApi,
-//     ApiResponse,
-// } from '@/api/socialLoginApi'
-import { WebView, WebViewNavigation } from 'react-native-webview'
-import { useAuthStore } from '@/store/authStore'
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TouchableOpacity, Text, View, TextInput, Modal } from 'react-native';
+import { styles, text } from './LoginStyle';
+import { TitleTextIcon } from '@/public/assets/SvgComponents';
+import { useNavigation } from '@react-navigation/native';
+import { getUserProfileApi } from '@/api/getUserProfileApi';
+import { WebView, WebViewNavigation } from 'react-native-webview';
+import { useAuthStore } from '@/store/authStore';
+import { login } from '@/api/login/loginApi';
 
 export default function LoginScreen() {
-    const { t } = useTranslation('login-join')
-    const navigation = useNavigation()
+    const { t } = useTranslation('login-join');
+    const navigation = useNavigation();
 
-    const webViewRef = useRef(null)
-    const [showWebView, setShowWebView] = useState(false)
-    const [webViewUrl, setWebViewUrl] = useState('')
+    const webViewRef = useRef(null);
+    const [showWebView, setShowWebView] = useState(false);
+    const [webViewUrl, setWebViewUrl] = useState('');
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [inputFocused, setInputFocused] = useState(false)
-    const [loginFailed, setLoginFailed] = useState(false)
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [inputFocused, setInputFocused] = useState(false);
+    const [loginFailed, setLoginFailed] = useState(false);
 
-    const login = useAuthStore((state) => state.login)
-    const updateUser = useAuthStore((state) => state.updateUser)
+    const loginUpdate = useAuthStore((state) => state.login);
 
-    // const handleSocialLogin = async (
-    //     socialLoginApi: () => Promise<ApiResponse>,
-    // ) => {
-    //     try {
-    //         const response = await socialLoginApi()
-    //         if (response.accessToken) {
-    //             const userProfile = await getUserProfileApi(
-    //                 response.accessToken,
-    //             )
-    //             userStore.login(
-    //                 userProfile.accessToken,
-    //                 userProfile.userId,
-    //                 userProfile.nickname,
-    //                 userProfile.profileImageUrl,
-    //             )
-    //             setShowWebView(false)
-    //             loginFinished()
-    //         } else {
-    //             setLoginFailed(true)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error during social login:', error)
-    //         setLoginFailed(true)
-    //     }
-    // }
+    const updateUser = useAuthStore((state) => state.updateUser);
+
     const handleWebViewNavigationStateChange = (
         navState: WebViewNavigation,
     ) => {
@@ -70,52 +39,46 @@ export default function LoginScreen() {
                         refreshToken,
                         hasVerifiedEmail,
                         hasProfile,
-                    } = data
+                    } = data;
                     // 토큰 및 사용자 정보 처리
-                    setShowWebView(false)
+                    setShowWebView(false);
                 })
                 .catch((error) => {
-                    console.error('Error:', error)
-                    setShowWebView(false)
-                })
+                    console.error('Error:', error);
+                    setShowWebView(false);
+                });
         }
-    }
+    };
 
     const handleLogin = async () => {
-        console.log(`email : ${email} || password : ${password}`)
+        console.log(`email : ${email} || password : ${password}`);
         try {
-            const response = await loginApi(email, password)
+            const { accessToken, refreshToken } = await login(email, password);
 
-            if (response.accessToken) {
-                console.log(`로그인 성공 : ${response.accessToken}`)
-                login(response.accessToken)
-
-                const userProfile = await getUserProfileApi()
+            if (accessToken && refreshToken) {
+                loginUpdate(accessToken, refreshToken);
+                const userProfile = await getUserProfileApi();
 
                 userProfile &&
                     updateUser({
                         nickname: userProfile.nickname,
                         profileImageUrl: userProfile.profileImageUrl,
                         userId: userProfile.userId,
-                    })
-                console.log(userProfile)
+                    });
             } else {
-                setLoginFailed(true)
-                setEmail('')
-                setPassword('')
+                setLoginFailed(true);
+                setEmail('');
+                setPassword('');
             }
         } catch (error) {
-            console.error('Error while logging in:', error)
-            setLoginFailed(true)
+            console.error('Error while logging in:', error);
+            setLoginFailed(true);
         }
-    }
+    };
 
     const gotoJoinScreen = () => {
-        navigation.navigate('EmailDuplicateCheck' as never)
-    }
-    const gotoFindPasswordScreen = () => {
-        //  navigation.navigate('화면이름')
-    }
+        navigation.navigate('EmailDuplicateCheck' as never);
+    };
 
     return (
         <View style={styles.container}>
@@ -285,5 +248,5 @@ export default function LoginScreen() {
                 </Modal>
             </View>
         </View>
-    )
+    );
 }
