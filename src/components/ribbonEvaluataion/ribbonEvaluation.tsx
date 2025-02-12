@@ -1,20 +1,20 @@
-import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native'
-import { styles, text } from './ribbonEvaluationStyle'
-import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
-import EvaluationFinish from '../evaluationFinish/evaluationFinish'
-import { getRibbonHospitalQuestion } from '@/api/hospital/getRibbonHospitalQuestion'
+import { View, TouchableOpacity, Image, Text, ScrollView } from 'react-native';
+import { styles, text } from './ribbonEvaluationStyle';
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import EvaluationFinish from '../evaluationFinish/evaluationFinish';
+import { getRibbonHospitalQuestion } from '@/api/hospital/getRibbonHospitalQuestion';
 
 interface RibbonEvaluationProp {
-    hospitalName: string
-    setRibbonOpen: React.Dispatch<React.SetStateAction<boolean>>
-    ribbonCount: number
+    hospitalName: string;
+    setRibbonOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    ribbonCount: number;
 }
 
 interface hospitalQuestion {
-    hospitalEvaluationQuestionId: number
-    seq: number
-    question: string
+    hospitalEvaluationQuestionId: number;
+    seq: number;
+    question: string;
 }
 
 export default function RibbonEvaluation({
@@ -25,39 +25,39 @@ export default function RibbonEvaluation({
     //병원 정보 체크할 배열
     const [hospitalCheck, setHospitalCheck] = useState<boolean[]>(
         new Array(hospitalQuestionsDummy.length).fill(false),
-    )
+    );
     const [hospitalQuestions, setHospitalQuestions] = useState<
         hospitalQuestion[]
-    >([])
+    >([]);
 
     //평가를 마친 경우 다음 화면을 띄우기 위한 상태
-    const [finish, setFinish] = useState<boolean>(false)
+    const [finish, setFinish] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const questionData = await getRibbonHospitalQuestion()
-                setHospitalQuestions(questionData)
-                setHospitalCheck(new Array(questionData.length).fill(false))
+                const questionData = await getRibbonHospitalQuestion();
+                setHospitalQuestions(questionData);
+                setHospitalCheck(new Array(questionData.length).fill(false));
             } catch (error) {
-                console.error('Failed to fetch hospital questions:', error)
+                console.error('Failed to fetch hospital questions:', error);
                 // 에러 처리 로직
             }
-        }
+        };
 
-        fetchQuestions()
-    }, [])
+        fetchQuestions();
+    }, []);
 
-    const { t } = useTranslation('ribbonEvaluation')
+    const { t } = useTranslation('ribbonEvaluation');
 
     return !finish ? (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 {/*헤더 */}
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
-                            setRibbonOpen(false)
+                            setRibbonOpen(false);
                         }}
                     >
                         <Image
@@ -76,14 +76,14 @@ export default function RibbonEvaluation({
                     </Text>
                 </View>
                 {/*체크 리스트 */}
-                <View style={styles.checkListContainer}>
+                <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
                     {hospitalQuestions &&
                         hospitalQuestions.map((data, index) => (
                             <TouchableOpacity
                                 onPress={() => {
-                                    const temp = [...hospitalCheck]
-                                    temp[index] = !temp[index]
-                                    setHospitalCheck(temp)
+                                    const temp = [...hospitalCheck];
+                                    temp[index] = !temp[index];
+                                    setHospitalCheck(temp);
                                 }}
                                 style={
                                     hospitalCheck[index]
@@ -119,14 +119,14 @@ export default function RibbonEvaluation({
                             backgroundColor: 'white',
                         }}
                     />
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
             <View style={styles.ButtonsContainer}>
                 {/*취소 버튼 */}
                 <TouchableOpacity
                     style={styles.cancelContainer}
                     onPress={() => {
-                        setRibbonOpen(false)
+                        setRibbonOpen(false);
                     }}
                 >
                     <Text style={text.cancelText}>{t('cancel')}</Text>
@@ -142,8 +142,8 @@ export default function RibbonEvaluation({
                               ]
                     }
                     onPress={() => {
-                        console.log('평가 완료')
-                        setFinish(true)
+                        console.log('평가 완료');
+                        setFinish(true);
                     }}
                 >
                     <Text style={text.finishText}>{t('finish')}</Text>
@@ -158,7 +158,7 @@ export default function RibbonEvaluation({
             score={hospitalCheck.filter((item) => item === true).length}
             ribbonCount={ribbonCount}
         />
-    )
+    );
 }
 
 const hospitalQuestionsDummy = [
@@ -172,4 +172,4 @@ const hospitalQuestionsDummy = [
     '해당 병원은 ADHD 전문병원이며, 전문가가 존재한다.',
     '해당 병원은 약에 대한 상세한 설명 및 복용량 조절이 적절하다.',
     '해당 병원은 임상 심리사와 행동 및 인지치료를 위한 기간이 존재한다.',
-]
+];

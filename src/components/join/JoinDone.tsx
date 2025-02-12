@@ -1,49 +1,48 @@
-import React, { useContext, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { TouchableOpacity, Text, View, Image, Alert } from 'react-native'
-import { styles, text } from './JoinStyle'
-import { ProfileStoreContext } from '@/state/signupState'
-import { sendUserInfoApi } from '@/api/join/sendUserInfoApi'
-import { uploadImageApi } from '@/api/image/imageApi'
-import { useAuthStore } from '@/store/authStore'
-import axios from 'axios'
+import React, { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity, Text, View, Image, Alert } from 'react-native';
+import { styles, text } from './JoinStyle';
+import { ProfileStoreContext } from '@/state/signupState';
+import { sendUserInfoApi } from '@/api/join/sendUserInfoApi';
+import { uploadImageApi } from '@/api/image/imageApi';
+import { useAuthStore } from '@/store/authStore';
+import axios from 'axios';
 
 export default function JoinDone() {
-    const { t } = useTranslation('login-join')
-    const navigation = useNavigation()
-    const profileStore = useContext(ProfileStoreContext)
-    const login = useAuthStore((state) => state.login)
-    const [loading, setLoading] = useState(false)
-    const updateUser = useAuthStore((state) => state.updateUser)
+    const { t } = useTranslation('login-join');
+    const navigation = useNavigation();
+    const profileStore = useContext(ProfileStoreContext);
+    const login = useAuthStore((state) => state.login);
+    const [loading, setLoading] = useState(false);
+    const updateUser = useAuthStore((state) => state.updateUser);
 
     const gotoNextScreen = async () => {
         try {
-            setLoading(true)
-            const accessToken = await handleSendUserInfo()
+            setLoading(true);
+            const { accessToken, refreshToken } = await handleSendUserInfo();
             Alert.alert(
                 '회원가입이 완료되었습니다!',
                 '포에이에서 adhd 관련 정보를 알아보세요 :)',
-            )
-            login(accessToken as string)
+            );
+            login(accessToken, refreshToken);
         } catch (error) {
-            console.error('final submit error', error)
+            console.error('final submit error', error);
+            Alert.alert('회원가입 중 오류가 발생했습니다.');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
-    const handleSendUserInfo = async () => {
+    const handleSendUserInfo = async (): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }> => {
         try {
-            let profileImageUrl = profileStore.imageUrl
+            let profileImageUrl = profileStore.imageUrl;
             if (profileStore.imageUrl) {
-                console.log(
-                    profileImageUrl.uri,
-                    profileImageUrl,
-                    profileImageUrl.uri.split('/').pop(),
-                )
-                const { imagePathList } = await uploadImageApi(profileImageUrl) // 이미지 업로드
-                profileImageUrl = imagePathList[0] // 첫 번째 이미지 경로를 저장
+                const imagePath = await uploadImageApi(profileImageUrl); // 이미지 업로드
+                profileImageUrl = imagePath;
             }
 
             const userInfo = {
@@ -68,17 +67,18 @@ export default function JoinDone() {
                         approved: true,
                     },
                 ],
-            }
+            };
 
-            const { accessToken } = await sendUserInfoApi(userInfo)
-            return accessToken
+            const { accessToken, refreshToken } =
+                await sendUserInfoApi(userInfo);
+            return { accessToken, refreshToken };
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error('Error sending user info:', error.response)
+                console.error('Error sending user info:', error.response);
             }
-            Alert.alert('회원가입 중 오류가 발생했습니다.')
+            throw error;
         }
-    }
+    };
 
     return (
         <View style={styles.JoinDone}>
@@ -103,5 +103,5 @@ export default function JoinDone() {
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }

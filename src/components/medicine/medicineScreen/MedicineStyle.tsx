@@ -1,16 +1,16 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
+        paddingTop: 53,
+        paddingHorizontal: 10,
         flex: 1,
         backgroundColor: '#EDEDEA',
         justifyContent: 'center',
         flexDirection: 'column',
     },
     header: {
-        position: 'absolute',
-        top: 53,
-        left: 19,
+        paddingHorizontal: 10,
     },
     searchBarContainer: {
         marginTop: 14,
@@ -33,10 +33,8 @@ export const styles = StyleSheet.create({
         marginRight: 12,
         zIndex: 2,
     },
+    sortContainer: { width: '100%', padding: 10 },
     sortOption: {
-        position: 'absolute',
-        top: -265,
-        right: 10,
         justifyContent: 'flex-end',
         flexDirection: 'row',
         alignItems: 'center',
@@ -46,8 +44,6 @@ export const styles = StyleSheet.create({
         height: 24,
     },
     medList: {
-        position: 'absolute',
-        top: 200,
         width: '100%',
         height: '65%',
         alignContent: 'center',
@@ -81,10 +77,9 @@ export const styles = StyleSheet.create({
     greenUnderIcon: {
         width: 40,
         height: 40,
-        position: 'absolute',
         right: 5,
     },
-})
+});
 
 export const text = {
     fontFamily: 'Pretendard',
@@ -139,5 +134,5 @@ export const text = {
         color: '#949494',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

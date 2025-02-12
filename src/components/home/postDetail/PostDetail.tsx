@@ -6,19 +6,21 @@ import {
     Modal,
     TextInput,
     TouchableWithoutFeedback,
-} from 'react-native'
-import { useTranslation } from 'react-i18next'
-import { useState, useEffect, Key } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { styles, text } from './PostDetailStyle'
-import { getPostDetail } from '@/api/home/getPostsDetailsApi'
-import { sendCommentApi } from '@/api/home/sendCommentApi'
-import { getCommentsApi } from '@/api/home/getCommentApi'
-import { formatDate } from '@/common/formatDate'
-import SimpleModal from '@/components/common/simpleModal/SimpleModal'
-import AlertModal from '@/components/common/alertModal/AlertModal'
-import Comment from '../comment/Comment'
-import { ScrollView } from 'react-native-gesture-handler'
+    KeyboardAvoidingView,
+    Alert,
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useState, useEffect, Key } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { styles, text } from './PostDetailStyle';
+import { getPostDetail } from '@/api/home/getPostsDetailsApi';
+import { sendCommentApi } from '@/api/home/sendCommentApi';
+import { getCommentsApi } from '@/api/home/getCommentApi';
+import { formatDate } from '@/common/formatDate';
+import SimpleModal from '@/components/common/simpleModal/SimpleModal';
+import AlertModal from '@/components/common/alertModal/AlertModal';
+import Comment from '../comment/Comment';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
     LikedIcon,
     ScrapIcon,
@@ -27,104 +29,104 @@ import {
     EditIcon,
     LeftArrowIcon,
     ClikedLikedIcon,
-} from '@/public/assets/SvgComponents'
-import userStore from '@/store/userStore/userStore'
-import * as Clipboard from 'expo-clipboard'
-import { sendPostLike } from '@/api/home/postLikedApi'
-import { deletePostApi } from '@/api/home/deletePostApi'
-import { handleScrapApi } from '@/api/home/postScrappedApi'
-import { API_URL } from '@env'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList } from '@/components/navigation'
-import BottomSheet from '@/components/medicine/medBottomSheet/BottomSheet'
-import BlockModal from '@/components/common/block/blockModal'
+} from '@/public/assets/SvgComponents';
+import userStore from '@/store/userStore/userStore';
+import * as Clipboard from 'expo-clipboard';
+import { sendPostLike } from '@/api/home/postLikedApi';
+import { deletePostApi } from '@/api/home/deletePostApi';
+import { handleScrapApi } from '@/api/home/postScrappedApi';
+import { API_URL } from '@env';
+import { StackNavigationProp } from '@react-navigation/stack';
+import BottomSheet from '@/components/medicine/medBottomSheet/BottomSheet';
+import BlockModal from '@/components/common/block/blockModal';
+import { imagePathMerge } from '@/utils/imagePathMerge';
+import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 
 interface PostDetailProps {
-    postId: number
+    postId: number;
 }
 
 type PostDetailNavigationProp = StackNavigationProp<
-    RootStackParamList,
+    TodayStackParams,
     'PostDetail'
->
+>;
 
 export default function PostDetail({ postId }: PostDetailProps) {
-    const { t } = useTranslation('board')
-    const navigation = useNavigation()
-    const postNavigation = useNavigation<PostDetailNavigationProp>()
+    const { t } = useTranslation('board');
+    const navigation = useNavigation();
+    const postNavigation = useNavigation<PostDetailNavigationProp>();
 
     const handleEdit = async () => {
-        postNavigation.navigate('EditPost', { postId })
-    }
+        postNavigation.navigate('EditPost', { postId });
+    };
 
-    const [showSharedAlert, setShowSharedAlert] = useState(false)
-    const [showAlert, setShowAlert] = useState(false)
-    const [showDeleteDoneAlert, setShowDeleteDoneAlert] = useState(false)
-    const [postDetail, setPostDetail] = useState<any>(null)
-    const [liked, setIsLiked] = useState(false)
-    const [scrapped, setIsScrapped] = useState(0)
-    const [comments, setComments] = useState<any>('')
-    const [commentIsAnonymous, setCommentIsAnonymous] = useState<boolean>(true)
-    const [commentContent, setCommentContent] = useState<string>('')
-    const [isAuthor, setIsAuthor] = useState(false)
-    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
-    const rangeList = ['차단하기', '신고하기', '공유하기']
-    const [modalVisible, setModalVisible] = useState<boolean>(false)
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+    const [showSharedAlert, setShowSharedAlert] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [showDeleteDoneAlert, setShowDeleteDoneAlert] = useState(false);
+    const [postDetail, setPostDetail] = useState<any>(null);
+    const [liked, setIsLiked] = useState(false);
+    const [scrapped, setIsScrapped] = useState(0);
+    const [comments, setComments] = useState<any>('');
+    const [commentIsAnonymous, setCommentIsAnonymous] = useState<boolean>(true);
+    const [commentContent, setCommentContent] = useState<string>('');
+    const [isAuthor, setIsAuthor] = useState(false);
+    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
+    const rangeList = ['차단하기', '신고하기', '공유하기'];
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [replyCommentId, setReplyCommentId] = useState();
     const reportList = [
         '특정인에 대한 욕설 및 비하',
         '잘못된 정보',
         '개인정보 유출',
         '상업적 광고 및 판매글',
         '타인에게 혐오감을 주는 게시글',
-    ]
+    ];
 
     useEffect(() => {
-        setIsModalVisible(isModalVisible)
+        setIsModalVisible(isModalVisible);
     }, []);
 
     const handleReport = () => {
-        setIsModalVisible(false)
-        console.log("게시글 신고 완료")
-    }
-
-
+        setIsModalVisible(false);
+        console.log('게시글 신고 완료');
+    };
 
     // 정렬 선택 _ 기본 차단하기
-    const [range, setRange] = useState<string>(rangeList[0])
+
+    const fetchComments = async () => {
+        try {
+            const data = await getCommentsApi(postId);
+            setComments(data.commentList);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const [range, setRange] = useState<string>(rangeList[0]);
     useEffect(() => {
         const fetchPostDetail = async () => {
             try {
                 if (postId === -1) {
                     // postId가 -1인 경우, 공지 내용을 설정
-                    setPostDetail(notification)
-                    return
+                    setPostDetail(notification);
+                    return;
                 }
 
                 // postId가 -1이 아닌 경우, 데이터 불러오기
-                const data = await getPostDetail(postId)
-                setPostDetail(data)
-                setIsAuthor(data.userId === userStore.nickname)
+                const data = await getPostDetail(postId);
+                setPostDetail(data);
+                setIsAuthor(data.userId === userStore.nickname);
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
-        }
+        };
 
         if (postId !== null) {
-            fetchPostDetail()
+            fetchPostDetail();
         }
 
-        const fetchComments = async () => {
-            try {
-                const data = await getCommentsApi(postId)
-                setComments(data.commentList)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-
-        fetchComments()
-    }, [postId])
+        fetchComments();
+    }, [postId]);
     const {
         category,
         images,
@@ -136,48 +138,54 @@ export default function PostDetail({ postId }: PostDetailProps) {
         content,
         likeCount,
         scrapCount,
-    } = postDetail || {}
+    } = postDetail || {};
 
     const toggleCommentAnonymous = () => {
-        setCommentIsAnonymous((prevState) => !prevState)
-    }
+        setCommentIsAnonymous((prevState) => !prevState);
+    };
 
-    const handleSendComment = (commentId: any) => {
-        const commentData = {
-            postId: postId,
-            content: commentContent,
-            isAnonymous: commentIsAnonymous,
-            reply: commentId ? commentId : null, // 답글인 경우, 답글의 ID
+    const handleSendReply = async (commentId: any) => {
+        setReplyCommentId(commentId);
+    };
+
+    const handleSendComment = async () => {
+        try {
+            const commentData = {
+                postId: postId,
+                content: commentContent,
+                isAnonymous: commentIsAnonymous,
+                reply: replyCommentId ?? null, // 답글인 경우, 답글의 ID
+            };
+            await sendCommentApi(commentData);
+            Alert.alert('댓글이 작성되었습니다.');
+            await fetchComments();
+        } catch {
+            Alert.alert('댓글 작성 중 오류가 발생했습니다.');
         }
-        sendCommentApi(commentData)
-    }
-
-    const handleReply = (commentId: any) => {
-        handleSendComment(commentId)
-    }
+    };
 
     const handleShare = () => {
-        const postLink = `${API_URL}posts/${postId}` // postId에 따라 실제 주소 생성
-        Clipboard.setString(postLink)
-        setShowSharedAlert(true)
-    }
+        const postLink = `${API_URL}posts/${postId}`; // postId에 따라 실제 주소 생성
+        Clipboard.setString(postLink);
+        setShowSharedAlert(true);
+    };
 
     const onDelete = () => {
-        handleDelete
-    }
+        handleDelete();
+    };
 
     const handleDelete = async () => {
         try {
-            await deletePostApi(postId)
-            setShowDeleteDoneAlert(true)
+            await deletePostApi(postId);
+            setShowDeleteDoneAlert(true);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     const handleNothing = () => {
-        setShowAlert(false)
-    }
+        setShowAlert(false);
+    };
 
     const handleLike = async () => {
         try {
@@ -190,38 +198,34 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 postDetail.likedCount,
                 postDetail.createdAt,
                 new Date().toISOString(), // lastModifiedAt
-            )
+            );
             setPostDetail((prevPostDetail: any) => ({
                 ...prevPostDetail,
                 likedCount: liked ? newLikedCount + 1 : newLikedCount,
                 lastModifiedAt: new Date().toISOString(), // 업데이트된 시간 설정
-            }))
-            setIsLiked(!liked)
+            }));
+            setIsLiked(!liked);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     const handleScrap = async () => {
         try {
-            const newScrapCount = await handleScrapApi(
-                postDetail.id,
-                userStore.userId,
-                scrapped,
-            )
+            await handleScrapApi(postDetail.id, userStore.userId, scrapped);
             setPostDetail((prevPostDetail: any) => ({
                 ...prevPostDetail,
-                scrapCount: scrapped ? newScrapCount + 1 : newScrapCount,
-            }))
-            setIsScrapped(scrapped ? 0 : 1)
+                scrapCount: scrapCount + 1,
+            }));
+            setIsScrapped(1);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     const handleGoback = () => {
-        navigation.goBack()
-    }
+        navigation.goBack();
+    };
 
     return (
         <View style={styles.container}>
@@ -244,7 +248,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 <Text style={text.categoryText}>{category}</Text>
                 <TouchableOpacity
                     onPress={() => {
-                        setRangeBottomSheet(true)
+                        setRangeBottomSheet(true);
                     }}
                 >
                     <Image
@@ -264,30 +268,16 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 )}
             </View>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                {/* 첨부 사진이 있는 경우 나타나는 첨부사진 view */}
-                {/* {images && images.length > 0 && ( //첨부 사진 uri잘못인지 아래 컨테이너 위치가 밀림
-                    <View>
-                        {images.map(
-                            (img: any, index: Key | null | undefined) => (
-                                <Image
-                                    key={index}
-                                    source={{ uri: img }}
-                                    style={styles.imageBox}
-                                />
-                            ),
-                        )}
-                        <View style={styles.imageCountBox}>
-                            <Text>{`1/${images.length}`}</Text>
-                        </View>
-                    </View>
-                )} */}
-
                 <View style={styles.bodyConatiner}>
                     {/* 작성자 정보 */}
                     <View style={styles.userInfoContainer}>
                         {postDetail && postDetail.profileImage ? (
                             <Image
-                                source={{ uri: postDetail.profileImage }}
+                                source={{
+                                    uri: imagePathMerge(
+                                        postDetail.profileImage,
+                                    ),
+                                }}
                                 style={styles.icon}
                             />
                         ) : (
@@ -365,6 +355,25 @@ export default function PostDetail({ postId }: PostDetailProps) {
                         <View style={styles.titleUnderBar} />
                     </View>
                     <View style={styles.contentContainer}>
+                        {/* 첨부 사진이 있는 경우 나타나는 첨부사진 view */}
+                        {images && images.length > 0 && (
+                            <View style={styles.imageContainer}>
+                                {images.map(
+                                    (
+                                        img: any,
+                                        index: Key | null | undefined,
+                                    ) => (
+                                        <Image
+                                            key={index}
+                                            source={{
+                                                uri: imagePathMerge(img),
+                                            }}
+                                            style={styles.imageBox}
+                                        />
+                                    ),
+                                )}
+                            </View>
+                        )}
                         <Text style={text.contentText}>{content}</Text>
                     </View>
                 </View>
@@ -383,50 +392,57 @@ export default function PostDetail({ postId }: PostDetailProps) {
                                 key={comment.commentId}
                                 comment={comment}
                                 postId={postDetail.id}
-                                onReply={handleReply}
+                                onReply={handleSendReply}
                             />
                         ),
                     )}
                 <View style={styles.endOfCommentBox} />
             </ScrollView>
             {/* 댓글 작성 */}
-            <View style={styles.addComment}>
-                <TouchableOpacity onPress={toggleCommentAnonymous}>
-                    <View style={styles.commentAnonymousContainer}>
-                        <Image
-                            source={
-                                commentIsAnonymous
-                                    ? require('@/public/assets/checkbox-icon.png')
-                                    : require('@/public/assets/check-icon.png')
-                            }
-                            style={styles.anonymousIcon}
-                        />
-                        <Text
-                            style={
-                                commentIsAnonymous
-                                    ? text.notAnonymousText
-                                    : text.anonymousText
-                            }
-                        >
-                            {t('post-anonymous')}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-                <TextInput
-                    style={[text.commentBoxText, styles.commentBox]}
-                    placeholder={t('post-give-comment')}
-                    placeholderTextColor="#949494"
-                />
-                <TouchableOpacity
-                    style={styles.commentButton}
-                    onPress={handleSendComment}
-                >
-                    <Image
-                        source={require('@/public/assets/comment.png')}
-                        style={styles.sendIcon}
+            <KeyboardAvoidingView behavior="padding">
+                <View style={styles.addComment}>
+                    <TouchableOpacity onPress={toggleCommentAnonymous}>
+                        <View style={styles.commentAnonymousContainer}>
+                            <Image
+                                source={
+                                    commentIsAnonymous
+                                        ? require('@/public/assets/checkbox-icon.png')
+                                        : require('@/public/assets/check-icon.png')
+                                }
+                                style={styles.anonymousIcon}
+                            />
+                            <Text
+                                style={
+                                    commentIsAnonymous
+                                        ? text.notAnonymousText
+                                        : text.anonymousText
+                                }
+                            >
+                                {t('post-anonymous')}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TextInput
+                        style={[text.commentBoxText, styles.commentBox]}
+                        onChangeText={(text) => setCommentContent(text)}
+                        placeholder={
+                            replyCommentId
+                                ? '답글을 남겨보세요'
+                                : t('post-give-comment')
+                        }
+                        placeholderTextColor="#949494"
                     />
-                </TouchableOpacity>
-            </View>
+                    <TouchableOpacity
+                        style={styles.commentButton}
+                        onPress={handleSendComment}
+                    >
+                        <Image
+                            source={require('@/public/assets/comment.png')}
+                            style={styles.sendIcon}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
 
             {/* 게시글 삭제 모달-alert */}
             <Modal
@@ -496,18 +512,27 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 transparent={true}
                 visible={isModalVisible}
                 animationType="fade"
-                onRequestClose={() => {setIsModalVisible(!isModalVisible)}}
+                onRequestClose={() => {
+                    setIsModalVisible(!isModalVisible);
+                }}
             >
-                <View style={[styles.overlay, {justifyContent: 'center', alignItems: 'center'}]}>
+                <View
+                    style={[
+                        styles.overlay,
+                        { justifyContent: 'center', alignItems: 'center' },
+                    ]}
+                >
                     <View style={styles.reportModalContainer}>
                         <Text style={text.reportModalTitleText}>
                             게시글 신고
                         </Text>
-                        <View style={styles.reportModalLine}/>
+                        <View style={styles.reportModalLine} />
 
                         {reportList.map((report) => (
-                            <TouchableOpacity style={styles.reportModalContent}
-                                                onPress={handleReport}>
+                            <TouchableOpacity
+                                style={styles.reportModalContent}
+                                onPress={handleReport}
+                            >
                                 <Text style={text.reportModalContentText}>
                                     {report}
                                 </Text>
@@ -515,9 +540,13 @@ export default function PostDetail({ postId }: PostDetailProps) {
                         ))}
 
                         <View style={styles.reportModalExitContainer}>
-                            <TouchableOpacity activeOpacity={1}
-                                                style={styles.reportModalExit}
-                                                onPress={() => {setIsModalVisible(!isModalVisible)}}>
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                style={styles.reportModalExit}
+                                onPress={() => {
+                                    setIsModalVisible(!isModalVisible);
+                                }}
+                            >
                                 <Text style={text.reportModalExitText}>
                                     닫기
                                 </Text>
@@ -533,12 +562,12 @@ export default function PostDetail({ postId }: PostDetailProps) {
                     onClose={() => setRangeBottomSheet(false)}
                     options={rangeList}
                     onSelect={(range) => {
-                        setRange(range)
+                        setRange(range);
                         if (range == '차단하기') {
-                            setModalVisible(!modalVisible)
+                            setModalVisible(!modalVisible);
                         }
                         if (range == '신고하기') {
-                            setIsModalVisible(true)
+                            setIsModalVisible(true);
                         }
                     }}
                     selectedOption={range}
@@ -555,7 +584,7 @@ export default function PostDetail({ postId }: PostDetailProps) {
                 />
             )}
         </View>
-    )
+    );
 }
 
 const notification = {
@@ -585,4 +614,4 @@ const notification = {
     profileImage: null,
     createdAt: 1723046942,
     lastModifiedAt: 1723046949,
-}
+};

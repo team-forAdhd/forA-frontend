@@ -1,69 +1,68 @@
-import { useState, useContext, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
-import { searchStoreContext } from '@/state/searchState'
-import { styles, text } from './searchStyle'
-import { ScrollView, TextInput } from 'react-native-gesture-handler'
-import PostItem from '../common/postItem/postItem'
-import { Observer } from 'mobx-react'
-import { getSearch } from '@/api/search/searchApi'
-import { Login } from '@/api/login/loginApi'
+import { useState, useContext, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native';
+import { searchStoreContext } from '@/state/searchState';
+import { styles, text } from './searchStyle';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import PostItem from '../common/postItem/postItem';
+import { Observer } from 'mobx-react';
+import { getSearch } from '@/api/search/searchApi';
 
 interface PostData {
-    commentCount: number
-    id: number
-    createdAt: number
-    images: string[] | null // 이미지가 URL 문자열 배열로 가정
-    likeCount: number
-    title: string
-    viewCount: number
+    commentCount: number;
+    id: number;
+    createdAt: number;
+    images: string[] | null; // 이미지가 URL 문자열 배열로 가정
+    likeCount: number;
+    title: string;
+    viewCount: number;
 }
 
 export default function SearchScreen() {
     //텍스트 인풋에서 받을 검색어
-    const [searchInputValue, setSearchInputValue] = useState<string>('')
+    const [searchInputValue, setSearchInputValue] = useState<string>('');
     //submit 상태에 따라 화면에 조건부 렌더링
-    const [submit, setSubmit] = useState<boolean>(false)
+    const [submit, setSubmit] = useState<boolean>(false);
     //검색 결과 리스트
-    const [searchResultList, setSearchResultList] = useState<PostData[]>([])
+    const [searchResultList, setSearchResultList] = useState<PostData[]>([]);
 
-    const store = useContext(searchStoreContext)
+    const store = useContext(searchStoreContext);
     //검색창 포커스 여부에 따라 placeholder 변화 주기 위해
-    const [isFocused, setIsFocused] = useState<boolean>(false)
+    const [isFocused, setIsFocused] = useState<boolean>(false);
 
-    const { t } = useTranslation('search')
+    const { t } = useTranslation('search');
 
-    const [title, setTitle] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false) // 로딩 상태 추가
+    const [title, setTitle] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
     const handleSearch = () => {
-        setSubmit(true)
-        setTitle(searchInputValue)
-        store.setSearchTerm(searchInputValue)
-    }
+        setSubmit(true);
+        setTitle(searchInputValue);
+        store.setSearchTerm(searchInputValue);
+    };
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchPostData = async () => {
             if (title) {
-                setLoading(true) // 데이터 요청 시작 전에 로딩 상태로 설정
+                setLoading(true); // 데이터 요청 시작 전에 로딩 상태로 설정
                 try {
-                    const search = await getSearch(title)
-                    setSearchResultList(search)
-                    console.log('검색 데이터 받아오기', search)
+                    const search = await getSearch(title);
+                    setSearchResultList(search);
+                    console.log('검색 데이터 받아오기', search);
                 } catch (error) {
-                    console.error('Error fetching data:', error)
+                    console.error('Error fetching data:', error);
                 } finally {
-                    setLoading(false) // 데이터 요청 완료 후 로딩 해제
+                    setLoading(false); // 데이터 요청 완료 후 로딩 해제
                 }
             }
-        }
+        };
 
         if (submit) {
-            fetchPostData()
+            fetchPostData();
         }
-    }, [title])
+    }, [title]);
 
     return (
         <View style={styles.container}>
@@ -78,8 +77,8 @@ export default function SearchScreen() {
                         <TextInput
                             value={searchInputValue}
                             onChangeText={(text) => {
-                                setSubmit(false)
-                                setSearchInputValue(text)
+                                setSubmit(false);
+                                setSearchInputValue(text);
                             }}
                             placeholder={
                                 isFocused
@@ -98,7 +97,7 @@ export default function SearchScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            setSearchInputValue('')
+                            setSearchInputValue('');
                         }}
                     >
                         <Image
@@ -109,7 +108,7 @@ export default function SearchScreen() {
                 </View>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.goBack()
+                        navigation.goBack();
                     }}
                 >
                     <Text style={text.deleteText}>{t('cancel')}</Text>
@@ -155,7 +154,7 @@ export default function SearchScreen() {
                         </Text>
                         <TouchableOpacity
                             onPress={() => {
-                                store.deleteAll()
+                                store.deleteAll();
                             }}
                             style={styles.deleteAllContainer}
                         >
@@ -177,8 +176,8 @@ export default function SearchScreen() {
                                                     styles.recentSearchTermContainer
                                                 }
                                                 onPress={() => {
-                                                    setTitle(search)
-                                                    setSubmit(true)
+                                                    setTitle(search);
+                                                    setSubmit(true);
                                                 }}
                                             >
                                                 <Text
@@ -193,7 +192,7 @@ export default function SearchScreen() {
                                                         //누르면 삭제 되게끔
                                                         store.deleteSearchTerm(
                                                             search,
-                                                        )
+                                                        );
                                                     }}
                                                 >
                                                     <Image
@@ -213,5 +212,5 @@ export default function SearchScreen() {
                 </View>
             )}
         </View>
-    )
+    );
 }

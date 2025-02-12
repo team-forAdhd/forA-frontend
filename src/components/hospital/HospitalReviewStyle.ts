@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 const color = {
     primary: '#52A55D',
@@ -9,12 +9,13 @@ const color = {
     backgroundGray: '#EDEDEA',
     faintGray: '#EEEEEE',
     gray: '#949494',
-}
+};
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        paddingTop: 20,
         flexDirection: 'column',
     },
     header: {
@@ -24,10 +25,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 40,
         width: '100%',
-        height: 'auto',
         marginBottom: 15,
-        position: 'absolute',
-        top: 16,
     },
     cancelIcon: {
         width: 24,
@@ -45,12 +43,10 @@ export const styles = StyleSheet.create({
         backgroundColor: color.faintGray,
     },
     hospitalContainer: {
-        paddingTop: 13,
+        paddingTop: 20,
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        position: 'absolute',
-        top: 100,
         borderBottomWidth: 1,
         borderBottomColor: color.faintGray,
     },
@@ -62,13 +58,11 @@ export const styles = StyleSheet.create({
     },
     middleContainer: {
         width: '100%',
+        padding: 20,
         justifyContent: 'center',
-        paddingTop: 55,
-        position: 'absolute',
-        top: 201,
     },
     grayButton: {
-        width: 48,
+        paddingHorizontal: 10,
         height: 24,
         borderRadius: 500,
         backgroundColor: color.faintGray,
@@ -80,8 +74,6 @@ export const styles = StyleSheet.create({
         marginRight: 4,
     },
     InputContainer: {
-        position: 'absolute',
-        top: 325,
         width: '92.2%',
         height: 179,
         borderRadius: 8,
@@ -123,9 +115,6 @@ export const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // 흐림 효과를 위한 반투명 배경
     },
     contents: {
-        position: 'absolute',
-        top: 503,
-        flex: 1,
         paddingHorizontal: 16,
         paddingTop: 20,
         width: '100%',
@@ -203,16 +192,14 @@ export const styles = StyleSheet.create({
         padding: 10,
     },
     bottomContainer: {
-        position: 'absolute',
-        top: 611,
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        marginBottom: 27,
         justifyContent: 'center',
         borderTopColor: color.faintGray,
         borderTopWidth: 1,
         paddingTop: 20,
+        paddingBottom: 40,
     },
     chooseButton: {
         borderRadius: 44,
@@ -224,30 +211,29 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cancelButtonContainer: {
-        width: 123,
+        paddingHorizontal: 40,
         height: 60,
         alignContent: 'center',
         justifyContent: 'center',
         borderRadius: 10,
     },
     submitButtonContainer: {
-        width: 248,
+        flex: 1,
         height: 60,
         alignContent: 'center',
         justifyContent: 'center',
         borderRadius: 10,
     },
     reviewActionContainer: {
-        position: 'absolute',
-        top: 780,
         flexDirection: 'row',
         paddingHorizontal: 16,
         paddingTop: 10,
         borderTopColor: color.faintGray,
-        borderTopWidth: 10,
+        borderTopWidth: 1,
         justifyContent: 'space-between',
         height: 115,
         width: '100%',
+        gap: 10,
     },
     bottomCheckbox: {
         flexDirection: 'row',
@@ -261,7 +247,7 @@ export const styles = StyleSheet.create({
         height: 20,
         marginRight: 5,
     },
-})
+});
 
 export const text = {
     fontFamily: 'Pretendard',
@@ -371,5 +357,5 @@ export const text = {
         textAlign: 'center',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

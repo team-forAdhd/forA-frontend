@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 //자주 반복되는 색 객체로 빼서 사용
 const color = {
@@ -10,7 +10,7 @@ const color = {
     background: '#F4F9D9',
     cancel: '#EEEEEE',
     InactiveBackground: '#949494',
-}
+};
 
 export const styles = StyleSheet.create({
     container: {
@@ -20,8 +20,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     header: {
-        position: 'absolute',
-        top: 52,
+        marginTop: 70,
         width: '100%',
         height: 36,
         flexDirection: 'row',
@@ -33,21 +32,18 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 2,
     },
     titleContainer: {
-        position: 'absolute',
-        top: 136,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
         width: '100%',
+        padding: 30,
     },
     flex: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 16,
-        marginHorizontal: 16,
-        width: 382,
-        height: 70,
+        padding: 15,
+        width: '95%',
         borderRadius: 8,
         borderWidth: 1,
         marginBottom: 8,
@@ -64,12 +60,7 @@ export const styles = StyleSheet.create({
         height: 20,
         objectFit: 'contain',
     },
-    checkListContainer: {
-        position: 'absolute',
-        top: 246,
-        width: '100%',
-        alignItems: 'center',
-    },
+    checkListContainer: {},
     IconImage: {
         width: 24,
         height: 24,
@@ -111,13 +102,13 @@ export const styles = StyleSheet.create({
         width: '100%',
         height: 111,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -169,5 +160,5 @@ export const text = {
         color: color.normal,
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};
