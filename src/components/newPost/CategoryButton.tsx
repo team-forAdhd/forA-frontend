@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { TouchableOpacity, Text } from 'react-native'
-import { styles, text } from './NewPostStyle'
+import React, { useState } from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import { styles, text } from './NewPostStyle';
 
 interface CategoryButtonProps {
-    selected: string
-    category: string
-    onSelectCategory: (category: string) => void // 카테고리 선택 시 부모 컴포넌트로 전달할 콜백 함수
+    selected: string;
+    category: string;
+    onSelectCategory: (category: string) => void; // 카테고리 선택 시 부모 컴포넌트로 전달할 콜백 함수
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
@@ -13,10 +13,14 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     category,
     onSelectCategory,
 }) => {
-    const isSelected = selected === category
+    const isSelected = selected === category;
     const handleCategorySelect = () => {
-        onSelectCategory(category)
-    }
+        if (category.includes('30대')) {
+            onSelectCategory('30대 이상');
+            return;
+        }
+        onSelectCategory(category);
+    };
 
     return (
         <TouchableOpacity
@@ -35,7 +39,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 {category}
             </Text>
         </TouchableOpacity>
-    )
-}
+    );
+};
 
-export default CategoryButton
+export default CategoryButton;
