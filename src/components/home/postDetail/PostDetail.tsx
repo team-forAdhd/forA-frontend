@@ -18,7 +18,7 @@ import { sendCommentApi } from '@/api/home/sendCommentApi';
 import { getCommentsApi } from '@/api/home/getCommentApi';
 import { formatDate } from '@/common/formatDate';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
-import AlertModal from '@/components/common/alertModal/AlertModal';
+import AlertModal from '@/components/common/modals/AlertModal';
 import Comment from '../comment/Comment';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
@@ -295,58 +295,60 @@ export default function PostDetail({ postId }: PostDetailProps) {
                                 {formatDate(createdAt)}
                             </Text>
                         </View>
-                        <View style={styles.actionButtonContainer}>
-                            {/* 좋아요 버튼 */}
-                            <TouchableOpacity
-                                style={styles.actionButton}
-                                onPress={handleLike}
-                            >
-                                <View style={styles.marginBox}>
-                                    {liked ? (
-                                        <ClikedLikedIcon />
-                                    ) : (
-                                        <LikedIcon />
-                                    )}
-                                    <Text
-                                        style={[
-                                            text.countText,
-                                            liked && { color: '#52A55D' },
-                                        ]}
-                                    >
-                                        {/* {likeCount} */}
-                                        {liked ? likeCount + 1 : likeCount}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                            {/* 스크랩 버튼 */}
-                            <TouchableOpacity
-                                style={styles.actionButton}
-                                onPress={handleScrap}
-                            >
-                                <View style={styles.marginBox}>
-                                    <ScrapIcon />
-                                    <Text
-                                        style={[
-                                            text.countText,
-                                            scrapped === 1 && {
-                                                color: '#52A55D',
-                                            },
-                                        ]}
-                                    >
-                                        {scrapped === 1
-                                            ? scrapCount + 1
-                                            : scrapCount}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                            {/* 공유 버튼 */}
-                            <TouchableOpacity
-                                style={styles.actionButton2}
-                                onPress={handleShare}
-                            >
-                                <ShareIcon />
-                            </TouchableOpacity>
-                        </View>
+                        {postDetail.id !== -1 && (
+                            <View style={styles.actionButtonContainer}>
+                                {/* 좋아요 버튼 */}
+                                <TouchableOpacity
+                                    style={styles.actionButton}
+                                    onPress={handleLike}
+                                >
+                                    <View style={styles.marginBox}>
+                                        {liked ? (
+                                            <ClikedLikedIcon />
+                                        ) : (
+                                            <LikedIcon />
+                                        )}
+                                        <Text
+                                            style={[
+                                                text.countText,
+                                                liked && { color: '#52A55D' },
+                                            ]}
+                                        >
+                                            {/* {likeCount} */}
+                                            {liked ? likeCount + 1 : likeCount}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                {/* 스크랩 버튼 */}
+                                <TouchableOpacity
+                                    style={styles.actionButton}
+                                    onPress={handleScrap}
+                                >
+                                    <View style={styles.marginBox}>
+                                        <ScrapIcon />
+                                        <Text
+                                            style={[
+                                                text.countText,
+                                                scrapped === 1 && {
+                                                    color: '#52A55D',
+                                                },
+                                            ]}
+                                        >
+                                            {scrapped === 1
+                                                ? scrapCount + 1
+                                                : scrapCount}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                {/* 공유 버튼 */}
+                                <TouchableOpacity
+                                    style={styles.actionButton2}
+                                    onPress={handleShare}
+                                >
+                                    <ShareIcon />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
 
                     {/* 본문 */}

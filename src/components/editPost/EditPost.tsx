@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     TouchableOpacity,
     Text,
@@ -7,93 +7,94 @@ import {
     TextInput,
     Image,
     Modal,
-} from 'react-native'
+} from 'react-native';
 import {
     LeftArrowIcon,
     DefaultCameraIcon,
     DeleteIcon,
-} from '@/public/assets/SvgComponents'
-import CategoryButton from './CategoryButton'
-import AlertModal from '../common/alertModal/AlertModal'
-import { useNavigation } from '@react-navigation/native'
-import { styles, text } from './EditPostStyle'
-import * as ImagePicker from 'expo-image-picker'
-import { getPostDetail } from '@/api/home/getPostsDetailsApi'
-import { updatePostApi } from '@/api/home/updatePostApi'
-import userStore from '@/store/userStore/userStore'
-import { uploadImageApi } from '@/api/image/imageApi'
+} from '@/public/assets/SvgComponents';
+import CategoryButton from './CategoryButton';
+import AlertModal from '../common/modals/AlertModal';
+import { useNavigation } from '@react-navigation/native';
+import { styles, text } from './EditPostStyle';
+import * as ImagePicker from 'expo-image-picker';
+import { getPostDetail } from '@/api/home/getPostsDetailsApi';
+import { updatePostApi } from '@/api/home/updatePostApi';
+import userStore from '@/store/userStore/userStore';
+import { uploadImageApi } from '@/api/image/imageApi';
 
 interface EditPostProps {
-    postId: number
+    postId: number;
 }
 
 export default function EditPost({ postId }: EditPostProps) {
-    const { t: t } = useTranslation('board')
-    const { t: tabT } = useTranslation('home')
-    const navigation = useNavigation()
+    const { t: t } = useTranslation('board');
+    const { t: tabT } = useTranslation('home');
+    const navigation = useNavigation();
 
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
-    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([])
-    const [isAnonymous, setIsAnonymous] = useState(false)
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
-    const [selectedCategory, setSelectedCategory] = useState<string>('')
-    const [createdAt, setCreatedAt] = useState(0)
-    const [showAlert, setShowAlert] = useState(false)
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([]);
+    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [status, requestPermission] =
+        ImagePicker.useMediaLibraryPermissions();
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [createdAt, setCreatedAt] = useState(0);
+    const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
         const fetchPostDetail = async () => {
             try {
-                const data = await getPostDetail(postId)
+                const data = await getPostDetail(postId);
                 // 받아온 값을 useState의 기본값으로 설정
-                setTitle(data.title)
-                setContent(data.content)
-                setAttachedPhotos(data.images || [])
-                setIsAnonymous(data.anonymous)
-                setSelectedCategory(data.category)
-                setCreatedAt(data.createdAt)
+                setTitle(data.title);
+                setContent(data.content);
+                setAttachedPhotos(data.images || []);
+                setIsAnonymous(data.anonymous);
+                setSelectedCategory(data.category);
+                setCreatedAt(data.createdAt);
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
-        }
+        };
 
-        fetchPostDetail()
-    }, [postId])
+        fetchPostDetail();
+    }, [postId]);
 
     const handleLeftArrowPress = () => {
-        setShowAlert(true)
-    }
+        setShowAlert(true);
+    };
 
     const handleCancel = () => {
-        setShowAlert(false)
-        navigation.navigate('PostDetail' as never)
-    }
+        setShowAlert(false);
+        navigation.navigate('PostDetail' as never);
+    };
 
     const handleContinue = () => {
-        setShowAlert(false)
-    }
+        setShowAlert(false);
+    };
 
     const isUploadButtonDisabled = () => {
-        return !title.trim() || !content.trim() // 제목 또는 내용 중 하나라도 입력이 없으면 버튼 비활성
-    }
+        return !title.trim() || !content.trim(); // 제목 또는 내용 중 하나라도 입력이 없으면 버튼 비활성
+    };
 
     const handleImageUpload = async (imageFile: any) => {
         try {
-            const response = await uploadImageApi(imageFile)
-            const imagePathList = response.data.imagePathList // response.data로 접근
-            return imagePathList
+            const response = await uploadImageApi(imageFile);
+            const imagePathList = response.data.imagePathList; // response.data로 접근
+            return imagePathList;
         } catch (error) {
-            console.error('Error uploading image:', error)
-            throw error
+            console.error('Error uploading image:', error);
+            throw error;
         }
-    }
+    };
 
     const uploadImage = async () => {
         // 갤러리 접근 권한
         if (!status?.granted) {
-            const permission = await requestPermission()
+            const permission = await requestPermission();
             if (!permission.granted) {
-                return null
+                return null;
             }
         }
         // 이미지 업로드 기능
@@ -101,27 +102,30 @@ export default function EditPost({ postId }: EditPostProps) {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             quality: 1,
-        })
+        });
         if (result.canceled) {
-            return null // 이미지 업로드 취소한 경우
+            return null; // 이미지 업로드 취소한 경우
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
-    }
+        setAttachedPhotos((prevPhotos) => [
+            ...prevPhotos,
+            result.assets[0].uri,
+        ]);
+    };
 
     const handleDeletePhoto = (index: number) => {
-        const updatedPhotos = [...attachedPhotos]
-        updatedPhotos.splice(index, 1) // 해당 인덱스의 사진 삭제
-        setAttachedPhotos(updatedPhotos)
-    }
+        const updatedPhotos = [...attachedPhotos];
+        updatedPhotos.splice(index, 1); // 해당 인덱스의 사진 삭제
+        setAttachedPhotos(updatedPhotos);
+    };
 
     const handleCategorySelect = (category: string) => {
-        setSelectedCategory(category) // 선택된 카테고리 상태 업데이트
-    }
+        setSelectedCategory(category); // 선택된 카테고리 상태 업데이트
+    };
 
     const handleAnonymousClick = () => {
-        setIsAnonymous((prev) => !prev)
-    }
+        setIsAnonymous((prev) => !prev);
+    };
 
     const handlePostInfo = async () => {
         try {
@@ -129,7 +133,7 @@ export default function EditPost({ postId }: EditPostProps) {
                 attachedPhotos.map((photo) =>
                     handleImageUpload({ uri: photo }),
                 ),
-            )
+            );
 
             const postInfo = {
                 postId: postId,
@@ -139,18 +143,18 @@ export default function EditPost({ postId }: EditPostProps) {
                 content: content,
                 images: imagePathList.flat().join(','), // 이미지 경로를 문자열로 변환
                 anonymous: isAnonymous,
-            }
-            await updatePostApi(postInfo, postId)
-            console.log('PostInfo sent successfully:', postInfo)
+            };
+            await updatePostApi(postInfo, postId);
+            console.log('PostInfo sent successfully:', postInfo);
         } catch (error) {
-            console.error('Error sending PostInfo:', error)
+            console.error('Error sending PostInfo:', error);
         }
-    }
+    };
 
     const handleUploadButton = () => {
-        handlePostInfo()
-        navigation.navigate('Home' as never)
-    }
+        handlePostInfo();
+        navigation.navigate('Home' as never);
+    };
 
     return (
         <View style={styles.container}>
@@ -318,5 +322,5 @@ export default function EditPost({ postId }: EditPostProps) {
                 </View>
             </Modal>
         </View>
-    )
+    );
 }

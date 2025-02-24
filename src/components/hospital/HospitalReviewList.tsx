@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    useMemo,
+} from 'react';
 import {
     View,
     TouchableOpacity,
@@ -6,22 +12,22 @@ import {
     Text,
     ScrollView,
     Modal,
-} from 'react-native'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import BottomSheet from '@gorhom/bottom-sheet'
-import { styles, text } from './HospitalReviewListStyle'
-import AlertModal from '../common/alertModal/AlertModal'
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { styles, text } from './HospitalReviewListStyle';
+import AlertModal from '../common/modals/AlertModal';
 import {
     getDoctorsApi,
     getReviewsApi,
     deleteReviewApi,
     reviewHelpedApi,
-} from '@/api/review/reviewsApi'
-import { formatDate } from 'date-fns'
+} from '@/api/review/reviewsApi';
+import { formatDate } from 'date-fns';
 
 interface HospitalReviewListProps {
-    hospitalId: string
+    hospitalId: string;
     /*
     receiptReview: {
         writerId: number
@@ -39,17 +45,21 @@ interface HospitalReviewListProps {
 }
 
 export default function HospitalReviewList(hospitalId: any) {
-    const navigation = useNavigation()
-    const { t: t } = useTranslation('hospitalReviewList')
+    const navigation = useNavigation();
+    const { t: t } = useTranslation('hospitalReviewList');
 
-    const [filter, setFilter] = useState<string>('all')
+    const [filter, setFilter] = useState<string>('all');
 
-    const sortOptionList = ['createdAt,desc', 'createdAt,asc', 'helpCount,desc'] // 최신순, 오래된 순, 추천순
-    const [sortOption, setSortOption] = useState<string>(sortOptionList[0]) // 정렬 옵션 - default; 최신순
-    const [reviewList, setReviewList] = useState<any>([])
-    const [doctorList, setDoctorList] = useState<any>([])
-    const [showAlert, setShowAlert] = useState<boolean>(false)
-    const [showBottomSheet, setShowBottomSheet] = useState<boolean>(false)
+    const sortOptionList = [
+        'createdAt,desc',
+        'createdAt,asc',
+        'helpCount,desc',
+    ]; // 최신순, 오래된 순, 추천순
+    const [sortOption, setSortOption] = useState<string>(sortOptionList[0]); // 정렬 옵션 - default; 최신순
+    const [reviewList, setReviewList] = useState<any>([]);
+    const [doctorList, setDoctorList] = useState<any>([]);
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [showBottomSheet, setShowBottomSheet] = useState<boolean>(false);
 
     const getReviewList = async (
         hospitalId: string,
@@ -58,122 +68,122 @@ export default function HospitalReviewList(hospitalId: any) {
         sort: string,
     ) => {
         try {
-            const res = await getReviewsApi(hospitalId, page, size, sort)
+            const res = await getReviewsApi(hospitalId, page, size, sort);
 
             if (res) {
-                setReviewList(res)
+                setReviewList(res);
             } else {
-                console.log('Unknown response')
+                console.log('Unknown response');
             }
         } catch (error) {
-            console.error('Fail to load review list: ', error)
+            console.error('Fail to load review list: ', error);
         }
-    }
+    };
 
     const getDoctorList = async () => {
         try {
-            const res = await getDoctorsApi(hospitalId)
+            const res = await getDoctorsApi(hospitalId);
 
             if (res) {
-                setDoctorList(res)
+                setDoctorList(res);
             } else {
-                console.log('Unknown response')
+                console.log('Unknown response');
             }
         } catch (error) {
-            console.error('Fail to load doctor list: ', error)
+            console.error('Fail to load doctor list: ', error);
         }
-    }
+    };
 
     // ref
-    const bottomSheetRef = useRef<BottomSheet>(null)
+    const bottomSheetRef = useRef<BottomSheet>(null);
 
     // variables
-    const snapPoints = useMemo(() => ['32%'], [])
+    const snapPoints = useMemo(() => ['32%'], []);
 
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index + 1)
-    }, [])
+        console.log('handleSheetChanges', index + 1);
+    }, []);
 
     const selectSortOption = (option: string) => {
-        setSortOption(option)
-        setShowBottomSheet(false)
-        getReviewList(hospitalId, 0, 10, sortOption)
-    }
+        setSortOption(option);
+        setShowBottomSheet(false);
+        getReviewList(hospitalId, 0, 10, sortOption);
+    };
 
     const getFilteredSortedList = () => {
-        let filteredList = new Array()
+        let filteredList = new Array();
 
         if (filter === 'all') {
-            filteredList = reviewList
+            filteredList = reviewList;
         } else {
             filteredList = reviewList.filter(
                 (review: any) => review.doctorName === filter,
-            )
+            );
         }
 
-        let sortedList = filteredList
+        let sortedList = filteredList;
 
         switch (sortOption) {
             case 'createdAt,desc':
                 sortedList = filteredList.sort(
                     (a, b) => b.createdAt - a.createdAt,
-                )
-                break
+                );
+                break;
 
             case 'createdAt,asc':
                 sortedList = filteredList.sort(
                     (a, b) => a.createdAt - b.createdAt,
-                )
-                break
+                );
+                break;
 
             default:
                 sortedList = filteredList.sort(
                     (a, b) => b.helpCount - a.helpCount,
-                )
+                );
         }
 
-        return sortedList // 정렬된 데이터 반환
-    }
+        return sortedList; // 정렬된 데이터 반환
+    };
 
     const editReview = () => {
-        console.log('Edit Review')
-    }
+        console.log('Edit Review');
+    };
     const deleteReview = () => {
-        setShowAlert(true)
-    }
+        setShowAlert(true);
+    };
 
     const handleDelete = async (reviewId: string) => {
-        setShowAlert(false)
+        setShowAlert(false);
 
         try {
-            await deleteReviewApi(reviewId)
-            console.log('Deleted review')
+            await deleteReviewApi(reviewId);
+            console.log('Deleted review');
         } catch (error) {
-            console.error('Error while deleting: ', error)
+            console.error('Error while deleting: ', error);
         }
-    }
+    };
 
     const handleContinue = () => {
-        setShowAlert(false)
-    }
+        setShowAlert(false);
+    };
 
     const postReviewHelp = async (reviewId: string) => {
         try {
-            await reviewHelpedApi(reviewId)
-            console.log('Helped Success!')
+            await reviewHelpedApi(reviewId);
+            console.log('Helped Success!');
         } catch (error) {
-            console.error('Error while liking: ', error)
+            console.error('Error while liking: ', error);
         }
-    }
+    };
 
     useEffect(() => {
-        getReviewList(hospitalId, 0, 10, sortOption)
-        console.log(reviewList)
-        getDoctorList()
-        setSortOption(sortOption)
-        setShowAlert(showAlert)
-    }, [])
+        getReviewList(hospitalId, 0, 10, sortOption);
+        console.log(reviewList);
+        getDoctorList();
+        setSortOption(sortOption);
+        setShowAlert(showAlert);
+    }, []);
 
     if (reviewList.length === 0) {
         return (
@@ -188,7 +198,7 @@ export default function HospitalReviewList(hospitalId: any) {
                     style={styles.arrowIcon}
                 />
             </View>
-        )
+        );
     }
 
     return (
@@ -574,5 +584,5 @@ export default function HospitalReviewList(hospitalId: any) {
                 <></>
             )}
         </View>
-    )
+    );
 }

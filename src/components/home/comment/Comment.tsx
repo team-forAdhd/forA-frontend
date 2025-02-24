@@ -5,7 +5,7 @@ import { styles, text } from './CommentStyle';
 import { deleteCommentApi, deleteReplyApi } from '@/api/home/deleteCommentApi';
 import { formatDate } from '@/common/formatDate';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
-import AlertModal from '@/components/common/alertModal/AlertModal';
+import AlertModal from '@/components/common/modals/AlertModal';
 import userStore from '@/store/userStore/userStore';
 import { LikedIcon, ClikedLikedIcon } from '@/public/assets/SvgComponents';
 import { toggleCommentLike } from '@/api/home/commentLikedApi';
