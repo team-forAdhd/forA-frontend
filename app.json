@@ -24,9 +24,9 @@
         "assetBundlePatterns": ["**/*"],
         "ios": {
             "supportsTablet": true,
-            "bundleIdentifier": "ios.forA",
+            "bundleIdentifier": "com.fora.appfora",
             "config": {
-                "googleMapsApiKey": ""
+                "googleMapsApiKey": "AIzaSyDl_Kn0cLi4nL54Pj6Eed-1nejU99Sbw0Q"
             }
         },
         "android": {
