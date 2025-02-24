@@ -1,4 +1,5 @@
 import { API_URL } from '@env';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { ImagePickerAsset } from 'expo-image-picker';
 
 export const uploadImageApi = async (
@@ -34,3 +35,12 @@ export const uploadImageApi = async (
         throw error;
     }
 };
+
+export function useImageUploadMutation(
+    options?: UseMutationOptions<string, any, ImagePickerAsset, any>,
+) {
+    return useMutation({
+        mutationFn: uploadImageApi,
+        ...options,
+    });
+}
