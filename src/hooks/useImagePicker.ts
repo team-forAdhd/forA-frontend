@@ -1,19 +1,17 @@
 import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
 import { Alert } from 'react-native';
 
 type ImagePickerHookProps = {
     options?: ImagePicker.ImagePickerOptions;
     fileLimitMB?: number;
-    setter: React.Dispatch<
-        React.SetStateAction<ImagePicker.ImagePickerAsset[]>
-    >;
 };
 
-export function useImagePicker({
-    options,
-    fileLimitMB,
-    setter,
-}: ImagePickerHookProps) {
+export function useImagePicker({ options, fileLimitMB }: ImagePickerHookProps) {
+    const [attachedPhotos, _setAttachedPhotos] = useState<
+        ImagePicker.ImagePickerAsset[]
+    >([]);
+
     const FILE_LIMIT = fileLimitMB
         ? fileLimitMB * 1024 * 1024
         : 50 * 1024 * 1024;
@@ -44,16 +42,22 @@ export function useImagePicker({
             )
         ) {
             Alert.alert(`파일 사이즈는 ${FILE_LIMIT}MB를 넘을 수 없습니다.`);
-            setter(
+            _setAttachedPhotos(
                 result.assets.filter(
                     (image) => image.fileSize && image.fileSize < FILE_LIMIT,
                 ),
             );
+            return;
         }
 
-        setter(result.assets);
+        _setAttachedPhotos(result.assets);
 
         return;
     }
-    return { launchImagePicker };
+    const handleDeletePhoto = (index: number) => {
+        const updatedPhotos = [...attachedPhotos];
+        updatedPhotos.splice(index, 1);
+        _setAttachedPhotos(updatedPhotos);
+    };
+    return { launchImagePicker, attachedPhotos, handleDeletePhoto };
 }
