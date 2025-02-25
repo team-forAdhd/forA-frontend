@@ -1,19 +1,15 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
-    Animated,
-    PanResponder,
     Text,
     Image,
-    Dimensions,
     TouchableOpacity,
-    ScrollView,
     TextStyle,
     StyleProp,
     StyleSheet,
     FlatList,
 } from 'react-native';
-import HospitalListItem from '../../../components/common/hospitalListItem/hospitalListItem';
+import HospitalListItem from './hospitalListItem';
 import { foraRibbonStoreContext } from '@/state/forAribbonClickState';
 import { Observer } from 'mobx-react';
 import {
@@ -21,14 +17,13 @@ import {
     SortOptions,
 } from '@/domains/HospitalList/screens/HospitalMaps';
 import { Location } from '@/hooks/useLocation';
+import AnimatedContainer from '@/components/common/animatedContainer';
 
 interface DescriptionProps {
     setDescription: React.Dispatch<React.SetStateAction<boolean>>;
     setModal: React.Dispatch<React.SetStateAction<boolean>>;
     hospitalList: Hospital[];
     setSort: React.Dispatch<React.SetStateAction<SortOptions>>;
-    setRerender: React.Dispatch<React.SetStateAction<boolean>>;
-    reRender: boolean;
     location: Location;
     setRadius: React.Dispatch<React.SetStateAction<number>>;
     setFilter: React.Dispatch<React.SetStateAction<string>>;
@@ -44,8 +39,6 @@ export default function HospitalBottomSheet({
     setModal,
     hospitalList,
     setSort,
-    reRender,
-    setRerender,
     location,
     setRadius,
     setFilter,
@@ -55,79 +48,11 @@ export default function HospitalBottomSheet({
     const [sortCLick, setSortCLick] = useState<string>('위치순');
     const [scrollable, setScrollable] = useState(true);
     const store = useContext(foraRibbonStoreContext);
-    const screenHeight = Dimensions.get('window').height;
-    const translateY = useRef(new Animated.Value(screenHeight * 0.7)).current;
-    const lastGestureY = useRef(screenHeight * 0.7);
-
-    // Define snap points
-    const SNAP_POINTS = {
-        TOP: screenHeight * 0.2,
-        MIDDLE: screenHeight * 0.5,
-        BOTTOM: screenHeight * 0.7,
-    };
-
-    const snapToPoint = (point: number) => {
-        lastGestureY.current = point;
-        Animated.spring(translateY, {
-            toValue: point,
-            friction: 8,
-            tension: 40,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const getClosestSnapPoint = (y: number) => {
-        const points = [
-            SNAP_POINTS.TOP,
-            SNAP_POINTS.MIDDLE,
-            SNAP_POINTS.BOTTOM,
-        ];
-        return points.reduce((prev, curr) =>
-            Math.abs(curr - y) < Math.abs(prev - y) ? curr : prev,
-        );
-    };
-
-    const panResponder = useRef(
-        PanResponder.create({
-            onMoveShouldSetPanResponder: (_, gestureState) => {
-                // Only respond to vertical gestures
-                return Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
-            },
-            onPanResponderGrant: () => {
-                translateY.setValue(lastGestureY.current);
-            },
-            onPanResponderMove: (_, gestureState) => {
-                if (scrollable) {
-                    const newY = lastGestureY.current + gestureState.dy;
-                    // Limit the movement between top and bottom positions
-                    if (newY >= SNAP_POINTS.TOP && newY <= SNAP_POINTS.BOTTOM) {
-                        translateY.setValue(newY);
-                    }
-                }
-            },
-            onPanResponderRelease: (_, gestureState) => {
-                const currentY = lastGestureY.current + gestureState.dy;
-                const snapPoint = getClosestSnapPoint(currentY);
-                snapToPoint(snapPoint);
-            },
-        }),
-    ).current;
 
     const sortOrders = ['위치순', '포에이 리본 병원', '리뷰 많은 순'];
 
     return (
-        <Animated.View
-            style={{
-                height: screenHeight - 200,
-                width: '100%',
-                transform: [{ translateY }],
-                backgroundColor: 'white',
-                zIndex: 10,
-                borderRadius: 20,
-                flexDirection: 'column',
-            }}
-            {...(scrollable ? panResponder.panHandlers : {})}
-        >
+        <AnimatedContainer scrollable={scrollable}>
             <TouchableOpacity activeOpacity={1} style={styles.topLine}>
                 <Image
                     source={require('@/public/assets/bottomsheetTop.png')}
@@ -199,8 +124,6 @@ export default function HospitalBottomSheet({
                             <HospitalListItem
                                 hospital={item}
                                 setModal={setModal}
-                                setRerender={setRerender}
-                                reRender={reRender}
                                 location={location}
                             />
                         )}
@@ -208,7 +131,7 @@ export default function HospitalBottomSheet({
                     />
                 </View>
             </View>
-        </Animated.View>
+        </AnimatedContainer>
     );
 }
 

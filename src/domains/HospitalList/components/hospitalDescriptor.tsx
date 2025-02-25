@@ -1,6 +1,4 @@
-import HospitalListItem, {
-    HospitalItemProps,
-} from '@/components/common/hospitalListItem/hospitalListItem';
+import HospitalListItem from '@/domains/HospitalList/components/hospitalListItem';
 import { Hospital } from '@/domains/HospitalList/screens/HospitalMaps';
 import { Location } from '@/hooks/useLocation';
 import { View } from 'react-native';
