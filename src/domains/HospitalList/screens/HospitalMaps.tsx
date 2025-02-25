@@ -54,9 +54,6 @@ export default function HospitalMaps() {
     const { myLocation, refresh, address, handleRegionChange, zoomLevel } =
         useLocation(pushError);
 
-    //위치 재검색
-    const [reRender, setRerender] = useState<boolean>(false);
-
     const [radius, setRadius] = useState<number>(3000); // 기본값 설정 (예: 1000미터)
     const [size, setSize] = useState<number>(4); // 한 번에 가져올 데이터의 개수
     const [sort, setSort] = useState<SortOptions>('DIST_ASC'); // 정렬 옵션
@@ -163,8 +160,6 @@ export default function HospitalMaps() {
                     setModal={setModal}
                     hospitalList={hospitalList}
                     setSort={setSort}
-                    reRender={reRender}
-                    setRerender={setRerender}
                     location={myLocation}
                     setFilter={setFilter}
                     setRadius={setRadius}
