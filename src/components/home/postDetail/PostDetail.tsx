@@ -8,6 +8,7 @@ import {
     TouchableWithoutFeedback,
     KeyboardAvoidingView,
     Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, Key } from 'react';
@@ -226,6 +227,8 @@ export default function PostDetail({ postId }: PostDetailProps) {
     const handleGoback = () => {
         navigation.goBack();
     };
+    if (!postDetail)
+        return <ActivityIndicator size={'large'} color={'green'} />;
 
     return (
         <View style={styles.container}>
