@@ -1,6 +1,6 @@
 import EditPost from '@/components/editPost/EditPost';
 import Home from '@/components/home/Home';
-import PostDetail from '@/components/home/postDetail/PostDetail';
+import PostDetail from '@/domains/TodayPostDetail/screens/TodayPostDetail';
 import NewPost from '@/components/newPost/NewPost';
 import NotificationScreen from '@/components/notification/notificationScreen';
 import SearchScreen from '@/components/search/searchScreen';
