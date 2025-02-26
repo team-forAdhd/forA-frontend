@@ -16,7 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export interface HospitalItemProps {
     hospital: Hospital;
     setModal?: React.Dispatch<React.SetStateAction<boolean>>;
-    setRerender?: React.Dispatch<React.SetStateAction<boolean>>;
+    setFocusedHospital?: React.Dispatch<React.SetStateAction<Hospital | null>>;
     reRender?: boolean;
     location?: Location;
 }
@@ -29,6 +29,7 @@ export default function HospitalListItem({
     hospital,
     setModal,
     location,
+    setFocusedHospital,
 }: HospitalItemProps) {
     const navigation = useNavigation<NavigationProp<HospitalDetailParams>>();
     const queryClient = useQueryClient();
@@ -46,7 +47,11 @@ export default function HospitalListItem({
                     location?.longitude,
                 ],
             });
-
+            if (setFocusedHospital)
+                setFocusedHospital({
+                    ...hospital,
+                    isBookmarked: !hospital.isBookmarked,
+                });
             const previousHospitalList = queryClient.getQueryData<{
                 pageParams: number[];
                 pages: { hospitalList: Hospital[]; paging: any }[];
@@ -78,6 +83,11 @@ export default function HospitalListItem({
                     context.previousHospitalList,
                 );
             }
+            if (setFocusedHospital)
+                setFocusedHospital({
+                    ...hospital,
+                    isBookmarked: !hospital.isBookmarked,
+                });
         },
         onSettled: () => {
             queryClient.invalidateQueries({

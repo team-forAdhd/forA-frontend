@@ -6,9 +6,11 @@ import { View } from 'react-native';
 export default function HospitalDescriptor({
     hospital,
     location,
+    setFocusedHospital,
 }: {
     hospital: Hospital;
     location: Location;
+    setFocusedHospital: React.Dispatch<React.SetStateAction<Hospital | null>>;
 }) {
     return (
         <View
@@ -23,7 +25,11 @@ export default function HospitalDescriptor({
                 borderRadius: 20,
             }}
         >
-            <HospitalListItem hospital={hospital} location={location} />
+            <HospitalListItem
+                hospital={hospital}
+                location={location}
+                setFocusedHospital={setFocusedHospital}
+            />
         </View>
     );
 }

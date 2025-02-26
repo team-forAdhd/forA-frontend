@@ -153,6 +153,7 @@ export default function HospitalMaps() {
                 <HospitalDescriptor
                     hospital={focusedHospital}
                     location={myLocation}
+                    setFocusedHospital={setFocusedHospital}
                 />
             ) : (
                 <HospitalBottomSheet
