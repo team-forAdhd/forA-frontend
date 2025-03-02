@@ -6,6 +6,7 @@ import {
     TextStyle,
     StyleProp,
     StyleSheet,
+    Modal,
 } from 'react-native';
 
 interface AlertModalProps {
@@ -24,25 +25,42 @@ const AlertModal: React.FC<AlertModalProps> = ({
     onRightClicked,
 }) => {
     return (
-        <View style={styles.container}>
-            <View style={styles.messageContainer}>
-                <Text style={text.messageText}>{message}</Text>
+        <Modal transparent={true} animationType="slide">
+            <View
+                style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'transparent',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <View style={styles.container}>
+                    <View style={styles.messageContainer}>
+                        <Text style={text.messageText}>{message}</Text>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={onLeftClicked}
+                        >
+                            <Text style={text.cancelText}>
+                                {leftButtonText}
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.continueButton}
+                            onPress={onRightClicked}
+                        >
+                            <Text style={text.continueText}>
+                                {rightButtonText}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={styles.cancelButton}
-                    onPress={onLeftClicked}
-                >
-                    <Text style={text.cancelText}>{leftButtonText}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.continueButton}
-                    onPress={onRightClicked}
-                >
-                    <Text style={text.continueText}>{rightButtonText}</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </Modal>
     );
 };
 
@@ -57,6 +75,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#FFF',
         borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'gray',
     },
     messageContainer: {
         width: 364,
@@ -74,6 +94,9 @@ const styles = StyleSheet.create({
         height: 56,
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
+        borderWidth: 1,
+        borderTopWidth: 0,
+        borderColor: 'gray',
     },
     cancelButton: {
         flex: 1,
