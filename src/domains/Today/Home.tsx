@@ -223,6 +223,7 @@ const writeNotification = {
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: 100,
         flex: 1,
         backgroundColor: '#fff',
         justifyContent: 'center',
@@ -274,12 +275,12 @@ const styles = StyleSheet.create({
     },
     scrollViewContainer: {
         flexGrow: 1,
-        paddingBottom: 100,
+        paddingBottom: 50,
     },
     carouselContainer: {
+        marginVertical: 10,
         width: '100%',
-        height: 380,
-        marginBottom: 50,
+        height: 300,
     },
     RefreshImage: {
         width: 23,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     },
     fabLayout: {
         position: 'absolute',
-        top: 665,
+        bottom: 10,
         right: 10,
     },
     fabIcon: {
