@@ -1,7 +1,7 @@
-import EditPost from '@/components/editPost/EditPost';
-import Home from '@/components/home/Home';
+import EditPost from '@/domains/TodayPostEdit/screens/EditPost';
+import Home from '@/domains/Today/Home';
 import PostDetail from '@/domains/TodayPostDetail/screens/TodayPostDetail';
-import NewPost from '@/components/newPost/NewPost';
+import NewPost from '@/domains/TodayNewPost/screens/NewPost';
 import NotificationScreen from '@/components/notification/notificationScreen';
 import SearchScreen from '@/components/search/searchScreen';
 import SiocialLoginScreen from '@/components/socialLogin/socialLogin';
@@ -37,11 +37,7 @@ export default function TodayStack() {
                 options={{ headerShown: false }}
             />
             <Today.Screen name="Notifications" component={NotificationScreen} />
-            <Today.Screen name="PostDetail">
-                {(props) => (
-                    <PostDetail {...props} postId={props.route.params.postId} />
-                )}
-            </Today.Screen>
+            <Today.Screen name="PostDetail" component={PostDetail} />
             <Today.Screen name="EditPost">
                 {(props) => (
                     <EditPost
