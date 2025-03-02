@@ -62,8 +62,9 @@ export default function LoginScreen() {
                 userProfile &&
                     updateUser({
                         nickname: userProfile.nickname,
-                        profileImageUrl: userProfile.profileImageUrl,
-                        userId: userProfile.userId,
+                        profileImage: userProfile.profileImage,
+                        email: userProfile.email,
+                        forAdhdType: userProfile.forAdhdType,
                     });
             } else {
                 setLoginFailed(true);
