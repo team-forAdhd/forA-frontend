@@ -5,34 +5,24 @@ import {
     TouchableOpacity,
     Modal,
     TouchableWithoutFeedback,
-    ActivityIndicator,
     StyleSheet,
     StyleProp,
     TextStyle,
+    SafeAreaView,
+    Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, Key } from 'react';
+import { useState, Key } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '@/common/formatDate';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
-import AlertModal from '@/components/common/modals/AlertModal';
 import TodayPostComment from '../components/TodayPostComment';
 import { ScrollView } from 'react-native-gesture-handler';
-import {
-    LikedIcon,
-    ScrapIcon,
-    ShareIcon,
-    DeleteIcon2,
-    EditIcon,
-    LeftArrowIcon,
-    ClikedLikedIcon,
-} from '@/public/assets/SvgComponents';
+import { LikedIcon, ScrapIcon, ShareIcon } from '@/public/assets/SvgComponents';
 import * as Clipboard from 'expo-clipboard';
-import { deletePostApi } from '@/api/home/deletePostApi';
+import { useDeletePostMutation } from '@/domains/TodayPostDetail/api/deletePost.api';
 import { API_URL } from '@env';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import BottomSheet from '@/components/medicine/medBottomSheet/BottomSheet';
-import BlockModal from '@/components/common/block/blockModal';
 import { imagePathMerge } from '@/utils/imagePathMerge';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 import { useTodayPostDetail } from '@/domains/TodayPostDetail/api/getTodayPostDetail.api';
@@ -41,6 +31,11 @@ import { useAuthStore } from '@/store/authStore';
 import { usePostLikeMutation } from '@/domains/TodayPostDetail/api/todayPostLike.api';
 import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
 import { useTodayPostScrapMutation } from '@/domains/TodayPostDetail/api/todayPostScrap.api';
+import { LoadingScreen } from '@/components/common/Loading';
+import { NotFound } from '@/components/common/NotFound';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Header from '@/components/common/ui/header';
+import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
 
 const reportList = [
     '특정인에 대한 욕설 및 비하',
@@ -52,18 +47,19 @@ const reportList = [
 
 export default function TodayPostDetail({
     route,
+    navigation,
 }: StackScreenProps<TodayStackParams, 'PostDetail'>) {
     const { t } = useTranslation('board');
     const { postId } = route.params;
-    const navigation = useNavigation();
-    const userId = useAuthStore((state) => state.userId);
+
+    const userId = useAuthStore((state) => state.email);
     const postNavigation =
         useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
 
     const handleEdit = async () => {
         postNavigation.navigate('EditPost', { postId });
     };
-    const { data: postDetail, isPending } = useTodayPostDetail(postId);
+    const { data: postDetail, isPending, isError } = useTodayPostDetail(postId);
 
     const [showSharedAlert, setShowSharedAlert] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
@@ -79,6 +75,7 @@ export default function TodayPostDetail({
 
     const { mutate: postLike } = usePostLikeMutation(postDetail as Post);
     const { mutate: postScrap } = useTodayPostScrapMutation(postId);
+    const { mutate: deletePost } = useDeletePostMutation({ navigation });
 
     const handleReport = () => {
         setIsModalVisible(false);
@@ -100,28 +97,24 @@ export default function TodayPostDetail({
     const onDelete = () => {
         handleDelete();
     };
-
+    console.log(postDetail);
     const handleDelete = async () => {
-        try {
-            await deletePostApi(postId);
-            setShowDeleteDoneAlert(true);
-        } catch (error) {
-            console.error(error);
-        }
+        Alert.alert('게시글 삭제', '게시글을 삭제하시겠습니까?', [
+            { text: '아니오', style: 'cancel' },
+            { text: '확인', onPress: () => deletePost({ postId: postId }) },
+        ]);
     };
 
     const handleNothing = () => {
         setShowAlert(false);
     };
 
-    const handleGoback = () => {
-        navigation.goBack();
-    };
-    if (!postDetail || isPending)
-        return <ActivityIndicator size={'large'} color={'green'} />;
+    if (isPending) return <LoadingScreen />;
+    if (!postDetail || isError)
+        return <NotFound informText="게시물을 찾을 수 없습니다." />;
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {rangeBottomSheet ||
                 (modalVisible && (
                     <View style={styles.bottomActivatedContainer}>
@@ -131,35 +124,29 @@ export default function TodayPostDetail({
                         />
                     </View>
                 ))}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.gobackIcon}
-                    onPress={handleGoback}
-                >
-                    <LeftArrowIcon />
-                </TouchableOpacity>
-                <Text style={text.categoryText}>{postDetail.category}</Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        setRangeBottomSheet(true);
-                    }}
-                >
-                    <Image
-                        source={require('@/public/assets/more.png')}
-                        style={{ width: 24, height: 26 }}
+            <Header
+                backIconType="chevron"
+                headerText={postDetail.category}
+                navigation={navigation}
+            >
+                <View style={styles.postOptionsContainer}>
+                    {true && (
+                        <View style={styles.isAuthorButtonBox}>
+                            <TouchableOpacity onPress={handleEdit}>
+                                <FontAwesome name="pencil" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={onDelete}>
+                                <FontAwesome name="trash" size={24} />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    <TodayPostOptions
+                        userId={postDetail.userId}
+                        navigation={navigation}
+                        postId={postId}
                     />
-                </TouchableOpacity>
-                {isAuthor && (
-                    <View style={styles.isAuthorButtonBox}>
-                        <TouchableOpacity onPress={handleEdit}>
-                            <EditIcon />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={onDelete}>
-                            <DeleteIcon2 />
-                        </TouchableOpacity>
-                    </View>
-                )}
-            </View>
+                </View>
+            </Header>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                 <View style={styles.bodyConatiner}>
                     {/* 작성자 정보 */}
@@ -301,46 +288,6 @@ export default function TodayPostDetail({
                 postId={postDetail.id}
                 replyCommentId={replyCommentId}
             />
-            {/* 게시글 삭제 모달-alert */}
-            <Modal
-                visible={showAlert}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowSharedAlert(false)}
-            >
-                <View style={styles.overlay}>
-                    <View style={styles.modalContainer}>
-                        <AlertModal
-                            message={t('post-delete-ing')}
-                            leftButtonText={t('post-yes')}
-                            rightButtonText={t('post-no')}
-                            onLeftClicked={onDelete}
-                            onRightClicked={handleNothing}
-                        />
-                    </View>
-                </View>
-            </Modal>
-            {/* 게시글 삭제 완료 모달 */}
-            <Modal
-                visible={showDeleteDoneAlert}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowSharedAlert(false)}
-            >
-                <TouchableWithoutFeedback
-                    onPress={() => setShowSharedAlert(false)}
-                >
-                    <View style={styles.overlay}>
-                        <View style={styles.modalContainer}>
-                            <SimpleModal
-                                visible={false}
-                                baseText={t('post-delete')}
-                                highlightText={t('common-delete')}
-                            />
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
 
             {/* 공유하기 완료 모달 */}
             <Modal
@@ -363,115 +310,9 @@ export default function TodayPostDetail({
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-
-            {/* 신고하기 모달 */}
-            <Modal
-                transparent={true}
-                visible={isModalVisible}
-                animationType="fade"
-                onRequestClose={() => {
-                    setIsModalVisible(!isModalVisible);
-                }}
-            >
-                <View
-                    style={[
-                        styles.overlay,
-                        { justifyContent: 'center', alignItems: 'center' },
-                    ]}
-                >
-                    <View style={styles.reportModalContainer}>
-                        <Text style={text.reportModalTitleText}>
-                            게시글 신고
-                        </Text>
-                        <View style={styles.reportModalLine} />
-
-                        {reportList.map((report) => (
-                            <TouchableOpacity
-                                style={styles.reportModalContent}
-                                onPress={handleReport}
-                            >
-                                <Text style={text.reportModalContentText}>
-                                    {report}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-
-                        <View style={styles.reportModalExitContainer}>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                style={styles.reportModalExit}
-                                onPress={() => {
-                                    setIsModalVisible(!isModalVisible);
-                                }}
-                            >
-                                <Text style={text.reportModalExitText}>
-                                    닫기
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-
-            {rangeBottomSheet && (
-                <BottomSheet
-                    visible={rangeBottomSheet}
-                    onClose={() => setRangeBottomSheet(false)}
-                    options={rangeList}
-                    onSelect={(range) => {
-                        setRange(range);
-                        if (range == '차단하기') {
-                            setModalVisible(!modalVisible);
-                        }
-                        if (range == '신고하기') {
-                            setIsModalVisible(true);
-                        }
-                    }}
-                    selectedOption={range}
-                />
-            )}
-            {modalVisible && (
-                <BlockModal
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    question={
-                        '이 멤버가 포에이에서 쓴 글과 댓글이 보이지 않고,\n 알림도 발송되지 않습니다.\n(차단을 하면 다시 해제하실 수 없습니다.)'
-                    }
-                    userId=""
-                />
-            )}
-        </View>
+        </SafeAreaView>
     );
 }
-
-const notification = {
-    id: -1,
-    userId: '',
-    title: '오늘탭 작성가이드 (필독!)',
-    content: `안녕하세요, 포에이 담당자입니다.
-‘포에이’ 이용에 불편이 없기를 바라며, 오늘탭 작성가이드를 알려드립니다\n
-1. 카테고리에 맞게 글을 작성해주세요. ADHD의 증상은 나이대별로 상이하기에 10대, 20대, 30대 이상, 학부모용으로 나뉩니다.\n
-2. 민감한 글, 욕설, 혐짤, 수위가 있는 내용은 반드시 5칸 이상 내려쓰세요. (밑에 예시 참고)
-제목은 [!]으로 표시해주세요. 어길 시 게시글은 삭제됩니다.
-.
-.
-.
-.
-.\n
-3. 자살, 살인, 담당자 판단하에 수위가 높은 글 등의 내용을 담은 게시글은 무조건 삭제됩니다. 예를 들어, 힘들다, 우울하다 정도는 괜찮으나 죽고 싶어, 죽이고 싶어 혹은 자살방법을 묻는 글은 금지됩니다.\n`,
-    anonymous: true,
-    images: null,
-    likeCount: 0,
-    commentCount: 2,
-    scrapCount: 0,
-    viewCount: 1,
-    category: '공지',
-    comments: [],
-    nickname: null,
-    profileImage: null,
-    createdAt: 1723046942,
-    lastModifiedAt: 1723046949,
-};
 
 const styles = StyleSheet.create({
     container: {
@@ -501,6 +342,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
+        backgroundColor: 'white',
         zIndex: 20,
     },
     gobackIcon: {
@@ -508,13 +350,14 @@ const styles = StyleSheet.create({
         left: 10,
         zIndex: 30,
     },
+    postOptionsContainer: {
+        flexDirection: 'row',
+        gap: 10,
+    },
     isAuthorButtonBox: {
-        position: 'absolute',
-        right: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        width: 82,
-        height: 35,
+        gap: 10,
     },
     overlay: {
         position: 'absolute',
@@ -560,7 +403,6 @@ const styles = StyleSheet.create({
         marginRight: 15,
     },
     scrollViewContainer: {
-        flexGrow: 1,
         paddingBottom: 0,
     },
     imageBox: {
@@ -582,7 +424,7 @@ const styles = StyleSheet.create({
         bottom: 16,
     },
     bodyConatiner: {
-        marginTop: 100,
+        marginTop: 40,
     },
     userInfoContainer: {
         flexDirection: 'row',
