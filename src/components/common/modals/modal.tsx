@@ -5,12 +5,14 @@ type GeneralModalProps = {
     switchModal: () => void;
     informText: string;
     confirmButtonText?: string;
+    onPressConfirm?: () => void;
 };
 export default function GeneralModal({
     modalVisible,
     switchModal,
     informText,
     confirmButtonText,
+    onPressConfirm,
 }: GeneralModalProps) {
     return (
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
@@ -19,7 +21,10 @@ export default function GeneralModal({
                     <Text style={styles.modalText}>{informText}</Text>
                     <Pressable
                         style={[styles.button, styles.buttonClose]}
-                        onPress={() => switchModal()}
+                        onPress={() => {
+                            switchModal();
+                            onPressConfirm?.();
+                        }}
                     >
                         <Text style={styles.textStyle}>
                             {confirmButtonText ?? '확인'}
