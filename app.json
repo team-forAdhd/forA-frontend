@@ -7,6 +7,15 @@
         "icon": "src/public/assets/forA-icon.png",
         "userInterfaceStyle": "light",
         "plugins": [
+            "@react-native-firebase/app",
+            [
+                "expo-build-properties",
+                {
+                    "ios": {
+                        "useFrameworks": "static"
+                    }
+                }
+            ],
             [
                 "expo-splash-screen",
                 {
@@ -25,6 +34,7 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.fora.appfora",
+            "googleServicesFile": "./GoogleService-Info.plist",
             "config": {
                 "googleMapsApiKey": "AIzaSyDl_Kn0cLi4nL54Pj6Eed-1nejU99Sbw0Q"
             }
