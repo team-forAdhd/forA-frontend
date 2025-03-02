@@ -1,5 +1,6 @@
 import Entypo from '@expo/vector-icons/Entypo';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
 import {
     StyleProp,
@@ -10,24 +11,42 @@ import {
     View,
 } from 'react-native';
 
+const text = {
+    fontFamily: 'Pretendard',
+    fontStyle: 'normal',
+    headerText: {
+        color: '#000',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 22.4,
+        textAlign: 'center',
+    },
+    cancelText: {
+        fontSize: 18,
+    },
+} as {
+    [key: string]: StyleProp<TextStyle>;
+};
+
 const leftIconsType = {
     chevron: <Entypo name="chevron-left" size={40} />,
-    text: <Text>취소</Text>,
+    text: <Text style={text.cancelText}>취소</Text>,
     none: null,
 } as const;
 
-export default function Header({
+export default function Header<T extends ParamListBase = ParamListBase>({
     headerText,
     backIconType = 'chevron',
     children,
+    navigation,
 }: {
     backIconType: keyof typeof leftIconsType;
     headerText: string;
     children: React.ReactNode;
+    navigation: StackNavigationProp<T>;
 }) {
-    const navigation = useNavigation();
     const handleBackButton = () => {
-        navigation.goBack();
+        navigation.pop();
     };
     return (
         <View style={styles.header}>
@@ -41,23 +60,6 @@ export default function Header({
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        flexDirection: 'column',
-    },
-    bottomActivatedContainer: {
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        top: 0,
-        zIndex: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        opacity: 10,
-        justifyContent: 'center',
-        flexDirection: 'column',
-    },
     header: {
         position: 'absolute',
         top: 52,
@@ -76,17 +78,3 @@ const styles = StyleSheet.create({
         gap: 10,
     },
 });
-
-const text = {
-    fontFamily: 'Pretendard',
-    fontStyle: 'normal',
-    headerText: {
-        color: '#000',
-        fontSize: 18,
-        fontWeight: '600',
-        lineHeight: 22.4,
-        textAlign: 'center',
-    },
-} as {
-    [key: string]: StyleProp<TextStyle>;
-};
