@@ -1,36 +1,45 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { UserInfo } from '@/types/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-interface AuthStore extends User {
-    accessToken: string
-    refreshToken: string
-    login: (accessToken: string, refreshToken: string) => void
-    logout: () => void
-    updateUser: ({ nickname, profileImageUrl, userId }: User) => void
-    reIssue: (accessToken: string, refreshToken: string) => void
+interface AuthStore extends UserInfo {
+    accessToken: string;
+    refreshToken: string;
+    login: (accessToken: string, refreshToken: string) => void;
+    logout: () => void;
+    updateUser: (userInfo: UserInfo) => void;
+    reIssue: (accessToken: string, refreshToken: string) => void;
 }
 export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             refreshToken: '',
             accessToken: '',
+            email: '',
+            profileImage: '',
             nickname: '',
-            profileImageUrl: '',
-            userId: '',
+            forAdhdType: '',
             login: (accessToken, refreshToken) =>
                 set({ accessToken: accessToken, refreshToken: refreshToken }),
             logout: () =>
                 set({
                     accessToken: '',
                     nickname: '',
-                    profileImageUrl: '',
-                    userId: '',
+                    email: '',
+                    profileImage: '',
+                    forAdhdType: '',
+                    refreshToken: '',
                 }),
-            updateUser: ({ nickname, profileImageUrl, userId }) =>
-                set({ nickname, profileImageUrl, userId }),
+            updateUser: ({ email, forAdhdType, nickname, profileImage }) =>
+                set({
+                    email,
+                    forAdhdType,
+                    nickname,
+                    profileImage,
+                }),
             reIssue: (accessToken, refreshToken) => {
-                set({ accessToken, refreshToken })
+                set({ accessToken, refreshToken });
             },
         }),
         {
@@ -38,4 +47,4 @@ export const useAuthStore = create<AuthStore>()(
             storage: createJSONStorage(() => AsyncStorage),
         },
     ),
-)
+);

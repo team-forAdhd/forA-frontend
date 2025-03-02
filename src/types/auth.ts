@@ -1,5 +1,6 @@
-type User = {
-    userId: string
-    nickname: string
-    profileImageUrl: string
-}
+export type UserInfo = {
+    email: string;
+    forAdhdType: string;
+    nickname: string;
+    profileImage: string;
+};
