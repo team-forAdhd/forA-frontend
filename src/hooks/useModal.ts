@@ -8,7 +8,7 @@ export default function useModal() {
         setModalVisible(true);
     }
     function switchModal() {
-        setModalVisible(false);
+        setModalVisible((prev) => !prev);
         setInformText('');
     }
     return {
