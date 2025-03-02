@@ -80,3 +80,6 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
+
+# Firebase configuration
+GoogleService-Info.plist
