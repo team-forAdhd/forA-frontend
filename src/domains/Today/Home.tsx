@@ -8,6 +8,8 @@ import {
     TextStyle,
     StyleProp,
     StyleSheet,
+    SafeAreaView,
+    Modal,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import CarouselComponent from '../../components/common/carousel/carousel';
@@ -18,7 +20,7 @@ import {
     getMainRealtimeApi,
     Post,
 } from '@/api/home/getPostsApi';
-import HomeModal from '../../components/common/homemodal/homeModal';
+import HomeModal from './components/homeModal';
 import { notification, support } from '../../components/home/homeModalData';
 import { useAuthStore } from '@/store/authStore';
 import AuthWrapper from '@/components/common/wrapper/authWrapper';
@@ -73,20 +75,14 @@ function Home({ navigation }: StackScreenProps<TodayStackParams, 'Home'>) {
     };
 
     return (
-        <View style={styles.container}>
-            {modalTitle && (
-                <View style={styles.overlay}>
-                    <HomeModal
-                        setModalTitle={setModalTitle}
-                        modalTitle={modalTitle}
-                        modalContents={
-                            modalTitle === 'notification'
-                                ? notification
-                                : support
-                        }
-                    />
-                </View>
-            )}
+        <SafeAreaView style={styles.container}>
+            <HomeModal
+                setModalTitle={setModalTitle}
+                modalTitle={modalTitle}
+                modalContents={
+                    modalTitle === 'notification' ? notification : support
+                }
+            />
             {/* 헤더 */}
             <View style={styles.header}>
                 <Image
@@ -209,7 +205,7 @@ function Home({ navigation }: StackScreenProps<TodayStackParams, 'Home'>) {
                 style={styles.fabLayout}
                 iconStyle={styles.fabIcon}
             ></FloatingButton>
-        </View>
+        </SafeAreaView>
     );
 }
 export default AuthWrapper(Home);
@@ -236,7 +232,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(35, 35, 35, 0.3)',
         zIndex: 90,
         position: 'absolute',
-        top: 0,
         height: '100%',
         width: '100%',
         alignItems: 'center',
@@ -247,12 +242,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 52,
         width: '100%',
-        height: 35,
+        height: 36,
         justifyContent: 'space-between',
+        alignItems: 'center',
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
-        zIndex: 2, //ZIndex를 조정해서 터치 이벤트 문제 해소 , 캐러셀 컴포넌트가 터치이벤트를 가로채서 헤더에 있는 아이콘의 터치가 안먹고 있었음
+        backgroundColor: 'white',
+        zIndex: 2,
     },
     Flex: {
         flex: 1,

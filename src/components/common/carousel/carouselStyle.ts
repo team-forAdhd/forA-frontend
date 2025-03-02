@@ -1,9 +1,7 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     slide: {
-        position: 'absolute',
-        top: 110,
         height: 260,
         justifyContent: 'center',
         alignItems: 'center',
@@ -22,4 +20,4 @@ export const styles = StyleSheet.create({
         height: 260,
         objectFit: 'contain',
     },
-})
+});
