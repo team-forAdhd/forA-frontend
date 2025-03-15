@@ -9,47 +9,50 @@ import {
     StyleSheet,
     SafeAreaView,
     ActivityIndicator,
-} from 'react-native'
-import { useTranslation } from 'react-i18next'
-import React, { useState } from 'react'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
-import HospitalReviewList from '../../../components/hospital/HospitalReviewList'
-import { useBookmarkMutation } from '@/domains/Hospital/api/postBookmark.api'
-import { HospitalStackParams } from '@/navigation/stacks/hospitalStack'
-import { StackScreenProps } from '@react-navigation/stack'
-import { useHospitalDetail } from '@/domains/Hospital/api/getHospitalDetail.api'
-import { Doctor } from '@/components/hospital/types'
-import { useRegion } from '@/hooks/useLocation'
-import ImageMarker from '@/domains/HospitalList/components/ImageMarker'
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import HospitalReviewList from '../../../components/hospital/HospitalReviewList';
+import { useBookmarkMutation } from '@/domains/Hospital/api/postBookmark.api';
+import { HospitalStackParams } from '@/navigation/stacks/hospitalStack';
+import { StackScreenProps } from '@react-navigation/stack';
+import { useHospitalDetail } from '@/domains/Hospital/api/getHospitalDetail.api';
+import { useRegion } from '@/hooks/useLocation';
+import ImageMarker from '@/domains/HospitalList/components/ImageMarker';
+import {
+    DoctorList,
+    NoDoctorContent,
+} from '@/domains/HospitalDetail/components/DoctorList';
 
 type HospitalDetailNavigationProp = StackScreenProps<
     HospitalStackParams,
     'HospitalDetail'
->
+>;
 
 export default function HospitalDetail({
     navigation,
     route,
 }: HospitalDetailNavigationProp) {
-    const { hospitalId, latitude, longitude } = route.params
+    const { hospitalId, latitude, longitude } = route.params;
     const { isLoading, data: hospital } = useHospitalDetail({
         hospitalId,
         latitude,
         longitude,
-    })
-    const [button, setButton] = useState<boolean[]>([true, false])
-    const [doctorProfile, setDoctorProfile] = useState<string>('')
-    const { zoomLevel, handleRegionChange } = useRegion()
-    const { mutate } = useBookmarkMutation()
+    });
+    const [button, setButton] = useState<boolean[]>([true, false]);
+    const [doctorProfile, setDoctorProfile] = useState<string>('');
+    const { zoomLevel, handleRegionChange } = useRegion();
+    const { mutate } = useBookmarkMutation();
 
     const contactsAndLocations = [
         require('@/public/assets/phone.png'),
         require('@/public/assets/location.png'),
-    ]
+    ];
 
-    const { t } = useTranslation('hospitalDetail')
+    const { t } = useTranslation('hospitalDetail');
 
-    if (isLoading) return <ActivityIndicator />
+    if (isLoading) return <ActivityIndicator />;
     return (
         <SafeAreaView style={styles.container}>
             {doctorProfile && ( // 제출 버튼을 누른 경우 배경 변화와 모달
@@ -61,7 +64,7 @@ export default function HospitalDetail({
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    setDoctorProfile('')
+                                    setDoctorProfile('');
                                 }}
                             >
                                 <Image
@@ -79,7 +82,7 @@ export default function HospitalDetail({
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.goBack()
+                            navigation.goBack();
                         }}
                     >
                         <Image
@@ -97,7 +100,7 @@ export default function HospitalDetail({
                     <View style={styles.topButtonContainer}>
                         <TouchableOpacity
                             onPress={() => {
-                                setButton([true, false])
+                                setButton([true, false]);
                             }}
                             style={
                                 button[0]
@@ -117,7 +120,7 @@ export default function HospitalDetail({
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
-                                setButton([false, true])
+                                setButton([false, true]);
                             }}
                             style={
                                 button[1]
@@ -261,186 +264,12 @@ export default function HospitalDetail({
                                     )}
                                 </View>
                                 {/*의사가 있으면 의사 선생님 목록이 뜨도록 */}
-                                {hospital?.doctorList &&
-                                hospital.doctorList.length > 0 ? (
-                                    <View
-                                        style={[
-                                            styles.columnContainer,
-                                            {
-                                                borderTopWidth: 23,
-                                                borderTopColor: '#EDEDEA',
-                                                paddingTop: 18,
-                                                marginTop: 24,
-                                                paddingHorizontal: 16,
-                                            },
-                                        ]}
-                                    >
-                                        <View
-                                            style={{
-                                                width: '100%',
-                                                flexDirection: 'row',
-                                                justifyContent: 'flex-start',
-                                                marginBottom: 14,
-                                            }}
-                                        >
-                                            <Text>
-                                                <Text style={text.semiboldText}>
-                                                    {t('doctor-count')}
-                                                </Text>
-                                                <Text
-                                                    style={text.primaryboldText}
-                                                >
-                                                    {hospital?.doctorList &&
-                                                        hospital.doctorList
-                                                            .length}
-                                                </Text>
-                                            </Text>
-                                        </View>
-                                        {hospital?.doctorList &&
-                                            hospital.doctorList.map(
-                                                (data: Doctor) => (
-                                                    <View
-                                                        style={
-                                                            styles.doctorProfileContainer
-                                                        }
-                                                    >
-                                                        <Image
-                                                            source={
-                                                                data.image
-                                                                    ? {
-                                                                          uri: data.image,
-                                                                      }
-                                                                    : require('@/public/assets/defaultDoctor.png')
-                                                            }
-                                                            style={
-                                                                styles.doctorImage
-                                                            }
-                                                        />
-                                                        <View>
-                                                            <Text>
-                                                                <Text
-                                                                    style={
-                                                                        text.doctorText
-                                                                    }
-                                                                >
-                                                                    {data.name}
-                                                                </Text>
-                                                                <Text
-                                                                    style={
-                                                                        text.titleText
-                                                                    }
-                                                                >
-                                                                    {t('title')}
-                                                                </Text>
-                                                            </Text>
-                                                            {data.profile && ( //약력이 있는 경우에만 뜨게끔
-                                                                <TouchableOpacity
-                                                                    onPress={() => {
-                                                                        data.profile &&
-                                                                            setDoctorProfile(
-                                                                                data.profile,
-                                                                            )
-                                                                    }}
-                                                                    style={
-                                                                        styles.profileContainer
-                                                                    }
-                                                                >
-                                                                    <Text
-                                                                        style={
-                                                                            text.profiletitleText
-                                                                        }
-                                                                    >
-                                                                        {t(
-                                                                            'profile',
-                                                                        )}
-                                                                    </Text>
-                                                                </TouchableOpacity>
-                                                            )}
-                                                        </View>
-                                                        {data.totalReviewCount && ( //리뷰가 있는 경우에만 뜨게끔
-                                                            <TouchableOpacity
-                                                                onPress={() => {
-                                                                    console.log(
-                                                                        '리뷰 보여줘',
-                                                                    )
-                                                                }}
-                                                                style={
-                                                                    styles.showReviewContainer
-                                                                }
-                                                            >
-                                                                <Text
-                                                                    style={
-                                                                        text.showReviewText
-                                                                    }
-                                                                >
-                                                                    {t(
-                                                                        'show-review',
-                                                                    ) +
-                                                                        '(' +
-                                                                        data.totalReviewCount +
-                                                                        ')'}
-                                                                </Text>
-                                                            </TouchableOpacity>
-                                                        )}
-                                                    </View>
-                                                ),
-                                            )}
-
-                                        {/*리뷰 쓰기 버튼 */}
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                if (hospital) {
-                                                    navigation.navigate(
-                                                        'CameraScreen',
-                                                        {
-                                                            hospitalInfo:
-                                                                hospital,
-                                                            ribbonEvaluation:
-                                                                true,
-                                                        },
-                                                    ) as never
-                                                }
-                                            }}
-                                            style={styles.writeReviewContainer}
-                                        >
-                                            <Text style={text.activeText}>
-                                                {t('write-review')}
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <View style={{ height: 33 }} />
-                                    </View>
+                                {hospital.doctorList.length ? (
+                                    <DoctorList
+                                        doctorList={hospital.doctorList}
+                                    />
                                 ) : (
-                                    //의사 선생님 정보가 준비되지 않은 경우
-                                    <View style={styles.notReadyContainer}>
-                                        <Image
-                                            source={require('@/public/assets/notReady.png')}
-                                            style={styles.notReadyImage}
-                                        />
-                                        <Text style={text.faintText}>
-                                            {t('not-ready')}
-                                        </Text>
-                                        {/*리뷰 쓰기 버튼 */}
-                                        <TouchableOpacity
-                                            style={styles.writeReviewContainer}
-                                            onPress={() => {
-                                                if (hospital) {
-                                                    navigation.navigate(
-                                                        'CameraScreen',
-                                                        {
-                                                            hospitalInfo:
-                                                                hospital,
-                                                            ribbonEvaluation:
-                                                                false,
-                                                        },
-                                                    )
-                                                }
-                                            }}
-                                        >
-                                            <Text style={text.activeText}>
-                                                {t('write-review')}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                    <NoDoctorContent />
                                 )}
                             </View>
                         </React.Fragment>
@@ -480,8 +309,8 @@ export default function HospitalDetail({
                                 if (hospital) {
                                     navigation.navigate('CameraScreen', {
                                         hospitalInfo: hospital,
-                                        ribbonEvaluation: true,
-                                    })
+                                        ribbonEvaluation: false,
+                                    });
                                 }
                             }}
                             style={styles.forARibbonContainer}
@@ -506,8 +335,8 @@ export default function HospitalDetail({
                                 if (hospital) {
                                     navigation.push('CameraScreen', {
                                         hospitalInfo: hospital,
-                                        ribbonEvaluation: true,
-                                    })
+                                        ribbonEvaluation: false,
+                                    });
                                 }
                             }}
                             style={styles.forARibbonContainer}
@@ -520,7 +349,7 @@ export default function HospitalDetail({
                 )}
             </View>
         </SafeAreaView>
-    )
+    );
 }
 
 const color = {
@@ -532,7 +361,7 @@ const color = {
     faintBlack: '#555555',
     backgroundGray: '#EDEDEA',
     faintGray: '#EEEEEE',
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -762,13 +591,13 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 100,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 const text = {
     headerText: {
@@ -886,5 +715,5 @@ const text = {
         color: 'white',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};
