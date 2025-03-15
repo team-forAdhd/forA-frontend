@@ -1,5 +1,5 @@
-import React from 'react'
-import Svg, { Defs, G, Path, Pattern, Rect, Use } from 'react-native-svg'
+import React from 'react';
+import Svg, { Defs, G, Path, Pattern, Rect, Use } from 'react-native-svg';
 
 export const ArrowIcon = () => (
     <Svg
@@ -17,7 +17,7 @@ export const ArrowIcon = () => (
             strokeLinejoin="round"
         />
     </Svg>
-)
+);
 
 export const TitleTextIcon = () => (
     <Svg
@@ -32,7 +32,7 @@ export const TitleTextIcon = () => (
             fill="#52A55D"
         />
     </Svg>
-)
+);
 
 export const CameraIcon = () => (
     <Svg
@@ -55,7 +55,7 @@ export const CameraIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const DefaultCameraIcon = () => (
     <Svg
@@ -78,7 +78,7 @@ export const DefaultCameraIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const LeftArrowIcon = () => (
     <Svg
@@ -95,7 +95,7 @@ export const LeftArrowIcon = () => (
             stroke-linecap="round"
         />
     </Svg>
-)
+);
 
 export const DeleteIcon = () => (
     <Svg
@@ -118,7 +118,7 @@ export const DeleteIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const CategoryIcon = () => (
     <Svg
@@ -153,7 +153,7 @@ export const CategoryIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const ViewIcon = () => (
     <Svg
@@ -176,7 +176,7 @@ export const ViewIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const ThumbsUpIcon = () => (
     <Svg
@@ -193,7 +193,7 @@ export const ThumbsUpIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const LikedIcon = () => (
     <Svg
@@ -210,7 +210,7 @@ export const LikedIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const ClikedLikedIcon = () => (
     <Svg
@@ -229,24 +229,24 @@ export const ClikedLikedIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
-export const ScrapIcon = () => (
+export const ScrapIcon = ({ fill = false }: { fill?: boolean }) => (
     <Svg
         width="16"
         height="16"
         viewBox="0 0 16 16"
-        fill="none"
+        fill={fill ? '#52A55D' : 'none'}
         // xmlns="http://www.w3.org/2000/svg"
     >
         <Path
             d="M12.2317 12.6244C12.2317 13.1985 11.584 13.5338 11.1152 13.2023L8.59986 11.4238C8.11004 11.0774 7.45511 11.0774 6.9653 11.4238L4.44994 13.2023C3.98113 13.5338 3.3335 13.1985 3.3335 12.6244V4.79017C3.3335 3.61744 4.28419 2.66674 5.45693 2.66675L10.1082 2.66676C11.281 2.66677 12.2317 3.61746 12.2317 4.79019V12.6244Z"
-            stroke="#232323"
+            stroke={fill ? 'none' : '#232323'}
             stroke-linecap="round"
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const ShareIcon = () => (
     <Svg
@@ -263,7 +263,7 @@ export const ShareIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const EditIcon = () => (
     <Svg
@@ -281,7 +281,7 @@ export const EditIcon = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
 
 export const DeleteIcon2 = () => (
     <Svg
@@ -299,4 +299,4 @@ export const DeleteIcon2 = () => (
             stroke-linejoin="round"
         />
     </Svg>
-)
+);
