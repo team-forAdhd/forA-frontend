@@ -34,6 +34,7 @@ type GetHospitalListResponse = {
 
 // 병원 목록을 가져오는 함수
 const SORT_OPTION = {
+    DIST_ASC: 'distance,asc',
     REVIEW_DESC: 'reviewCount,desc',
 };
 export const getHospitalList = async ({
@@ -46,7 +47,7 @@ export const getHospitalList = async ({
     sort,
 }: GetHospitalListRequest): Promise<GetHospitalListResponse> => {
     const { data } = await apiClient.get<GetHospitalListResponse>(
-        `/hospitals/nearby?latitude=${latitude}&longitude=${longitude}&radius=${radius}&page=${page}&size=${size}&sort=${SORT_OPTION['REVIEW_DESC']}&filter=${filter}`,
+        `/hospitals/nearby?latitude=${latitude}&longitude=${longitude}&radius=2000&page=${page}&size=${size}&sort=${'distance,asc'}&filter=${filter}`,
     );
     return data;
 };
@@ -58,7 +59,7 @@ export const useHospitalList = (
         queryKey: ['hospitalList', params.latitude, params.longitude],
         queryFn: ({ pageParam }) =>
             getHospitalList({ ...params, page: pageParam as number }),
-        initialPageParam: 1,
+        initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             if (lastPage.paging.isLast) return undefined;
             return allPages.length + 1;
