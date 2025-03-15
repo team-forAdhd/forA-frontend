@@ -1,4 +1,11 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 
 type GeneralModalProps = {
     modalVisible: boolean;
@@ -18,18 +25,20 @@ export default function GeneralModal({
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>{informText}</Text>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => {
-                            switchModal();
-                            onPressConfirm?.();
-                        }}
-                    >
-                        <Text style={styles.textStyle}>
-                            {confirmButtonText ?? '확인'}
-                        </Text>
-                    </Pressable>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <Text style={styles.modalText}>{informText}</Text>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => {
+                                switchModal();
+                                onPressConfirm?.();
+                            }}
+                        >
+                            <Text style={styles.textStyle}>
+                                {confirmButtonText ?? '확인'}
+                            </Text>
+                        </Pressable>
+                    </ScrollView>
                 </View>
             </View>
         </Modal>
@@ -46,6 +55,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         width: '80%',
+        maxHeight: '80%',
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
