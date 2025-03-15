@@ -35,7 +35,7 @@ type Doctor = {
     name: string; // 의사 이름
     image?: string; // 의사 프로필 사진 URL (선택적)
     profile?: string; // 의사의 약력 (선택적)
-    totalReviewCount?: number; // 의사에 대한 총 리뷰 수 (선택적)
+    totalReceiptReviewCount?: number; // 의사에 대한 총 리뷰 수 (선택적)
 };
 
 export { Hospital, HospitalInfo, Doctor };
