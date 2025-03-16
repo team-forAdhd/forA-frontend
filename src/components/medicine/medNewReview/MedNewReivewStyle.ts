@@ -105,13 +105,14 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 20
+        marginVertical: 20,
+        paddingLeft: 35, 
     },
       IconImage: {
         position: 'absolute',
         width: 28,
         height: 28,
-        left: 8,
+        left: 12,
     },
     coMedClick:{
         flexDirection: 'row',

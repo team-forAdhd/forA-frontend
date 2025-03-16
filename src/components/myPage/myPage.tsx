@@ -6,24 +6,24 @@ import { useNavigation } from '@react-navigation/native';
 import { ProfileStoreContext } from '@/state/signupState';
 import { Observer } from 'mobx-react';
 import getUser from '@/api/myPage/getUser';
-import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove';
+import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'; 
 import { getUserProfileApi } from '@/api/getUserProfileApi';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store/authStore'; 
 
 interface UserProfile {
-    email: string; // 이메일 주소
-    forAdhdType: 'FOR_MY_ADHD'; // 고정된 값이라면, 문자열 리터럴 타입을 사용
-    nickname: string; // 사용자 닉네임
-    profileImage: string; // 프로필 이미지 경로 (URL 형태)
+    email: string; 
+    forAdhdType: 'FOR_MY_ADHD';
+    nickname: string; 
+    profileImage: string; 
+    userRole?: string;
 }
 
 export default function MyPage() {
-    const store = useContext(ProfileStoreContext);
-    const updateUser = useAuthStore((state) => state.updateUser);
+    const store = useContext(ProfileStoreContext); 
+    const updateUser = useAuthStore((state) => state.updateUser); 
 
     const { t } = useTranslation('MyPage');
 
-    //리스트에 들어갈 이름과 이미지 주소를 저장한 객체
     const myWrittings = {
         [t('my-article')]: {
             icon: require('@/public/assets/myArticle.png'),
@@ -38,7 +38,6 @@ export default function MyPage() {
             navigator: 'MyPosts',
         },
     };
-    //유저의 저장 내역과 세팅에 담길 글 배열을 담고 있는 객체
     const user = {
         myScrab: [
             t('my-scrabArticle'),
@@ -53,33 +52,39 @@ export default function MyPage() {
         ],
     };
 
-    useEffect(() => {
-        getUserProfile();
-    });
-
-    const getUserProfile = async () => {
-        const data = await getUserProfileApi();
-        updateUser(data);
-    };
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState<UserProfile>();
+    const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
+
     useEffect(() => {
-        const fetchHospitalData = async () => {
+        const fetchUserData = async () => {
             setIsLoading(true);
             try {
-                // 병원 데이터 가져오기
-                const userInfo = await getUser();
-                setUserInfo(userInfo);
-                console.log(userInfo, 'user Info');
+                // 유저 정보, 병원 데이터 가져옴
+                const [profileData, hospitalData] = await Promise.all([
+                    getUserProfileApi(),
+                    getUser(),
+                ]);
+
+                // 상태 업데이트 
+                const mergedData = { ...hospitalData, ...profileData };
+                updateUser(mergedData);
+                setUserInfo(mergedData);
+                console.log('Fetched User Data:', mergedData);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             } finally {
-                setIsLoading(false); // 데이터 가져오기가 완료되면 로딩 상태를 false로 설정합니다.
+                setIsLoading(false);
             }
         };
-        fetchHospitalData();
+        fetchUserData();
     }, []);
+
+    useEffect(() => {
+        console.log('Updated userInfo:', userInfo);
+    }, [userInfo]);
+
+    const isAdmin = userInfo?.userRole === 'ADMIN';
+
     const navigation = useNavigation();
     //푸시 알림 핸들링
     const handlePushNotificationToggle = async () => {
@@ -90,8 +95,8 @@ export default function MyPage() {
             await updatePushNotificationApprovals({
                 pushNotificationApprovals: [
                     {
-                        pushNotificationApprovalId: 1,
-                        approved: store.isPushNotiOn,
+                        pushNotificationApprovalId: 1, // 푸쉬 알림 설정 식별 ID
+                        approved: store.isPushNotiOn, // 푸쉬 알림의 승인 상태
                     },
                 ],
             });
@@ -99,6 +104,7 @@ export default function MyPage() {
             console.error('Error updating push notification approval:', error);
         }
     };
+
     return (
         <View style={styles.container}>
             {/* 헤더 */}
@@ -216,6 +222,7 @@ export default function MyPage() {
                                         </Text>
 
                                         {setting !== '계정 설정' && ( // 계정 설정이 아닌 경우에만 동의 버튼이 뜨게끔
+                                            // 푸쉬 알림 및 위치 권한 상태 관리
                                             <Observer>
                                                 {() => (
                                                     <TouchableOpacity
@@ -255,6 +262,31 @@ export default function MyPage() {
                                 </TouchableOpacity>
                             ))}
                         </View>
+                        {/* 어드민 계정일 때만 신고 내역 확인 버튼 활성화 */}
+                        {isAdmin && (
+                        <View style={styles.complaintContainer}>
+                        <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate('AdminReport' as never);
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        justifyContent: 'space-between',
+                                        flexDirection: 'row',
+                                    }}
+                                >
+                                    <Text style={text.commonText}>
+                                        신고 내역 확인
+                                    </Text>
+                                    <Image
+                                        source={require('@/public/assets/next.png')}
+                                        style={styles.scrabImage}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        )}
 
                         {/* 맨 밑 화면 (이용약관, 처리방침, 포에이로고, 사업자정보) */}
                         <View style={styles.bottomInfoContainer}>

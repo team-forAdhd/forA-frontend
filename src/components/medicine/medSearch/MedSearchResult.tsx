@@ -36,7 +36,7 @@ type MedSearchResultScreenProps = {
 }
 
 export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
-    const { resultList, searchInputValue } = route.params
+    const { resultList, searchInputValue, selectedShapeForm, selectedColor } = route.params
     const { t } = useTranslation('medicine')
     const navigation = useNavigation()
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
@@ -74,9 +74,9 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             entpName: med.entpName,
             itemEngName: med.itemEngName,
             itemImage: med.itemImage,
-            className: med.className,
-            rating: med.rating,
-            favorite: med.favorite,
+            className: med.className || '알 수 없음',
+            rating: med.rating ?? 0, 
+            favorite: med.favorite ?? false,
         }))
         setMedList(filteredData)
         setSelectedIngredient(ingredient) // 성분을 선택한 상태로 유지
@@ -91,20 +91,113 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         navigation.navigate('ShapeSearch' as never)
     }
 
+    const shapeMap: { [key: string]: string } = {
+        원형: '원형',
+        장방형: '장방형',
+        타원형: '타원형',
+    }
+    
+    const colorMap: { [key: string]: string } = {
+        하양: '하양',
+        노랑: '노랑',
+        주황: '주황',
+        분홍: '분홍',
+        빨강: '빨강',
+        갈색: '갈색',
+        연두: '연두',
+        초록: '초록',
+        청록: '청록',
+        파랑: '파랑',
+        남색: '남색',
+        자주: '자주',
+        보라: '보라',
+        회색: '회색',
+        검정: '검정',
+        투명: '투명',
+    }
+    
+    const tabletTypeMap: { [key: string]: string } = {
+        "정제": "TABLET",
+        "경질캡슐제": "HARD_CAPSULE",
+        "연질캡슐제": "SOFT_CAPSULE",
+        "서방정": "EXTENDED_RELEASE_TABLET",
+        "서방성필름코팅정": "EXTENDED_RELEASE_FILM_COATED_TABLET",
+        "경질캡슐제, 산제": "HARD_CAPSULE",
+        "장용성캡슐제, 펠렛": "ENTERIC_COATED_CAPSULE",
+        "나정": "TABLET",
+        "필름코팅정": "FILM_COATED_TABLET",
+        "경질캡슐제, 산제, 펠렛": "HARD_CAPSULE",
+    }
+
     // 정렬 함수
     const sortMedList = () => {
-        let sortedList = new Array()
-        const filteredData = resultList.map((med: any) => ({
-            id: med.medicineId,
+        if (!resultList || resultList.length === 0) {
+            console.log('검색 결과 없음', resultList)
+            return []
+        }
+
+        console.log('API 응답 데이터:', JSON.stringify(resultList, null, 2));
+
+        
+        // // 필수 속성이 있는지 확인
+        // if (!resultList[0].drugShape || !resultList[0].colorClass1 || !resultList[0].formCodeName) {
+        //     console.warn("응답 데이터에 필수 필터링 속성이 없음!");
+        // }
+
+        // console.log('검색 키워드:', searchInputValue);
+
+        // // 검색어 분리
+        // const searchKeywords = searchInputValue.split(', ').map((kw) => kw.trim())
+
+        // // 검색 키워드 변환 (제형은 한글로 변환)
+        // const convertedSearchKeywords = searchKeywords.map((kw) => tabletTypeMap[kw] ?? kw)
+
+        // console.log("변환된 검색어:", convertedSearchKeywords)
+
+        // // `resultList`가 올바르게 전달되었는지 확인
+        // console.log('API 응답 데이터 구조:', resultList[0]);
+
+        // console.log('검색 키워드:', searchInputValue);
+
+        // // 검색어 기반 필터링
+        // let filteredData = resultList.filter((med) => {
+        //     console.log('현재 약 정보:', med);
+
+        //     const medShape = med.drugShape ? med.drugShape.trim() : ''
+        //     const medColor1 = med.colorClass1 ? med.colorClass1.trim() : ''
+        //     const medColor2 = med.colorClass2 ? med.colorClass2.trim() : ''
+        //     const medType = med.formCodeName ? (tabletTypeMap[med.formCodeName.trim()] ?? med.formCodeName.trim()).toLowerCase() : ''     
+    
+        //     console.log('현재 약 정보:', med)
+        //     console.log('매칭 데이터:', { medShape, medColor1, medColor2, medType });
+    
+        //     const searchKeywords = searchInputValue.split(', ').map((kw) => kw.trim())
+
+        //     return (
+        //         (!selectedShapeForm || med.drugShape === selectedShapeForm) &&
+        //         (!selectedColor || med.colorClass1 === selectedColor || med.colorClass2 === selectedColor)
+        //     )
+        // });            
+
+        // console.log("필터링 후 남은 약 개수:", filteredData.length);
+
+        // let sortedList = new Array()
+        // const filteredData = resultList.map((med: any) => ({
+        //let sortedList = filteredData.map((med: any) => ({
+        let sortedList = resultList.map((med: any) => ({
+            id: med.itemSeq,
             itemName: med.itemName,
             entpName: med.entpName,
-            itemEngName: med.itemEngName,
+            itemEngName: med.itemEngName || '알 수 없음',
             itemImage: med.itemImage,
-            className: med.className,
-            rating: med.rating,
-            favorite: med.favorite,
+            className: med.className || '알 수 없음',
+            rating: med.rating ?? 0,
+            favorite: med.favorite ?? false,
         }))
-        sortedList = filteredData
+
+        console.log('변환된 리스트:', sortedList);
+
+        //sortedList = filteredData
 
         switch (sortOption) {
             case '가나다 순':
@@ -119,7 +212,7 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             default:
                 break
         }
-        
+        console.log('최종 정렬 리스트:', sortedList)
         return sortedList
     }
 
@@ -202,9 +295,10 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
                 </ScrollView>
             ) : (
                 <ScrollView style={styles.medList}>
-                    {sortMedList().map((med) => (
-                        <MedicineListItem key={med.id} item={med} />
-                    ))}
+                    {sortMedList().map((med) => {
+                        console.log('렌더링되는 약 정보:', med);
+                        return <MedicineListItem key={med.id} item={med} />
+                    })}
                 </ScrollView>
             )}
 

@@ -20,8 +20,11 @@ export const useAuthStore = create<AuthStore>()(
             profileImage: '',
             nickname: '',
             forAdhdType: '',
-            login: (accessToken, refreshToken) =>
+            login: (accessToken, refreshToken) => {
                 set({ accessToken: accessToken, refreshToken: refreshToken }),
+                console.log('Access Token:', accessToken)
+                console.log('Refresh Token:', refreshToken)
+            },
             logout: () =>
                 set({
                     accessToken: '',

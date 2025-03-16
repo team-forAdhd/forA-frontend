@@ -3,6 +3,7 @@ import ChangeNickName from '@/components/changeNickName/changeNickName';
 import MyPage from '@/components/myPage/myPage';
 import MyPost from '@/components/myPage/myPost';
 import { createStackNavigator } from '@react-navigation/stack';
+import AdminReport from '@/components/myPage/adminReport';
 
 type MypageStackParams = {
     MyPage: undefined;
@@ -12,6 +13,8 @@ type MypageStackParams = {
     MyComments: { postType: 'myComments' };
     MyReviews: { postType: 'myReviews' };
     SavedPosts: { postType: 'savedPosts' };
+    SavedPharmacies: { postType: 'savedPharmacies'};
+    AdminReport: undefined;
 };
 const Mypage = createStackNavigator<MypageStackParams>();
 export default function MypageStack() {
@@ -44,6 +47,15 @@ export default function MypageStack() {
                 name="SavedPosts"
                 component={MyPost}
                 initialParams={{ postType: 'savedPosts' }}
+            />
+            <Mypage.Screen
+                name="SavedPharmacies"
+                component={MyPost}
+                initialParams={{ postType: 'savedPharmacies' }}
+            />
+            <Mypage.Screen 
+                name="AdminReport" 
+                component={AdminReport} 
             />
         </Mypage.Navigator>
     );

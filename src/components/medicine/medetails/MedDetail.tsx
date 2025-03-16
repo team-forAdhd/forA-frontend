@@ -10,39 +10,45 @@ import {
 import { styles, text } from './MedDetailStyle'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
-import MedReview from './MedReview'
-import { RootStackParamList } from '@/components/navigation'
+import MedReview from './MedReview' // 리뷰 목록 페이지
+import { RootStackParamList } from '@/components/navigation' // 파라미터 안전하게 전달
 import { medBookmarkApi } from '@/api/medicine/medBookmarkApi'
 
 
 const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(')
+    const bracketIndex = name.indexOf('(') // 괄호가 없다면 indexOf는 -1 반환
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
 }
 
 
 export default function MedDetail(med : any) {
     const data = med.route.params
-
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const { t: t } = useTranslation('medicine')
     const { t: dataT } = useTranslation('medDetail')
-    const [activeTab, setActiveTab] = useState('정보')
+    const [activeTab, setActiveTab] = useState('정보') 
     const [activeButton, setActiveButton] = useState('all')
-    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite)
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite) 
     const scrollViewRef = useRef<ScrollView>(null)
     const sectionPositions = useRef<{ [key: string]: number }>({})
     
     const medInfoList = ['effect', 'usage', 'precaution', 'med-info', 'company']
 
-    const postBookmark = async (medId : number) => {
-        const bookmark = await medBookmarkApi(medId)
-        setIsBookmarked(true)
+    const postBookmark = async (medId: number) => { 
+        try {
+            const response = await medBookmarkApi(medId) 
+            if (response.status === 200) {
+                setIsBookmarked((prev) => !prev) 
+            }
+        } catch (error) {
+            console.error('북마크 변경 실패:', error)
+        }
     }
 
     useEffect(() => {
-        setIsBookmarked(isBookmarked)
-    })
+        setIsBookmarked(data.favorite) 
+    }, [data.favorite]) 
+    
 
     const handleLeftArrowPress = () => {
         //navigation.navigate('MedicineMain' as never)
@@ -51,17 +57,17 @@ export default function MedDetail(med : any) {
 
     // 항목별 이동을 위한 동적 로직
     const handleScrollToSection = (section: string) => {
-        setActiveButton(section)
-        const targetSection = section === 'all' ? 'effect' : section
-        const position = sectionPositions.current[targetSection]
-        if (position !== undefined) {
+        setActiveButton(section) 
+        const targetSection = section === 'all' ? 'effect' : section 
+        const position = sectionPositions.current[targetSection] 
+        if (position !== undefined) { 
             scrollViewRef.current?.scrollTo({ y: position, animated: true })
         }
     }
-
+    // 각 섹션의 위치(y 좌표) 저장 – 이후 특정 섹션으로 스크롤을 이동할 때 사용됨
     const handleLayout = (section: string) => (event: LayoutChangeEvent) => {
-        const { y } = event.nativeEvent.layout
-        sectionPositions.current[section] = y
+        const { y } = event.nativeEvent.layout 
+        sectionPositions.current[section] = y 
     }
 
     // data.id에 따른 약 내용 설정
@@ -135,6 +141,7 @@ export default function MedDetail(med : any) {
                     />
                 </TouchableOpacity>
                 <Text style={text.headerText}>
+                    {/* data가 존재하면 data.itemName(약 이름)을 가져와 truncateItemName 함수를 통해 가공된 이름을 표시 */}
                     {data ? truncateItemName(data.itemName) : t('review')}
                 </Text>
                 <View style={styles.IconImage} />
@@ -144,13 +151,17 @@ export default function MedDetail(med : any) {
             <View style={styles.topButtonContainer}>
                 {['정보', '리뷰'].map((tab) => (
                     <TouchableOpacity
+                        // setActiveTab(tab)이 실행되어 현재 선택된 탭이 변경됨
                         onPress={() => setActiveTab(tab)}
                     style={[
                         activeTab === tab
-                            ? styles.activeContainer
+                            // tab 선택 시
+                            ? styles.activeContaine
+                            // 선택되지 않았을 시
                             : styles.inactiveContainer
                     ]}
                     >
+                        {/* 탭 버튼 안의 글자(정보 또는 리뷰)를 표시함 */}
                         <Text
                             style={
                                 activeTab === tab
@@ -180,11 +191,14 @@ export default function MedDetail(med : any) {
                         </View>
                         <View style={styles.infoBox}>
                             <Text style={text.itemNameText}>
+                                {/* 약 이름에서 괄호 이후 부분을 제거하고 표시 */}
                                 {truncateItemName(data.itemName)}
                             </Text>
+                            {/* 영어 이름 표시 */}
                             <Text style={text.itemEngNameText}>
                                 {data.itemEngName}
                             </Text>
+                            {/* 제약회사 이름 표시 */}
                             <Text style={text.entpNameText}>
                                 {data.entpName}
                             </Text>
@@ -239,6 +253,7 @@ export default function MedDetail(med : any) {
                                     </Text>
                                 </View>
                                 <Text style={text.contentText}>
+                                    {/* 해당 정보(효능, 부작용 등)에 대한 번역된 텍스트를 가져와서 표시 */}
                                     {dataT(getTranslationKey(med.medId, info))}
                                 </Text>
                             </View>
@@ -246,20 +261,24 @@ export default function MedDetail(med : any) {
 
                     </View>
                 ) : (
+                    // 리뷰 화면을 보여주는 MedReview 컴포넌트 렌더링. medId를 MedReview 컴포넌트에 전달
                     <MedReview medId={data.medicineId} />
                 )}
             </ScrollView>
 
             {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
+                {/* data.favorite 서버에서 가져온 북마크 여부, isBookmarked 클라이언트에서 확인된 북마크 상태 */}
                 {data.favorite || isBookmarked
                 ? (
                     <Image
+                        // 북마크된 상태면 이미지 표시
                         source={require('@/public/assets/clickScrabButton.png')}
                         style={styles.scrapIamge}
                     />
                 )
                 : (
+                    // 북마크 되지 않은 경우. 클릭 시 postBookmark(data.medicineId) 함수를 호출해 북마크에 추가
                     <TouchableOpacity onPress={() => {postBookmark(data.medicineId)}}>
                     <Image
                         source={require('@/public/assets/scrabButton.png')}
@@ -269,6 +288,7 @@ export default function MedDetail(med : any) {
                 )}
 
                 <TouchableOpacity
+                    // 리뷰 작성화면(MedNewReview)으로 이동하면서 data 전달
                     onPress={() => {navigation.navigate('MedNewReview', data)}}
                     style={styles.reviewButton}
                 >

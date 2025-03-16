@@ -1030,13 +1030,17 @@ PODS:
   - React-Mapbuffer (0.73.6):
     - glog
     - React-debug
+  - react-native-geolocation (3.4.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
-  - react-native-google-maps (1.18.2):
+  - react-native-google-maps (1.20.1):
     - Google-Maps-iOS-Utils (= 5.0.0)
     - GoogleMaps (= 8.4.0)
     - React-Core
-  - react-native-maps (1.18.2):
+  - react-native-maps (1.20.1):
     - React-Core
   - react-native-safe-area-context (4.8.2):
     - React-Core
@@ -1226,7 +1230,7 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNLocalize (3.1.0):
+  - RNLocalize (3.4.1):
     - React-Core
   - RNReanimated (3.6.3):
     - glog
@@ -1239,7 +1243,7 @@ PODS:
     - React-Core
   - RNSVG (14.1.0):
     - React-Core
-  - RNVectorIcons (10.1.0):
+  - RNVectorIcons (10.2.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1296,6 +1300,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector-modern`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -1431,6 +1436,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-google-maps:
@@ -1557,9 +1564,10 @@ SPEC CHECKSUMS:
   React-jsinspector: 85583ef014ce53d731a98c66a0e24496f7a83066
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: d81d930c1b7f4db284e1d721fe7fdc99230ca108
+  react-native-geolocation: dca4a700096eb1253fdd47b8c39ee22b98232809
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
-  react-native-google-maps: 8cb46ae72c332204bc364dcbaf09423d244480d5
-  react-native-maps: d7c0974353b8a495642d7ce3b80f239fc6b87bfb
+  react-native-google-maps: 7cc1184afe41fbd15a3dffd53c924819f6587b69
+  react-native-maps: ee1e65647460c3d41e778071be5eda10e3da6225
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   react-native-webview: ad868affda04ff2b204de83546193bc0325a8280
   React-nativeconfig: e700ac3ec3d66329076bd2c2787a204411815d43
@@ -1587,15 +1595,15 @@ SPEC CHECKSUMS:
   RNFBAnalytics: 5313ad2b6e6641a6b9bfbe06d646d5fb25e0ccc1
   RNFBApp: 60366dd9d6bb01327607e1561a32508592d76db9
   RNGestureHandler: 12833709769dde5fdb36ec9d4cdf4d3a1a024122
-  RNLocalize: e8694475db034bf601e17bd3dfa8986565e769eb
+  RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNReanimated: 41963a348e738c496a9b129bba9a9217017cd530
   RNScreens: a4d9ce8f68f833f4e42410140eafd88e38bba163
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
-  RNVectorIcons: b307b181c8e98d633d416d36421d515cf2fe9e31
+  RNVectorIcons: e547446004607b9037ae4bea770d0fd2ba15c4a7
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
 PODFILE CHECKSUM: f867f03f77b8df5046e3d8cfedd37fce64a03e85
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
