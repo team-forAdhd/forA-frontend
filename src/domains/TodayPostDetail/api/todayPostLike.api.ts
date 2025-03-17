@@ -39,7 +39,10 @@ export function usePostLikeMutation(post: Post) {
             if (previousPost) {
                 queryClient.setQueryData(['todayPostDetail', post.id], {
                     ...previousPost,
-                    likeCount: previousPost.likeCount + 1,
+                    isLiked: !previousPost.isLiked,
+                    likeCount: previousPost.isLiked
+                        ? previousPost.likeCount - 1
+                        : previousPost.likeCount + 1,
                 });
             }
             return { previousPost };

@@ -53,7 +53,11 @@ export default function Header<T extends ParamListBase = ParamListBase>({
             <TouchableOpacity onPress={handleBackButton}>
                 {leftIconsType[backIconType]}
             </TouchableOpacity>
-            <Text style={[text.headerText, { left: '50%' }]}>{headerText}</Text>
+            <Text
+                style={[text.headerText, { position: 'absolute', left: '50%' }]}
+            >
+                {headerText}
+            </Text>
             <View style={styles.rightOptionsContainer}>{children}</View>
         </View>
     );

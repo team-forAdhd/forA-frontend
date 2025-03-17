@@ -1,61 +1,61 @@
-import React, { useState, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { ArrowIcon } from '@/public/assets/SvgComponents'
-import { TouchableOpacity, Text, View, TextInput, Image } from 'react-native'
-import { styles, text } from './JoinStyle'
-import { checkExistingMemberApi } from '@/api/join/checkExistingMemberApi'
-import { sendAuthApi } from '@/api/join/sendAuthApi'
-import profileStore from '@/state/signupState/profileStore'
+import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { ArrowIcon } from '@/public/assets/SvgComponents';
+import { TouchableOpacity, Text, View, TextInput, Image } from 'react-native';
+import { styles, text } from './JoinStyle';
+import { checkExistingMemberApi } from '@/api/join/checkExistingMemberApi';
+import { sendAuthApi } from '@/api/join/sendAuthApi';
+import profileStore from '@/state/signupState/profileStore';
 
 export default function EmailDuplicateCheck() {
-    const { t } = useTranslation('login-join')
-    const navigation = useNavigation()
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [birthYearMonth, setBirthYearMonth] = useState('')
-    const [gender, setGender] = useState('')
-    const [inputFocused, setInputFocused] = useState(false)
-    const [nameChecked, setNameChecked] = useState(false)
-    const [genderChecked, setGenderChecked] = useState(false)
-    const [birthChecked, setBirthChecked] = useState(false)
-    const [isEmailValid, setIsEmailValid] = useState(false)
-    const [emailChecked, setEmailChecked] = useState(false)
-    const [emailConfirmed, setEmailConfirmed] = useState(false)
+    const { t } = useTranslation('login-join');
+    const navigation = useNavigation();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [birthYearMonth, setBirthYearMonth] = useState('');
+    const [gender, setGender] = useState('');
+    const [inputFocused, setInputFocused] = useState(false);
+    const [nameChecked, setNameChecked] = useState(false);
+    const [genderChecked, setGenderChecked] = useState(false);
+    const [birthChecked, setBirthChecked] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [emailChecked, setEmailChecked] = useState(false);
+    const [emailConfirmed, setEmailConfirmed] = useState(false);
 
     const gotoBeforeScreen = () => {
-        navigation.navigate('Login' as never)
-    }
+        navigation.navigate('Login' as never);
+    };
     const gotoNextScreen = () => {
-        saveUserdInfo()
-        sendAuthApi(email)
-        navigation.navigate('AuthCheck' as never)
-    }
-    const genderInputRef = useRef<TextInput>(null)
+        saveUserdInfo();
+        sendAuthApi(email);
+        navigation.navigate('AuthCheck' as never);
+    };
+    const genderInputRef = useRef<TextInput>(null);
 
     const handleEmailChange = (text: string) => {
-        setEmail(text)
-        setIsEmailValid(/\S+@\S+\.\S+/.test(text))
-        setEmailChecked(false)
-    }
+        setEmail(text);
+        setIsEmailValid(/\S+@\S+\.\S+/.test(text));
+        setEmailChecked(false);
+    };
 
     const handleCheckButton = async () => {
         try {
-            const isValidEmail = await checkExistingMemberApi(email)
-            setEmailChecked(true)
-            setEmailConfirmed(isValidEmail)
+            const isValidEmail = await checkExistingMemberApi(email);
+            setEmailChecked(true);
+            setEmailConfirmed(isValidEmail);
         } catch (error) {
-            console.error('Error while checking email in: ', error)
-            setEmailConfirmed(false)
+            setEmailConfirmed(false);
+            console.error('Error while checking email in: ', error.response);
         }
-    }
+    };
 
     const saveUserdInfo = () => {
-        profileStore.setName(name)
-        profileStore.setEmail(email)
-        profileStore.setBirthYearMonth(birthYearMonth)
-        profileStore.setGender(gender)
-    }
+        profileStore.setName(name);
+        profileStore.setEmail(email);
+        profileStore.setBirthYearMonth(birthYearMonth);
+        profileStore.setGender(gender);
+    };
 
     return (
         <View style={styles.container}>
@@ -79,8 +79,8 @@ export default function EmailDuplicateCheck() {
                         placeholder={t('join-name-input')}
                         value={name}
                         onChangeText={(text) => {
-                            setName(text)
-                            setNameChecked(text.length >= 2)
+                            setName(text);
+                            setNameChecked(text.length >= 2);
                         }}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
@@ -118,8 +118,8 @@ export default function EmailDuplicateCheck() {
                                 value={birthYearMonth}
                                 onChangeText={(text) => {
                                     if (/^\d+$/.test(text)) {
-                                        setBirthYearMonth(text)
-                                        setBirthChecked(true)
+                                        setBirthYearMonth(text);
+                                        setBirthChecked(true);
                                     }
                                 }}
                                 onFocus={() => setInputFocused(true)}
@@ -140,11 +140,11 @@ export default function EmailDuplicateCheck() {
                                 placeholder={'- 0 ∙ ∙ ∙ ∙ ∙ ∙'}
                                 value={gender}
                                 onChangeText={(text) => {
-                                    setGender(text)
+                                    setGender(text);
                                     profileStore.setGender(
                                         +text % 2 === 0 ? 'FEMALE' : 'MALE',
-                                    )
-                                    setGenderChecked(true)
+                                    );
+                                    setGenderChecked(true);
                                 }}
                                 onFocus={() => setInputFocused(true)}
                                 onBlur={() => setInputFocused(false)}
@@ -152,7 +152,7 @@ export default function EmailDuplicateCheck() {
                                 maxLength={1}
                                 onSubmitEditing={() => {
                                     if (genderInputRef.current) {
-                                        genderInputRef.current.focus()
+                                        genderInputRef.current.focus();
                                     }
                                 }}
                             />
@@ -261,5 +261,5 @@ export default function EmailDuplicateCheck() {
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }

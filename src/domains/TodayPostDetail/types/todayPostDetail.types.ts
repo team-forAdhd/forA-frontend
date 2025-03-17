@@ -9,7 +9,10 @@ export type Comment = {
     lastModifiedAt: number;
     parentCommentId: number | null;
     children: Comment[];
+    isLiked: boolean;
     nickname: string;
+    isCommentAuthor: boolean;
+    isBlocked: boolean;
     profileImage: string;
 };
 
@@ -20,6 +23,8 @@ export type Post = {
     content: string;
     anonymous: boolean;
     images: string[] | null;
+    isLiked?: boolean;
+    isScrapped?: boolean;
     likeCount: number;
     commentCount: number;
     scrapCount: number;
@@ -30,4 +35,6 @@ export type Post = {
     profileImage: string | null;
     createdAt: number;
     lastModifiedAt: number;
+    isAuthor?: boolean;
+    isBlocked?: boolean;
 };
