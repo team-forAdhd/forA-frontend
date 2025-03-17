@@ -3,8 +3,8 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { styles, text } from './MedReviewStyle'
 import { useTranslation } from 'react-i18next'
 import { getMedReviewApi } from '@/api/medicine/medReviewApi'
-import MedReviewListItem from './MedReviewList/MedReviewListItem'
-import StarRating from './StarRating/StarRating'
+import MedReviewListItem from './MedReviewList/MedReviewListItem' // 약 리뷰 목록에서 개별 리뷰 아이템을 표시
+import StarRating from './StarRating/StarRating' // 별점 표시 컴포넌트
 import BottomSheet from '../medBottomSheet/BottomSheet'
 import { useRoute } from '@react-navigation/native'
 
@@ -14,11 +14,11 @@ interface MedReviewProps {
 const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
     const route = useRoute()
     const { t } = useTranslation('medicine')
-    const [reviews, setReviews] = useState<any[]>([])
-    const [averageRate, setAverateRate] = useState(0)
+    const [reviews, setReviews] = useState<any[]>([]) // 리뷰 데이터 저장하는 상태
+    const [averageRate, setAverateRate] = useState(0) // 전체 리뷰의 평균 평점을 저장
     const [ratingDistribution, setRatingDistribution] = useState([
         0, 0, 0, 0, 0,
-    ])
+    ]) // 별점 분포 초기화
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
 
     //정렬 리스트
@@ -30,14 +30,16 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
         '별점 낮은 순',
     ]
     const [sortOption, setSortOption] = useState(rangeList[0])
-    const [sortedReviews, setSortedReviews] = useState<any[]>([])
+    const [sortedReviews, setSortedReviews] = useState<any[]>([]) 
 
+    // useEffect로 컴포넌트가 렌더링 될 때마다 특정 작업을 실행하도록 함.
+    // medId가 변경될 때마다 리뷰를 다시 가져오는 역할을 함.
     useEffect(() => {
         console.log(`약 리뷰 페이지 (id: ${medId})`)
-        const fetchReviews = async () => {
+        const fetchReviews = async () => { // 약물 리뷰 데이터를 API에서 가져오는 기능
             const response = await getMedReviewApi(medId)
             if (response && response.data) {
-                setReviews(response.data)
+                setReviews(response.data) 
                 calcAverageRate(response.data)
                 calcRateDistribution(response.data)
             }
@@ -50,10 +52,10 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
     const sortReviews = (reviewsToSort: any[]) => {
         let sorted = [...reviewsToSort]
         switch (sortOption) {
-            case '최신순':
+            case '최신순': // createdAt 값을 기준으로 내림차순 정렬
                 sorted.sort((a, b) => b.createdAt - a.createdAt)
                 break
-            case '오래된 순':
+            case '오래된 순': // 오름차순 정렬
                 sorted.sort((a, b) => a.createdAt - b.createdAt)
                 break
             case '추천 받은 순':
@@ -68,7 +70,7 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
             default:
                 break
         }
-        setSortedReviews(sorted)
+        setSortedReviews(sorted) // 정렬된 리뷰 목록을 저장
     }
 
     // sortOption이 바뀌면 리뷰 정렬
@@ -83,14 +85,14 @@ const MedReview: React.FC<MedReviewProps> = ({ medId }) => {
             0,
         )
         const average = totalRating / reviews.length
-        setAverateRate(average)
+        setAverateRate(average) // 계산된 평균 별점 저장
     }
 
     // 점수 분포 계산
     const calcRateDistribution = (reviews: any[]) => {
         const distribution = [0, 0, 0, 0, 0]
         reviews.forEach((review) => {
-            const ratingIndex = Math.floor(review.grade) - 1
+            const ratingIndex = Math.floor(review.grade) - 1 
             if (ratingIndex >= 0 && ratingIndex < 5) {
                 distribution[ratingIndex]++
             }

@@ -4,11 +4,11 @@ import { useEffect, useState, Fragment } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import TabBar from '../common/tabBar/tabBar'
 import PostItem from '../common/postItem/postItem'
+import PharmacyItem from '../common/pharmacyItem/pharmacyItem'
 import BottomSheet from '../medicine/medBottomSheet/BottomSheet'
 import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '../navigation'
 import { getMyComment } from '@/api/myPage/mycommentApi'
-import { Login } from '@/api/login/loginApi'
 import { getSavedPosts } from '@/api/myPage/mySavedPostApi'
 import { getMyPosts } from '@/api/myPage/myPostApi'
 import { getSavedHospitals } from '@/api/myPage/mySavedHospitalsApi'
@@ -82,14 +82,17 @@ export default function MyPost({ route }: PostProps) {
     ]
 
     const categories = dummy.map((post) => post.category) // 데이터에서 카테고리만 따로 모은 배열
-    const tabList: string[] = ['10대', '20대', '30대', '학부모'] // 게시판 리스트 순서대로 표시하기 위해
+    const tabList: string[] = ['10대', '20대', '30대', '학부모'] 
     const categoryList: string[] = Array.from(new Set(categories)) // 게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
 
     // 게시판 선택
     const [boardClick, setBoardClick] = useState<string>(categoryList[0])
 
     // 정렬 기준 리스트
-    const rangeList = ['최신순', '오래된 순', '조회수 순', '좋아요 순']
+    const rangeList = postType === 'savedPharmacies' 
+        ? ['최신순', '오래된 순'] 
+        : ['최신순', '오래된 순', '조회수 순', '좋아요 순'];
+
     // 정렬 선택 _ 기본 최신순
     const [range, setRange] = useState<string>(rangeList[0])
 
@@ -110,47 +113,58 @@ export default function MyPost({ route }: PostProps) {
     const [rerender, setRerender] = useState(false)
     //병원, 약 정렬
     const [sort, setSort] = useState<'createdAt' | 'desc'>('createdAt')
+    
+    const fetchData = async ( selectedSortOption = sortOption ) => {
+        try {
+
+            let fetchedData
+            switch (postType) {
+                case 'myPosts':
+                    fetchedData = await getMyPosts(category, sortOption)
+                    break
+
+                case 'myComments':
+                    fetchedData = await getMyComment(sortOption)
+                    break
+
+                case 'savedPosts':
+                    fetchedData = await getSavedPosts(category, sortOption)
+                    break
+
+                case 'savedHospitals':
+                    fetchedData = await getSavedHospitals(sort)
+                    break
+
+                case 'savedPharmacies':
+                    fetchedData = await getSavedPharmacies()
+                    break
+
+                default:
+                    console.warn('Unknown post type:', postType)
+                    return
+            }
+
+            if (fetchedData?.data) {
+                console.log("Fetched Data:", fetchedData.data);
+                const sortedData = [...fetchedData.data].sort((a, b) => {
+                    if (!a.bookmarkedAt || !b.bookmarkedAt) return 0; // null 값 방지
+                    return selectedSortOption === 'NEWEST_FIRST'
+                        ? b.bookmarkedAt - a.bookmarkedAt  // 최신순 정렬
+                        : a.bookmarkedAt - b.bookmarkedAt; // 오래된순 정렬
+                });
+                
+                console.log("정렬된 데이터:", sortedData);
+                setDataList([...sortedData]); // React 상태 변경 감지를 위해 새로운 배열 할당
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await Login()
-
-                let fetchedData
-                switch (postType) {
-                    case 'myPosts':
-                        fetchedData = await getMyPosts(category, sortOption)
-                        break
-
-                    case 'myComments':
-                        fetchedData = await getMyComment(sortOption)
-                        break
-
-                    case 'savedPosts':
-                        fetchedData = await getSavedPosts(category, sortOption)
-                        break
-
-                    case 'savedHospitals':
-                        fetchedData = await getSavedHospitals(sort)
-                        break
-
-                    case 'savedPharmacies':
-                        fetchedData = await getSavedPharmacies()
-                        break
-
-                    default:
-                        console.warn('Unknown post type:', postType)
-                        return
-                }
-
-                setDataList(fetchedData)
-                console.log(`${postType} Data:`, fetchedData)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-        fetchData()
-    }, [route, sortOption, category])
+        console.log("sortOption 변경됨:", sortOption);
+        fetchData(sortOption);
+    }, [route, sortOption, category, postType])
 
     const navigation = useNavigation()
 
@@ -184,65 +198,87 @@ export default function MyPost({ route }: PostProps) {
                 <Fragment>
                     {/* 게시판 리스트 */}
                     <View style={styles.topContainer}>
+                    {postType !== 'savedPharmacies' && (
                         <View style={styles.boardListContainer}>
-                            {tabList.map((board, index) => (
-                                <View key={index}>
-                                    {categoryList.includes(board) && (
-                                        <TouchableOpacity
+                        {tabList.map((board, index) => (
+                            <View key={index}>
+                                {categoryList.includes(board) && (
+                                    <TouchableOpacity
+                                        style={
+                                            boardClick === board
+                                                ? styles.clickContainer
+                                                : styles.baseContainer
+                                        }
+                                        onPress={() => {
+                                            setBoardClick(board)
+                                            console.log(board)
+                                        }}
+                                    >
+                                        <Text
                                             style={
                                                 boardClick === board
-                                                    ? styles.clickContainer
-                                                    : styles.baseContainer
+                                                    ? text.clickText
+                                                    : text.baseText
                                             }
-                                            onPress={() => {
-                                                setBoardClick(board)
-                                                console.log(board)
-                                            }}
                                         >
-                                            <Text
-                                                style={
-                                                    boardClick === board
-                                                        ? text.clickText
-                                                        : text.baseText
-                                                }
-                                            >
-                                                {board}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                            ))}
-                        </View>
+                                            {board}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        ))}
+                    </View>
+                    )}
                         {/* 정렬 */}
-                        <TouchableOpacity
-                            onPress={() => setRangeBottomSheet(true)}
-                            style={styles.rangeContainer}
-                        >
-                            <Text style={text.rangeText}>{range}</Text>
-                            <Image
-                                source={require('@/public/assets/under.png')}
-                                style={styles.underIcon}
+                        <View style={{ flex: 1, alignItems: 'flex-end' }}></View>
+                            <TouchableOpacity
+                                onPress={() => setRangeBottomSheet(true)}
+                                style={styles.rangeContainer}
+                            >
+                                <Text style={text.rangeText}>{range}</Text>
+                                <Image
+                                    source={require('@/public/assets/under.png')}
+                                    style={styles.underIcon}
+                                />
+                            </TouchableOpacity>
+                        {/* 정렬 옵션 바텀시트 */}
+                        {rangeBottomSheet && (
+                            <BottomSheet
+                                visible={rangeBottomSheet}
+                                onClose={() => setRangeBottomSheet(false)}
+                                options={rangeList}  // 변경된 정렬 리스트 적용
+                                onSelect={setRange}
+                                selectedOption={range}
                             />
-                        </TouchableOpacity>
+                        )}
                     </View>
-                    {/* 게시글 */}
-                    <View style={styles.postsContainer}>
-                        {dataList &&
-                            dataList.map((post, index) => (
-                                <View
-                                    key={index}
-                                    style={styles.postInnerContainer}
-                                >
-                                    <PostItem post={post} page={'myPage'} />
-                                </View>
-                            ))}
-                    </View>
+                        <View style={styles.postsContainer}>
+                            {postType === 'savedPharmacies' ? (
+                                <PharmacyItem pharmacies={dataList || []} />
+                            ) : (
+                                dataList?.map((item, index) => (
+                                    <PostItem key={index} post={item} page={'myPage'} />
+                                ))
+                            )}
+                        </View>
                     {rangeBottomSheet && (
                         <BottomSheet
                             visible={rangeBottomSheet}
                             onClose={() => setRangeBottomSheet(false)}
                             options={rangeList}
-                            onSelect={setRange}
+                            onSelect={(selectedRange) => {
+                                console.log("선택된 정렬 방식:", selectedRange)
+                                setRange(selectedRange)
+                                const newSortOption = selectedRange === '최신순' ? 'NEWEST_FIRST' : 'OLDEST_FIRST'
+                                console.log("선택된 정렬 방식:", newSortOption)
+                                
+                                setsortOption(newSortOption)
+                                //상태 업데이트 후 fetchData 실행
+                                setTimeout(() => {
+                                    console.log("fetchData 실행:", newSortOption);
+                                    fetchData(newSortOption);
+                                }, 0);
+                            }}                                                      
                             selectedOption={range}
                         />
                     )}
