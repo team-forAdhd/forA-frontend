@@ -141,13 +141,13 @@ export default function MedScreen() {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View>
+                    {/* <View>
                         <TouchableOpacity onPress={gotoMedShapeSearch}>
                             <Text style={text.shapeSearchText}>
                                 {t('search-shape')}
                             </Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
             </View>
             {/* 정렬 옵션 부분 */}

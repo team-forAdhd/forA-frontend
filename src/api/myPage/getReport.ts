@@ -12,23 +12,32 @@ export const getReport = async () => {
     }
 }
 
-export const getHandleReport = async (email, postId, handleReportType) => {
+export const postHandleReport = async (email, postId, handleReportType) => {
     try {
-        const url = `${API_URL}/api/v1/posts/handleReport?email=${email}&postId=${postId}&handleReportType=${handleReportType}`
-        console.log("API 요청 URL:", url)
-        const response = await apiClient.get(`${API_URL}/api/v1/posts/handleReport`, {
-            params: {
-                email,
-                postId,
-                handleReportType
-            },
-            headers: {
-                'Authorization': `Bearer ${userStore.accessToken}`,
+        const payload = {
+            email: email,
+            postId: postId,
+            handleReportType: handleReportType
+        };
+        console.log("API 요청 데이터:", JSON.stringify(payload, null, 2));
+        const response = await apiClient.post(`${API_URL}/api/v1/posts/handleReport`,
+            payload,
+            // {
+            //     email: email,
+            //     postId: postId,
+            //     handleReportType: handleReportType
+            // }, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${userStore.accessToken}`,
+                    'Content-Type': 'application/json'
+                }
             }
-        })
+        );
+        console.log("성공 응답:", response.data);
         return response.data
     } catch (error) {
-        console.error('Error handling report:', error)
+        console.error('Error handling report:', error.response?.data || error);
         throw error
     }
 }
