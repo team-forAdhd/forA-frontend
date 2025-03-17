@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     gobackIcon: {
         position: 'absolute',
         left: 10,
+        top: 62,
     },
     gobackSize: {
         width: 36,
@@ -107,7 +108,7 @@ export const styles = StyleSheet.create({
     },
     searchButton: {
         position: 'absolute',
-        bottom: 25,
+        bottom: 0,
         width: '100%',
         height: 60,
         backgroundColor: '#52A55D',
@@ -115,7 +116,7 @@ export const styles = StyleSheet.create({
     },
     disabledSearchButton: {
         position: 'absolute',
-        bottom: 25,
+        bottom: 0,
         width: '100%',
         height: 60,
         backgroundColor: '#EEEEEE',
