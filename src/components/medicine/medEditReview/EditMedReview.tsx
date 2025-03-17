@@ -10,21 +10,21 @@ import {
 import { styles, text } from './EditMedReviewStyle'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
-import { Rating } from 'react-native-elements'
-import { TextInput } from 'react-native-gesture-handler'
+import { Rating } from 'react-native-elements' 
+import { TextInput } from 'react-native-gesture-handler' 
 import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
-import * as ImagePicker from 'expo-image-picker'
-import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
-import MedSelectModal from '../medNewReview/MedSelectModal/MedSelectModal'
-import medStore from '@/state/medState/medStore'
-import { getMedReviewApi } from '@/api/medicine/medReviewApi'
+import * as ImagePicker from 'expo-image-picker' 
+import { sendMedReviewApi } from '@/api/medicine/medReviewApi' 
+import MedSelectModal from '../medNewReview/MedSelectModal/MedSelectModal' 
+import medStore from '@/state/medState/medStore' 
+import { getMedReviewApi } from '@/api/medicine/medReviewApi' 
 
 const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(')
-    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
+    const bracketIndex = name.indexOf('(') 
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name 
 }
 
-interface EditMedReviewProps {
+interface EditMedReviewProps { 
     reviewId: number
 }
 
@@ -33,32 +33,32 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
 
     const navigation = useNavigation()
     const scrollViewRef = useRef<ScrollView>(null)
-    const route = useRoute()
+    const route = useRoute() 
 
     const [rating, setRating] = useState(0)
-    const [isCoMed, setIsCoMed] = useState(false)
-    const [coMedName, setCoMedName] = useState('')
-    const [coMedId, setCoMedId] = useState(0)
-    const [content, setContent] = useState('')
-    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([])
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
-    const [isFocused, setIsFocused] = useState(false)
-    const [age, setAge] = useState('')
-    const [sex, setSex] = useState('')
-    const [modalVisible, setModalVisible] = useState(false)
+    const [isCoMed, setIsCoMed] = useState(false) 
+    const [coMedName, setCoMedName] = useState('') 
+    const [coMedId, setCoMedId] = useState(0) 
+    const [content, setContent] = useState('') 
+    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([]) 
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions() 
+    const [isFocused, setIsFocused] = useState(false) 
+    const [age, setAge] = useState('') 
+    const [sex, setSex] = useState('') 
+    const [modalVisible, setModalVisible] = useState(false) 
 
-    useEffect(() => {
+    useEffect(() => { 
         const fetchReviewData = async () => {
-            try {
-                const reviewData = await getMedReviewApi(reviewId) // getMedReviewApi 호출
-                if (reviewData) {
-                    setRating(reviewData.grade) // 리뷰 평점 설정
-                    setContent(reviewData.content) // 리뷰 내용 설정
-                    setAttachedPhotos(reviewData.images) // 첨부 사진 설정
-                    setIsCoMed(reviewData.coMedications.length > 0) // 공동복용 여부 설정
-                    if (reviewData.coMedications.length > 0) {
-                        setCoMedId(reviewData.coMedications[0]) // 공동복용약 ID 설정
-                        setCoMedName(medStore.selectedMed?.itemName || '') // 공동복용약 이름 설정
+            try { 
+                const reviewData = await getMedReviewApi(reviewId) 
+                if (reviewData) { 
+                    setRating(reviewData.grade) 
+                    setContent(reviewData.content) 
+                    setAttachedPhotos(reviewData.images) 
+                    setIsCoMed(reviewData.coMedications.length > 0)
+                    if (reviewData.coMedications.length > 0) { 
+                        setCoMedId(reviewData.coMedications[0]) 
+                        setCoMedName(medStore.selectedMed?.itemName || '') 
                     }
                 }
             } catch (error) {
@@ -66,76 +66,76 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
             }
         }
 
-        fetchReviewData()
-    }, [reviewId])
+        fetchReviewData() 
+    }, [reviewId]) 
 
-    //MedDetail로 이동
     const gotoMedDetail = () => {
         navigation.navigate('MedDetail' as never)
     }
 
-    //MedDetail로 이동
-    const handleReviewSend = () => {
-        const reviewData = {
+    const handleReviewSend = () => { 
+        const reviewData = { 
             // reviewId,
             coMedications:
                 isCoMed && medStore.selectedMed
                     ? [medStore.selectedMed.medId]
-                    : [],
+                    : [], 
             content: content,
-            images: attachedPhotos,
+            images: attachedPhotos, 
             grade: rating,
         }
-        sendMedReviewApi(reviewData)
-        navigation.navigate('MedDetail' as never)
+        sendMedReviewApi(reviewData) 
+        navigation.navigate('MedDetail' as never) 
     }
 
-    const onRatingCompleted = (rating: number) => {
-        const roundedRating = Math.round(rating * 2) / 2 // 반올림
-        setRating(roundedRating)
+    const onRatingCompleted = (rating: number) => { 
+        const roundedRating = Math.round(rating * 2) / 2 
+        setRating(roundedRating) 
     }
 
-    const handleCoMed = () => {
-        setIsCoMed((prev) => !prev)
+    // 공동복용약 여부
+    const handleCoMed = () => { 
+        setIsCoMed((prev) => !prev) 
+        if (!isCoMed) {
+            // "없음" 선택 시, 선택된 약을 초기화
+            medStore.setSelectedMed(null); // 선택된 약을 null로 초기화
+            setCoMedName(''); // 공동 복용 약 이름 초기화
+            setCoMedId(0); // 공동 복용 약 ID 초기화
+        }
     }
 
-    // TextInput 관련 로직
-    const handleFocus = () => {
+    const handleFocus = () => { 
         setIsFocused(true)
     }
-    const handleBlur = () => {
+    const handleBlur = () => { 
         setIsFocused(false)
     }
-    // 사진 업로드 로직
     const uploadImage = async () => {
-        // 갤러리 접근 권한
-        if (!status?.granted) {
-            const permission = await requestPermission()
-            if (!permission.granted) {
-                return null
+        if (!status?.granted) { 
+            const permission = await requestPermission() 
+            if (!permission.granted) { 
+                return null 
             }
         }
-        // 이미지 업로드 기능
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            quality: 1,
+        const result = await ImagePicker.launchImageLibraryAsync({ 
+            mediaTypes: ImagePicker.MediaTypeOptions.Images, 
+            allowsEditing: false, 
+            quality: 1, 
         })
-        if (result.canceled) {
-            return null // 이미지 업로드 취소한 경우
+        if (result.canceled) { 
+            return null 
         }
-        // 이미지 업로드 결과 및 이미지 경로 업데이트
         setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
     }
 
-    const handleDeletePhoto = (index: number) => {
-        const updatedPhotos = [...attachedPhotos]
-        updatedPhotos.splice(index, 1) // 해당 인덱스의 사진 삭제
-        setAttachedPhotos(updatedPhotos)
+    const handleDeletePhoto = (index: number) => { 
+        const updatedPhotos = [...attachedPhotos] 
+        updatedPhotos.splice(index, 1) 
+        setAttachedPhotos(updatedPhotos) 
     }
     // 옵션 로직
-    const handleAgeOption = (option: string) => {
-        setAge(option)
+    const handleAgeOption = (option: string) => { // 나이 옵션 선택 시 호출
+        setAge(option) // option을 age 상태로 설정해서 선택된 나이 옵션 반영
     }
     const handleSexOption = (option: string) => {
         setSex(option)
@@ -144,9 +144,9 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
     // 리뷰 버튼 활성화
     const isReviewButtonEnabled = () => {
         return (
-            rating > 0 &&
-            content.length >= 20 &&
-            (isCoMed ? coMedName.length > 0 : true)
+            rating > 0 && // 평점이 0보다 큰 경우에만 버튼 활성화
+            content.length >= 20 && // 리뷰 내용 길이가 20자 이상일 경우에만 버튼 활성화
+            (isCoMed ? coMedName.length > 0 : true) // 공동복용약 이름이 1자 이상
         )
     }
 
@@ -164,12 +164,14 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                     />
                 </TouchableOpacity>
                 <View style={styles.titleStyle}>
+                    {/* t는 번역함수 */}
                     <Text style={text.titleText}>{t('review-title')}</Text>
                 </View>
             </View>
             <ScrollView ref={scrollViewRef} style={styles.scrollStyle}>
                 {/* 약 이름, 약 사진 */}
                 <View style={styles.contentBox1}>
+                    {/* data 객체에서 itemName 속성 값 표시 (약 이름) */}
                     <Text style={text.medTitleText}>{data.itemName}</Text>
                     <View style={styles.imageContainer}>
                         <Image
@@ -185,41 +187,66 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                     <Text style={text.subTitleText}>{t('review-rate')}</Text>
                     <Rating
                         type="custom"
+                        // 별점 개수 5로 설정
                         ratingCount={5}
+                        // 각 별의 크기 56으로 설정
                         imageSize={56}
+                        // 처음 표시되는 별점의 값을 rating 상태 값에 설정
                         startingValue={rating}
+                        // 소수점 단위로 별점을 표시할 수 있도록 설정
                         fractions={1}
+                        // 사용자가 별점을 선택하고 끝내면 호출. onRatingCompleted는 별점이 선택될 때마다 실행되는 함수
                         onFinishRating={onRatingCompleted}
+                        // 별점 색상
                         ratingColor="#52A55D"
+                        // 별점의 배경색
                         ratingBackgroundColor="#EEEEEE"
+                        // 별점 배경에 덧칠 색
                         tintColor="#FFFFFF"
                         style={styles.rating}
                     />
+                    {/* {rating}점은 rating 상태 값을 표시해서 별점 숫자를 보여줌 */}
                     <Text style={text.rateNumText}>{rating}점</Text>
                 </View>
                 {/* 함께 복용중인 약 */}
                 <View style={styles.contentBox3}>
                     <Text style={text.subTitleText}>{t('other-med')}</Text>
-                    <TouchableOpacity onPress={() => setModalVisible(true)}>
-                        <View style={styles.searchBar}>
-                            <Image
-                                style={styles.IconImage}
-                                source={require('@/public/assets/greenSearch.png')}
-                            />
-                            <Text style={text.coMedText}>
-                                {medStore.selectedMed?.itemName}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
+                    {medStore.selectedMed ? (
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <View style={styles.searchBar}>
+                                <Image
+                                    style={styles.IconImage}
+                                    source={require('@/public/assets/greenSearch.png')}
+                                />
+                                {/* 현재 선택된 약의 이름을 표시하는 부분 */}
+                                <Text style={text.coMedText}>
+                                    {medStore.selectedMed.itemName}
+                                    {/* medStore.selectedMed에 저장된 약의 이름을 표시. 만약 사용자가 약을 선택하지 않았다면 빈 문자열이나 기본 값이 표시될 수 있음. */}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    ): (
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Text style={text.coMedText}>{t('none-selected')}</Text> {/* "없음" 표시 */}
+                        </TouchableOpacity>)}
                     {/* 있/없 확인 */}
+                    {/* 사용자가 이 영역을 클릭하면 handleCoMed 함수가 실행됨 */}
                     <TouchableOpacity
                         style={styles.coMedClick}
-                        onPress={handleCoMed}
+                        onPress={() => {
+                            handleCoMed();
+                            if (isCoMed) {
+                                medStore.setSelectedMed(null); // 공동 복용 약 초기화
+                            }
+                        }}
                     >
                         <Image
                             source={
+                                // isCoMed 값에 따라 다르게 이미지를 표시함
                                 isCoMed
+                                    // true
                                     ? require('@/public/assets/check-icon.png')
+                                    // false
                                     : require('@/public/assets/checkbox-icon.png')
                             }
                             style={styles.checkboxIcon}
@@ -240,12 +267,18 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                             ]}
                             placeholder={t('review-placeholder')}
                             placeholderTextColor="#CCCCCC"
+                            // 입력된 텍스트를 content 상태로 관리하여 표시
                             value={content}
+                            // 사용자가 텍스트를 변경할 때마다 setContent를 호출해서 content 상태를 업데이트
                             onChangeText={setContent}
+                            // 텍스트 선택 시 표시되는 색
                             selectionColor={'#52A55D'}
+                            // 입력창이 포커스 되었을 때 호출되는 핸들러
                             onFocus={handleFocus}
+                            // 입력창 벗어날 때 호출되는 핸들러
                             onBlur={handleBlur}
                             maxLength={5000}
+                            // 여러 줄 텍스트 입력 허용
                             multiline={true}
                         />
                         <Text style={text.inputNumText}>
@@ -259,22 +292,28 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                             style={styles.photoPreview}
                             onPress={uploadImage}
                         >
+                            {/* 사진을 찍을 수 있는 카메라 아이콘. 사용자가 사진을 업로드 할 수 있음을 나타냄 */}
                             <DefaultCameraIcon />
                             <Text
                                 style={[
                                     text.photoPreviewText,
                                     {
                                         color:
+                                            // 첨부된 사진 수
                                             attachedPhotos.length > 0
+                                                // 첨부된 사진이 있음
                                                 ? '#52A55D'
+                                                // 없음
                                                 : '#555',
                                     },
                                 ]}
                             >
+                                {/* 최대 첨부 가능한 수 */}
                                 {`${attachedPhotos.length}/5`}
                             </Text>
                         </TouchableOpacity>
                         {/* 첨부된 사진 미리보기 */}
+                        {/* 첨부된 사진이 여러 개 있을 수 있으므로 map 함수를 사용해서 각 사진을 화면에 표시 */}
                         {attachedPhotos.map((photoUri, index) => (
                             <View key={index} style={styles.photoPreview}>
                                 <Image
@@ -505,12 +544,16 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                 </View>
             </View>
             <Modal
+                // 모달이 화면에 나타날 때 슬라이드 애니메이션 효과 적용
                 animationType="slide"
+                // 모달 배경 투명
                 transparent={true}
+                // modalVisible 상태가 true일 때 모달이 보이도록 함
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalContainer}>
+                    {/* 약 선택 관련 UI 제공하는 컴포넌트 */}
                     <MedSelectModal onClose={() => setModalVisible(false)} />
                 </View>
             </Modal>
