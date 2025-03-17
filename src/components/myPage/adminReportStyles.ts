@@ -71,6 +71,23 @@ export const styles = StyleSheet.create({
         color: '#777',
         marginTop: -50,
     },
+    modalContainer: {
+        alignItems: 'center',
+        marginTop: 300,
+        backgroundColor: 'white',
+        padding: 30,
+        width: 250,
+        left: 70,
+    },
+    modalContent: {
+        padding: 5,
+    },
+    modalTitle: {
+        marginBottom: 30,
+    },
+    modalOption: {
+        marginBottom: 20,
+    },
 })
 
 const baseText = {

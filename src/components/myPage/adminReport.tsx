@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
 import { styles, text } from './adminReportStyles';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -10,8 +10,7 @@ import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'; // �
 import { getUserProfileApi } from '@/api/getUserProfileApi';
 import { useAuthStore } from '@/store/authStore'; // 사용자 인증 정보 저장
 import { getReport } from '@/api/myPage/getReport';
-import { getHandleReport } from '@/api/myPage/getReport'; 
-import { Alert } from 'react-native';
+import { postHandleReport } from '@/api/myPage/getReport'; 
 
 interface Report {
     id: number;
@@ -25,12 +24,15 @@ interface Report {
     createdAt: string;
     reportTypeCounts: { [key: string]: number };
     anonymous: boolean;
+    email: string;
 }
 
 export default function AdminReport () {
     const store = useContext(ProfileStoreContext); // 사용자 프로필 관련 데이터 관리
     const updateUser = useAuthStore((state) => state.updateUser); //updateUser 함수를 사용해서 사용자 정보를 업데이트 하는 데 사용
     const [report, setReport] = useState<Report[]>([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedReport, setSelectedReport] = useState<Report | null>(null);
     const navigation = useNavigation()
 
     useEffect(() => {
@@ -48,21 +50,28 @@ export default function AdminReport () {
         fetchReports();
     }, []);
 
+    const handleOpenModal = (post) => {
+        setSelectedReport(post)
+        setModalVisible(true)
+    };
+
     const formatDate = (timestamp: number) => {
         const date = new Date(timestamp * 1000);
         return date.toLocaleString();
     };
 
-    const handleReport = async (email, postId) => {
+    const handleReportAction = async (actionType: string) => {
+        if (!selectedReport) return;
         try {
-            const response = await getHandleReport(email, postId, "POST_DELETE") // 신고 처리 요청
+            const response = await postHandleReport(selectedReport.email, selectedReport.id, actionType);
             if (response) {
-                Alert.alert("신고 처리 완료", "게시글이 정상적으로 처리되었습니다.")
+                Alert.alert("신고 처리 완료", "게시글이 정상적으로 처리되었습니다.");
             }
         } catch (error) {
-            Alert.alert("오류 발생", "신고 처리 중 문제가 발생했습니다.")
+            Alert.alert("오류 발생", "신고 처리 중 문제가 발생했습니다.");
         }
-    }
+        setModalVisible(false);
+    };
 
     return(
         <View style={styles.container}>
@@ -106,7 +115,7 @@ export default function AdminReport () {
                             )}
                             {post.email && (
                                 <TouchableOpacity 
-                                    onPress={() => handleReport(post.email, post.id)}
+                                    onPress={() => handleOpenModal(post)}
                                     style={styles.emailContainer}>
                                     <Text style={styles.emailText}>작성자 이메일: {post.email}</Text>
                                 </TouchableOpacity>
@@ -117,6 +126,30 @@ export default function AdminReport () {
                     <Text style={text.noDataText}>신고된 게시글이 없습니다.</Text>
                 )}
             </ScrollView>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>{selectedReport?.email}아이디에 조치를 취하겠습니까?</Text>
+                        <TouchableOpacity onPress={() => handleReportAction('DAY_2_PAUSE')}>
+                            <Text style={styles.modalOption}>2일 활동 정지와 글 삭제</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleReportAction('DAY_ALL_PAUSE')}>
+                            <Text style={styles.modalOption}>영구 활동 정지와 글 삭제</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleReportAction('POST_DELETE')}>
+                            <Text style={styles.modalOption}>글만 삭제하기</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <Text style={styles.modalCancel}>취소</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
     
