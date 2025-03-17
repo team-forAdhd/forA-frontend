@@ -7,7 +7,7 @@ import {
     Image,
     Modal,
 } from 'react-native'
-import { styles, text } from './MedNewReivewStyle'
+import { styles, text } from './MedNewReviewStyle'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { Rating } from 'react-native-elements'
@@ -16,7 +16,7 @@ import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
 import * as ImagePicker from 'expo-image-picker'
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
 import MedSelectModal from './MedSelectModal/MedSelectModal'
-import medStore from '@/state/medState/medStore'
+//import medStore from '@/state/medState/medStore'
 import { uploadImageApi } from '@/api/image/imageApi'
 
 interface MedNewReviewProps {
@@ -50,6 +50,7 @@ export default function MedNewReview(med : any) {
     const [age, setAge] = useState('')
     const [sex, setSex] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
+    const [selectedMed, setSelectedMed] = useState<MedListItem[]>([])
 
     const handleImageUpload = async (imageFile: any) => {
         try {
@@ -78,10 +79,7 @@ export default function MedNewReview(med : any) {
 
             const reviewData = {
                 medicineId: data.medicineId,
-                coMedications:
-                    isCoMed && medStore.selectedMed
-                        ? [medStore.selectedMed.id]
-                        : [],
+                coMedications: isCoMed ? selectedMed.map(med => med.id) : [],
                 content: content,
                 images: imagePathList.flat(), // 이미지 경로를 배열로 포함
                 grade: rating,
@@ -105,7 +103,16 @@ export default function MedNewReview(med : any) {
 
     const handleCoMed = () => {
         setIsCoMed((prev) => !prev)
+        setSelectedMed([]);
     }
+    // 공동복용약 없음 선택 시 초기화
+    useEffect(() => {
+        if (!isCoMed) {
+            setSelectedMed([]);
+            setCoMedName('');
+            setCoMedId(0);
+        }
+    }, [isCoMed]);
 
     // TextInput 관련 로직
     const handleFocus = () => {
@@ -165,16 +172,12 @@ export default function MedNewReview(med : any) {
         setAttachedPhotos(attachedPhotos)
         setAge(age)
         setSex(sex)
-        /*
-        console.log(rating)
-        console.log(isCoMed)
-        console.log(coMedId)
-        console.log(content)
-        console.log(attachedPhotos)
-        console.log(age)
-        console.log(sex)
-        */
     })
+
+    const handleMedSelection = (meds: MedListItem[]) => {
+        console.log("MedNewReview에서 받은 선택된 약:", meds)
+        setSelectedMed(meds)
+    }
 
     return (
         <View style={styles.container}>
@@ -227,14 +230,21 @@ export default function MedNewReview(med : any) {
                 <View style={styles.contentBox3}>
                     <Text style={text.subTitleText}>{t('other-med')}</Text>
                     <TouchableOpacity onPress={() => setModalVisible(true)}>
-                        <View style={styles.searchBar}>
+                        <View style={[styles.searchBar, {flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12}]}>
                             <Image
                                 style={styles.IconImage}
                                 source={require('@/public/assets/greenSearch.png')}
                             />
-                            <Text style={text.coMedText}>
-                                {medStore.selectedMed?.itemName}
-                            </Text>
+                            {selectedMed.length > 0 ? (
+                                <Text 
+                                    style={[text.coMedText, {flex:1, marginLeft:8}]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >{selectedMed.map(med => med.itemName).join(', ')}
+                                </Text>
+                            ) : (
+                                <Text style={text.coMedText}>{t('약을 선택해주세요')}</Text> 
+                            )}
                         </View>
                     </TouchableOpacity>
                     {/* 있/없 확인 */}
@@ -537,7 +547,10 @@ export default function MedNewReview(med : any) {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalContainer}>
-                    <MedSelectModal onClose={() => setModalVisible(false)} />
+                    <MedSelectModal 
+                        onClose={() => setModalVisible(false)}
+                        onSelectMed={handleMedSelection}
+                        savedSelectedMed={selectedMed}/>
                 </View>
             </Modal>
         </View>
