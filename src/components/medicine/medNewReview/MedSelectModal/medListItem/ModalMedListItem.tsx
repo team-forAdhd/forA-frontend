@@ -5,11 +5,13 @@ import { styles, text } from './ModalMedListItemStyle'
 interface MedicineListItemProps {
     item: MedicineItem
     onPress: () => void
+    isSelected: boolean
 }
 
 const ModalMedListItem: React.FC<MedicineListItemProps> = ({
     item,
     onPress,
+    isSelected,
 }) => {
     const [isPressed, setIsPressed] = useState(false)
 
@@ -28,7 +30,7 @@ const ModalMedListItem: React.FC<MedicineListItemProps> = ({
         <TouchableOpacity
             style={[
                 styles.itemContainer,
-                isPressed && {
+                isSelected && {
                     backgroundColor: '#F4F9D9',
                     borderColor: '#52A55D',
                 },

@@ -6,7 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { useTranslation } from 'react-i18next'
 import { searchStoreContext } from '@/state/searchState'
 import { useContext } from 'react'
-import medStore from '@/state/medState/medStore'
+//import medStore from '@/state/medState/medStore'
 import { observer } from 'mobx-react-lite'
 import { getMedListApi } from '@/api/medicine/medListApi'
 
@@ -21,13 +21,17 @@ interface MedListItem {
 
 interface MedSelectModalProps {
     onClose: () => void
+    onSelectMed: (meds: MedListItem[]) => void
+    //savedSelectedMed: MedListItem | null
+    savedSelectedMed: MedListItem[]
 }
 
-const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
+const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose, onSelectMed, savedSelectedMed }) => {
     const { t } = useTranslation('medicine')
-    const [selectedMed, setSelectedMed] = useState<MedListItem | null>(null)
+    const [selectedMed, setSelectedMed] = useState<MedListItem[]>(savedSelectedMed || []);
     const [searchQuery, setSearchQuery] = useState('')
     const [data, setData] = useState<any>(null)
+    const [modalVisible, setModalVisible] = useState<boolean>(true);
 
     //텍스트 인풋에서 받을 검색어
     const [searchInputValue, setSearchInputValue] = useState<string>('')
@@ -39,7 +43,6 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
     const [isFocused, setIsFocused] = useState<boolean>(false)
 
     useEffect(() => {
-        // API 호출
         const fetchData = async () => {
             try {
                 const medicine = await getMedListApi()
@@ -52,6 +55,18 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
         fetchData()
     }, [])
 
+    useEffect(() => {
+        console.log('모달 열릴 때 선택된 약:', savedSelectedMed); 
+        if (savedSelectedMed && savedSelectedMed.length > 0) {
+            setSelectedMed([...savedSelectedMed]);
+        } else {
+            setSelectedMed(() => []);
+        }
+        setTimeout(() => {
+            console.log('업데이트된 selectedMed:', selectedMed);
+        }, 100); // 상태 변경 후 로그를 찍어서 확인
+    }, [modalVisible]); // 모달이 열릴 때마다 업데이트
+
     const handleSearch = () => {
         setSubmit(true)
         console.log('Searching for:', searchInputValue)
@@ -59,26 +74,33 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
     }
 
     const handleConfirm = () => {
-        if (selectedMed) {
-            medStore.setSelectedMed(selectedMed)
-            onClose()
+        console.log("확인 버튼 눌림, 선택된 약:", selectedMed);
+        if (selectedMed.length === 0) {
+            console.warn("선택된 약 없음 상태 업데이트 확인 필요")
         }
-    }
+        onSelectMed([...selectedMed]); 
+        onClose()
+    };
 
     const handleMedSelect = (item: MedListItem) => {
-        setSelectedMed((prevSelectedMed) => {
-            if (prevSelectedMed && prevSelectedMed.id === item.id) {
-                // 동일한 항목을 다시 선택하면 선택 해제
-                return null
+        setSelectedMed(prevSelectedMed => {
+            if (!prevSelectedMed) return [item]
+
+            const isAlreadySelected = prevSelectedMed.some(med => med.medicineId === item.medicineId);
+
+            if (isAlreadySelected) {
+                console.log("이미 선택된 약 제거:", item)
+                return prevSelectedMed.filter(med => med.medicineId !== item.medicineId);
+            } else {
+                console.log("새로운 약 선택:", item)
+                return [...prevSelectedMed, item]
             }
-            // 새로운 항목 선택
-            return item
         })
-        console.log('Selected Med:', item.id, item.itemName)
+        console.log('Selected Med 업데이트:', selectedMed);
     }
 
     const filteredMedList = data
-        ? data.filter((med: { itemName: string }) =>
+        ? data.filter((med: { id: number; itemName: string }) =>
               med.itemName.toLowerCase().includes(searchQuery.toLowerCase()),
           )
         : []
@@ -141,9 +163,10 @@ const MedSelectModal: React.FC<MedSelectModalProps> = ({ onClose }) => {
             <ScrollView>
                 {filteredMedList.map((med: MedListItem) => (
                     <ModalMedListItem
-                        key={med.id}
+                        key={med.medicineId}
                         item={med}
                         onPress={() => handleMedSelect(med)}
+                        isSelected={selectedMed.some(selected => selected.medicineId === med.medicineId)} 
                     />
                 ))}
             </ScrollView>

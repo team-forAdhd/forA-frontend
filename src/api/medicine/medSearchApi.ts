@@ -40,7 +40,12 @@ export const getShapeColorSearchResult = async (
         const queryString =
             queryParams.length > 0 ? `?${queryParams.join('&')}` : ''
 
+        console.log('API 요청 URL:', `/medicines/search${queryString}`)
+
         const response = await apiClient.get(`/medicines/search?${queryString}`)
+
+        console.log('응답 상태 코드:', response.status)
+        console.log('응답 데이터:', response.data)
 
         if (response.status === 200) {
             console.log('모양, 색상별 약 찾기 성공')
@@ -84,3 +89,48 @@ export const deleteMedRecentSearchApi = async (searchId: number) => {
         throw error
     }
 }
+
+// 약 게시글 목록 조회 API
+export const getMedSortedListApi = async (
+    itemName?: string,
+    shape?: string,
+    color1?: string,
+    tabletTypes?: string[],
+) => {
+    try {
+        // 쿼리 파라미터 동적으로 추가
+        let queryParams = [];
+
+        if (itemName) {
+            queryParams.push(`itemName=${itemName}`); 
+        }
+        if (shape) {
+            queryParams.push(`shape=${shape}`); 
+        }
+        if (color1) {
+            queryParams.push(`color1=${color1}`);
+        }
+        if (tabletTypes && tabletTypes.length > 0) {
+            tabletTypes.forEach((type) => {
+                queryParams.push(`tabletType=${type}`);
+            });
+        }
+
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        
+        console.log('API 요청 URL:', `https://foradhd.site/api/v1/medicines/sorted${queryString}`)
+
+        const response = await apiClient.get(`/api/v1/medicines/sorted${queryString}`);
+
+        if (response.status === 200) {
+            console.log('약 목록 조회 성공:', response.data);
+            return response.data;
+        } else {
+            console.error('약 목록 조회 실패, 상태 코드:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching sorted medicines:', error);
+        throw error;
+    }
+};
