@@ -179,7 +179,7 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         // const filteredData = resultList.map((med: any) => ({
         //let sortedList = filteredData.map((med: any) => ({
         let sortedList = resultList.map((med: any) => ({
-            id: med.itemSeq,
+            id: med.medicineId,
             itemName: med.itemName,
             entpName: med.entpName,
             itemEngName: med.itemEngName || '알 수 없음',
@@ -290,7 +290,6 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             ) : (
                 <ScrollView style={styles.medList}>
                     {sortMedList().map((med) => {
-                        console.log('렌더링되는 약 정보:', med);
                         return <MedicineListItem key={med.id} item={med} />;
                     })}
                 </ScrollView>
