@@ -130,17 +130,20 @@ export default function MedScreen() {
                 </View>
                 {/* 검색 창 */}
                 <View style={styles.searchBarContainer}>
-                    <View style={styles.searchBar}>
+                    <TouchableOpacity
+                        style={styles.searchBar}
+                        onPress={gotoMedSearch}
+                    >
                         <Image
                             style={styles.IconImage}
                             source={require('@/public/assets/greenSearch.png')}
                         />
-                        <TouchableOpacity onPress={gotoMedSearch}>
+                        <View>
                             <Text style={text.searchBarText}>
                                 {t('search-placeholder')}
                             </Text>
-                        </TouchableOpacity>
-                    </View>
+                        </View>
+                    </TouchableOpacity>
                     {/* <View>
                         <TouchableOpacity onPress={gotoMedShapeSearch}>
                             <Text style={text.shapeSearchText}>
