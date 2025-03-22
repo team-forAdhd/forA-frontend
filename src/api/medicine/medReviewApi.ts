@@ -15,7 +15,7 @@ export const getMedReviewApi = async (medicineId: number) => {
 
 export const medReviewHelpApi = async (reviewId: number) => {
     try {
-        const response = await apiClient.get(
+        const response = await apiClient.post(
             `medicines/reviews/${reviewId}/help`,
         );
 
@@ -54,7 +54,9 @@ export const sendMedReviewApi = async (reviewData: {
 
 export const deleteMedReviewApi = async (reviewId: number) => {
     try {
-        const response = await apiClient.get(`medicines/reviews/${reviewId}`);
+        const response = await apiClient.delete(
+            `medicines/reviews/${reviewId}`,
+        );
 
         return response.data;
     } catch (error) {

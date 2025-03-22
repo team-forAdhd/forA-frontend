@@ -1,5 +1,5 @@
-import { TitleTextIcon } from '@/public/assets/SvgComponents'
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { TitleTextIcon } from '@/public/assets/SvgComponents';
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     },
     rateCreatedAtBox: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     rateBox: {
         width: 37,
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
         width: 17,
         height: 17,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     contentBox: {
         marginTop: 16,
@@ -38,6 +38,11 @@ export const styles = StyleSheet.create({
     textContainer: {
         marginLeft: 10,
         flex: 1,
+    },
+    reviewHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     imagesContainer: {
         flexDirection: 'row',
@@ -78,7 +83,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#52A55D',
         marginBottom: 10,
-        backgroundColor: '#F4F9D9'
+        backgroundColor: '#F4F9D9',
     },
     modalBackground: {
         flex: 1,
@@ -100,8 +105,7 @@ export const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 8,
     },
-
-})
+});
 
 export const text = {
     fontFamily: 'Pretendard',
@@ -112,12 +116,19 @@ export const text = {
         fontWeight: '600',
         lineHeight: 22.4,
     },
+    deleteText: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: '400',
+        lineHeight: 22.4,
+        marginRight: 10,
+    },
     ageGenederText: {
         color: '#949494',
         fontSize: 14,
         fontWeight: '400',
         lineHeight: 19.6,
-        letterSpacing: -0.7
+        letterSpacing: -0.7,
     },
     rateText: {
         color: '#52A55D',
@@ -155,7 +166,7 @@ export const text = {
         fontWeight: '400',
         lineHeight: 24,
         letterSpacing: -0.8,
-    }
+    },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};
