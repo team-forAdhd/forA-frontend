@@ -82,13 +82,16 @@ export default function MedNewReview(med: any) {
 
             const reviewData = {
                 medicineId: data.medicineId,
-                coMedications: isCoMed ? selectedMed.map((med) => med.id) : [],
+                coMedications: isCoMed
+                    ? selectedMed
+                          .map((med) => med.id)
+                          .filter((id): id is number => typeof id === 'number')
+                    : [],
                 content: content,
                 images: imagePathList.flat(), // 이미지 경로를 배열로 포함
                 grade: rating,
             };
             await sendMedReviewApi(reviewData);
-            console.log('Review sent successfully:', reviewData);
         } catch (error) {
             console.error('Error sending review:', error);
         }
@@ -98,15 +101,6 @@ export default function MedNewReview(med: any) {
         handleReviewSend();
         navigation.navigate('Home' as never);
     };
-
-    // const handleReviewButton = () => {
-    //     try {
-    //         navigation.navigate('MedReview', { medId: data.medicineId });
-    //     } catch (error) {
-    //         console.error('Error saving review:', error);
-    //         alert('리뷰 저장 중 오류가 발생했습니다.');
-    //     }
-    // };
 
     const onRatingCompleted = (rating: number) => {
         const roundedRating = Math.round(rating * 2) / 2; // 반올림
@@ -176,7 +170,7 @@ export default function MedNewReview(med: any) {
         return (
             rating > 0 &&
             content.length >= 20 &&
-            (isCoMed ? coMedName.length > 0 : true)
+            (isCoMed ? selectedMed.length > 0 : true)
         );
     };
 
