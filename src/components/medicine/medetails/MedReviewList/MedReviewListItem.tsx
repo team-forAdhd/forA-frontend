@@ -13,6 +13,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
 import { medReviewHelpApi } from '@/api/medicine/medReviewApi';
 import { deleteMedReviewApi } from '@/api/medicine/medReviewApi';
+import { getMedReviewApi } from '@/api/medicine/medReviewApi';
 
 interface MedReviewListItemProps {
     review: {
@@ -23,7 +24,10 @@ interface MedReviewListItemProps {
         images: string[];
         grade: number;
         helpCount: number;
-        coMedications: number[];
+        coMedications: {
+            id: number;
+            name: string;
+        }[];
         nickname: string;
         profileImage: string;
         ageRange: string;
@@ -40,22 +44,32 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({
     onDelete,
 }) => {
     const { t } = useTranslation('medicine');
-    const [helpCount, setHelpCount] = useState(review.helpCount);
     const [isHelpClicked, setIsHelpClicked] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [helpCount, setHelpCount] = useState(review.helpCount ?? 0);
 
     const handleHelpClick = async () => {
-        if (isHelpClicked) return; // 이미 눌렀다면 함수 종료
+        const nextHelpClicked = !isHelpClicked;
+        const originalCount = helpCount;
+        setIsHelpClicked(nextHelpClicked);
 
-        setIsHelpClicked(true); // 버튼 비활성화
-        setHelpCount(helpCount + 1);
+        const optimisticCount = helpCount + (nextHelpClicked ? 1 : -1);
+        const safeCount = optimisticCount >= 0 ? optimisticCount : 0;
+        setHelpCount(safeCount);
 
         try {
             await medReviewHelpApi(review.id);
+            const updatedReview = await getMedReviewApi(review.id);
+            const found = updatedReview?.data?.find(
+                (item) => item.id === review.id,
+            );
+            if (found) {
+                setHelpCount(found.helpCount);
+            }
         } catch (error) {
-            setIsHelpClicked(false); // 요청 실패 시 다시 활성화
-            setHelpCount(helpCount - 1); // 카운트 되돌리기
+            setIsHelpClicked(!nextHelpClicked);
+            setHelpCount(originalCount);
         }
     };
 
@@ -96,7 +110,19 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({
                     </TouchableOpacity>
                 </View>
                 <Text style={text.ageGenederText}>
-                    {`${review.ageRange} · ${review.gender === 'FEMALE' ? '여성' : '남성'}`}
+                    {`${review.ageRange} · ${review.gender === 'FEMALE' ? '여성' : '남성'}${
+                        review.coMedications?.length
+                            ? ` ·${review.coMedications
+                                  .map((med) =>
+                                      med && med.name
+                                          ? med.name.includes('(')
+                                              ? med.name.split('(')[0].trim()
+                                              : med.name
+                                          : '알 수 없음',
+                                  )
+                                  .join(', ')}`
+                            : ''
+                    }`}
                 </Text>
                 <View style={styles.rateCreatedAtBox}>
                     <View style={styles.rateBox}>
