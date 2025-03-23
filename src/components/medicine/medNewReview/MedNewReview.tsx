@@ -80,16 +80,25 @@ export default function MedNewReview(med: any) {
                 ),
             );
 
+            const mainMedicineId = data.medicineId;
+            const coMedicationIds = isCoMed
+                ? selectedMed
+                      .filter((med) => med.medicineId !== mainMedicineId)
+                      .map((med) => med.medicineId)
+                : [];
+
             const reviewData = {
-                medicineId: data.medicineId,
-                coMedications: isCoMed
-                    ? selectedMed
-                          .map((med) => med.id)
-                          .filter((id): id is number => typeof id === 'number')
-                    : [],
+                medicineId: mainMedicineId,
+                coMedications: coMedicationIds,
                 content: content,
                 images: imagePathList.flat(), // 이미지 경로를 배열로 포함
                 grade: rating,
+                ageRange: age,
+                gender: sex,
+                createdAt: Date.now(),
+                lastModifiedAt: Date.now(),
+                helpCount: 0,
+                averageGrade: 0,
             };
             await sendMedReviewApi(reviewData);
         } catch (error) {
@@ -99,7 +108,7 @@ export default function MedNewReview(med: any) {
 
     const handleReviewButton = () => {
         handleReviewSend();
-        navigation.navigate('Home' as never);
+        navigation.goBack();
     };
 
     const onRatingCompleted = (rating: number) => {
