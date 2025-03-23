@@ -1,18 +1,18 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, text } from './myPostStyle'
-import { useEffect, useState, Fragment } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import TabBar from '../common/tabBar/tabBar'
-import PostItem from '../common/postItem/postItem'
-import PharmacyItem from '../common/pharmacyItem/pharmacyItem'
-import BottomSheet from '../medicine/medBottomSheet/BottomSheet'
-import { RouteProp } from '@react-navigation/native'
-import { RootStackParamList } from '../navigation'
-import { getMyComment } from '@/api/myPage/mycommentApi'
-import { getSavedPosts } from '@/api/myPage/mySavedPostApi'
-import { getMyPosts } from '@/api/myPage/myPostApi'
-import { getSavedHospitals } from '@/api/myPage/mySavedHospitalsApi'
-import { getSavedPharmacies } from '@/api/myPage/mySavedPharmacieApi'
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { styles, text } from './myPostStyle';
+import { useEffect, useState, Fragment } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import TabBar from '../common/tabBar/tabBar';
+import PostItem from '../common/postItem/postItem';
+import PharmacyItem from '../common/pharmacyItem/pharmacyItem';
+import BottomSheet from '../medicine/medBottomSheet/BottomSheet';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation';
+import { getMyComment } from '@/api/myPage/mycommentApi';
+import { getSavedPosts } from '@/api/myPage/mySavedPostApi';
+import { getMyPosts } from '@/api/myPage/myPostApi';
+import { getSavedHospitals } from '@/api/myPage/mySavedHospitalsApi';
+import { getSavedPharmacies } from '@/api/myPage/mySavedPharmacieApi';
 
 interface PostProps {
     route:
@@ -21,31 +21,31 @@ interface PostProps {
         | RouteProp<RootStackParamList, 'MyReviews'>
         | RouteProp<RootStackParamList, 'SavedPosts'>
         | RouteProp<RootStackParamList, 'SavedHospitals'>
-        | RouteProp<RootStackParamList, 'SavedPharmacies'>
+        | RouteProp<RootStackParamList, 'SavedPharmacies'>;
 }
 
 interface Post {
-    anonymous: boolean
-    category: string | null
-    commentCount: number
-    comments: string[] | null
-    content: string
-    createdAt: number
-    id: number
-    images: string[] | null
-    lastModifiedAt: number | null
-    likeCount: number
-    nickname: string | null
-    profileImage: string | null
-    scrapCount: number
-    title: string
-    userId: number | null
-    viewCount: number
+    anonymous: boolean;
+    category: string | null;
+    commentCount: number;
+    comments: string[] | null;
+    content: string;
+    createdAt: number;
+    id: number;
+    images: string[] | null;
+    lastModifiedAt: number | null;
+    likeCount: number;
+    nickname: string | null;
+    profileImage: string | null;
+    scrapCount: number;
+    title: string;
+    userId: number | null;
+    viewCount: number;
 }
 
 export default function MyPost({ route }: PostProps) {
     // 내가 쓴 글인지 저장한 글인지 댓글인지 등의 정보를 받아오기
-    const { postType } = route.params
+    const { postType } = route.params;
 
     // 받아온 파라미터를 활용해 렌더링
     const postTypeList = [
@@ -79,94 +79,141 @@ export default function MyPost({ route }: PostProps) {
             content: '아직 저장한 약이 없어요!',
             icon: require('@/public/assets/myArticle.png'),
         },
-    ]
+    ];
 
-    const categories = dummy.map((post) => post.category) // 데이터에서 카테고리만 따로 모은 배열
-    const tabList: string[] = ['10대', '20대', '30대', '학부모'] 
-    const categoryList: string[] = Array.from(new Set(categories)) // 게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
+    const categories = dummy.map((post) => post.category); // 데이터에서 카테고리만 따로 모은 배열
+    const tabList: string[] = ['10대', '20대', '30대↑', '학부모'];
+    const categoryList: string[] = Array.from(new Set(categories)); // 게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
 
     // 게시판 선택
-    const [boardClick, setBoardClick] = useState<string>(categoryList[0])
+    const [boardClick, setBoardClick] = useState<string>(categoryList[0]);
 
     // 정렬 기준 리스트
-    const rangeList = postType === 'savedPharmacies' 
-        ? ['최신순', '오래된 순'] 
-        : ['최신순', '오래된 순', '조회수 순', '좋아요 순'];
+    const rangeList =
+        postType === 'savedPharmacies' || postType === 'myComments'
+            ? ['최신순', '오래된 순']
+            : ['최신순', '오래된 순', '조회수 순', '좋아요 순'];
 
     // 정렬 선택 _ 기본 최신순
-    const [range, setRange] = useState<string>(rangeList[0])
+    const [range, setRange] = useState<string>(rangeList[0]);
 
     // 정렬 클릭시 나올 바텀시트 상태
-    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false)
+    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
 
     const [sortOption, setsortOption] = useState<
-        'NEWEST_FIRST' | 'OLDEST_FIRST'
-    >('NEWEST_FIRST')
+        'NEWEST_FIRST' | 'OLDEST_FIRST' | 'MOST_VIEWED' | 'MOST_LIKED'
+    >('NEWEST_FIRST');
 
-    const [token, setToken] = useState<string>('')
+    const [token, setToken] = useState<string>('');
     //받아온 데이터
-    const [dataList, setDataList] = useState<Post[]>()
+    const [dataList, setDataList] = useState<Post[]>();
 
     //게시글 카테코리 선택
-    const [category, setCategory] = useState('TEENS')
+    const [category, setCategory] = useState('TEENS');
 
-    const [rerender, setRerender] = useState(false)
+    const [rerender, setRerender] = useState(false);
     //병원, 약 정렬
-    const [sort, setSort] = useState<'createdAt' | 'desc'>('createdAt')
-    
-    const fetchData = async ( selectedSortOption = sortOption ) => {
-        try {
+    const [sort, setSort] = useState<'createdAt' | 'desc'>('createdAt');
 
-            let fetchedData
+    const categoryMap: Record<string, string> = {
+        '10대': 'TEENS',
+        '20대': 'TWENTIES',
+        '30대↑': 'THIRTIES_AND_ABOVE',
+        학부모: 'PARENTS',
+    };
+
+    const fetchData = async (
+        selectedSortOption = sortOption,
+        selectedCategory = category,
+    ) => {
+        try {
+            let fetchedData;
             switch (postType) {
                 case 'myPosts':
-                    fetchedData = await getMyPosts(category, sortOption)
-                    break
+                    const res = await getMyPosts(
+                        selectedCategory,
+                        selectedSortOption,
+                    );
+                    fetchedData = res;
+                    if (res?.postList) {
+                        let sortedData = [...res.postList];
+
+                        switch (selectedSortOption) {
+                            case 'NEWEST_FIRST':
+                                sortedData.sort(
+                                    (a, b) => b.createdAt - a.createdAt,
+                                );
+                                break;
+                            case 'OLDEST_FIRST':
+                                sortedData.sort(
+                                    (a, b) => a.createdAt - b.createdAt,
+                                );
+                                break;
+                            case 'MOST_VIEWED':
+                                sortedData.sort(
+                                    (a, b) => b.viewCount - a.viewCount,
+                                );
+                                break;
+                            case 'MOST_LIKED':
+                                sortedData.sort(
+                                    (a, b) => b.likeCount - a.likeCount,
+                                );
+                                break;
+                        }
+
+                        setDataList(sortedData);
+                    }
+                    break;
 
                 case 'myComments':
-                    fetchedData = await getMyComment(sortOption)
-                    break
-
+                    fetchedData = await getMyComment(sortOption);
+                    if (fetchedData?.postList) {
+                        const sortedData = [...fetchedData.postList].sort(
+                            (a, b) => {
+                                return selectedSortOption === 'NEWEST_FIRST'
+                                    ? b.createdAt - a.createdAt
+                                    : a.createdAt - b.createdAt;
+                            },
+                        );
+                        setDataList(sortedData);
+                    }
+                    break;
                 case 'savedPosts':
-                    fetchedData = await getSavedPosts(category, sortOption)
-                    break
+                    fetchedData = await getSavedPosts(category, sortOption);
+                    break;
 
                 case 'savedHospitals':
-                    fetchedData = await getSavedHospitals(sort)
-                    break
+                    fetchedData = await getSavedHospitals(sort);
+                    break;
 
                 case 'savedPharmacies':
-                    fetchedData = await getSavedPharmacies()
-                    break
+                    fetchedData = await getSavedPharmacies();
+                    break;
 
                 default:
-                    console.warn('Unknown post type:', postType)
-                    return
+                    return;
             }
 
             if (fetchedData?.data) {
-                console.log("Fetched Data:", fetchedData.data);
                 const sortedData = [...fetchedData.data].sort((a, b) => {
                     if (!a.bookmarkedAt || !b.bookmarkedAt) return 0; // null 값 방지
                     return selectedSortOption === 'NEWEST_FIRST'
-                        ? b.bookmarkedAt - a.bookmarkedAt  // 최신순 정렬
+                        ? b.bookmarkedAt - a.bookmarkedAt // 최신순 정렬
                         : a.bookmarkedAt - b.bookmarkedAt; // 오래된순 정렬
                 });
-                
-                console.log("정렬된 데이터:", sortedData);
+
                 setDataList([...sortedData]); // React 상태 변경 감지를 위해 새로운 배열 할당
             }
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    };
 
     useEffect(() => {
-        console.log("sortOption 변경됨:", sortOption);
         fetchData(sortOption);
-    }, [route, sortOption, category, postType])
+    }, [route, sortOption, category, postType]);
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
@@ -198,87 +245,115 @@ export default function MyPost({ route }: PostProps) {
                 <Fragment>
                     {/* 게시판 리스트 */}
                     <View style={styles.topContainer}>
-                    {postType !== 'savedPharmacies' && (
-                        <View style={styles.boardListContainer}>
-                        {tabList.map((board, index) => (
-                            <View key={index}>
-                                {categoryList.includes(board) && (
-                                    <TouchableOpacity
-                                        style={
-                                            boardClick === board
-                                                ? styles.clickContainer
-                                                : styles.baseContainer
-                                        }
-                                        onPress={() => {
-                                            setBoardClick(board)
-                                            console.log(board)
-                                        }}
-                                    >
-                                        <Text
-                                            style={
-                                                boardClick === board
-                                                    ? text.clickText
-                                                    : text.baseText
-                                            }
-                                        >
-                                            {board}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                        ))}
-                    </View>
-                    )}
+                        {postType !== 'savedPharmacies' &&
+                            postType !== 'myComments' && (
+                                <View style={styles.boardListContainer}>
+                                    {tabList.map((board, index) => (
+                                        <View key={index}>
+                                            <TouchableOpacity
+                                                style={
+                                                    boardClick === board
+                                                        ? styles.clickContainer
+                                                        : styles.baseContainer
+                                                }
+                                                onPress={() => {
+                                                    const newCategory =
+                                                        categoryMap[board] ||
+                                                        'TEENS';
+                                                    setBoardClick(board);
+                                                    setCategory(newCategory);
+                                                    fetchData(
+                                                        sortOption,
+                                                        newCategory,
+                                                    );
+                                                }}
+                                            >
+                                                <Text
+                                                    style={
+                                                        boardClick === board
+                                                            ? text.clickText
+                                                            : text.baseText
+                                                    }
+                                                >
+                                                    {board}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
                         {/* 정렬 */}
-                        <View style={{ flex: 1, alignItems: 'flex-end' }}></View>
-                            <TouchableOpacity
-                                onPress={() => setRangeBottomSheet(true)}
-                                style={styles.rangeContainer}
-                            >
-                                <Text style={text.rangeText}>{range}</Text>
-                                <Image
-                                    source={require('@/public/assets/under.png')}
-                                    style={styles.underIcon}
-                                />
-                            </TouchableOpacity>
+                        <View
+                            style={{ flex: 1, alignItems: 'flex-end' }}
+                        ></View>
+                        <TouchableOpacity
+                            onPress={() => setRangeBottomSheet(true)}
+                            style={styles.rangeContainer}
+                        >
+                            <Text style={text.rangeText}>{range}</Text>
+                            <Image
+                                source={require('@/public/assets/under.png')}
+                                style={styles.underIcon}
+                            />
+                        </TouchableOpacity>
                         {/* 정렬 옵션 바텀시트 */}
                         {rangeBottomSheet && (
                             <BottomSheet
                                 visible={rangeBottomSheet}
                                 onClose={() => setRangeBottomSheet(false)}
-                                options={rangeList}  // 변경된 정렬 리스트 적용
-                                onSelect={setRange}
+                                options={rangeList} // 변경된 정렬 리스트 적용
+                                onSelect={(selectedRange) => {
+                                    setRange(selectedRange);
+
+                                    const sortOptionMap: Record<string, any> = {
+                                        최신순: 'NEWEST_FIRST',
+                                        '오래된 순': 'OLDEST_FIRST',
+                                        '조회수 순': 'MOST_VIEWED',
+                                        '좋아요 순': 'MOST_LIKED',
+                                    };
+
+                                    const newSortOption =
+                                        sortOptionMap[selectedRange] ||
+                                        'NEWEST_FIRST';
+
+                                    setsortOption(newSortOption);
+                                    fetchData(newSortOption, category);
+                                }}
                                 selectedOption={range}
                             />
                         )}
                     </View>
-                        <View style={styles.postsContainer}>
-                            {postType === 'savedPharmacies' ? (
-                                <PharmacyItem pharmacies={dataList || []} />
-                            ) : (
-                                dataList?.map((item, index) => (
-                                    <PostItem key={index} post={item} page={'myPage'} />
-                                ))
-                            )}
-                        </View>
+                    <View style={styles.postsContainer}>
+                        {postType === 'savedPharmacies' ? (
+                            <PharmacyItem pharmacies={dataList || []} />
+                        ) : (
+                            dataList?.map((item, index) => (
+                                <PostItem
+                                    key={index}
+                                    post={item}
+                                    page={'myPage'}
+                                />
+                            ))
+                        )}
+                    </View>
                     {rangeBottomSheet && (
                         <BottomSheet
                             visible={rangeBottomSheet}
                             onClose={() => setRangeBottomSheet(false)}
                             options={rangeList}
                             onSelect={(selectedRange) => {
-                                console.log("선택된 정렬 방식:", selectedRange)
-                                setRange(selectedRange)
-                                const newSortOption = selectedRange === '최신순' ? 'NEWEST_FIRST' : 'OLDEST_FIRST'
-                                console.log("선택된 정렬 방식:", newSortOption)
-                                
-                                setsortOption(newSortOption)
+                                setRange(selectedRange);
+                                const newSortOption =
+                                    selectedRange === '최신순'
+                                        ? 'NEWEST_FIRST'
+                                        : 'OLDEST_FIRST';
+
+                                setsortOption(newSortOption);
                                 //상태 업데이트 후 fetchData 실행
                                 setTimeout(() => {
-                                    console.log("fetchData 실행:", newSortOption);
-                                    fetchData(newSortOption);
+                                    fetchData(newSortOption, category);
                                 }, 0);
-                            }}                                                      
+                            }}
                             selectedOption={range}
                         />
                     )}
@@ -304,7 +379,7 @@ export default function MyPost({ route }: PostProps) {
                 </View>
             )}
         </View>
-    )
+    );
 }
 
 const dummy = [
@@ -362,4 +437,4 @@ const dummy = [
         createdAt: '2020-04-01',
         images: [],
     },
-]
+];

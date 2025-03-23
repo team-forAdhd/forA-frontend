@@ -1,41 +1,41 @@
-import React from 'react'
-import { View, Image, Text, ImageSourcePropType } from 'react-native'
-import { styles, text } from './postItemStyle'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { useNavigation, NavigationProp } from '@react-navigation/native'
+import React from 'react';
+import { View, Image, Text, ImageSourcePropType } from 'react-native';
+import { styles, text } from './postItemStyle';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 interface PostProps {
-    page: 'homeRealTime' | 'myPage' | 'homeOther'
+    page: 'homeRealTime' | 'myPage' | 'homeOther';
     post: {
-        anonymous?: boolean
-        category?: string | null
-        commentCount?: number
-        comments?: string[] | null
-        content?: string
-        createdAt: number
-        id?: number
-        images?: string[] | null
-        lastModifiedAt?: number | null
-        likeCount?: number
-        nickname?: string | null
-        profileImage?: string | null
-        scrapCount?: number
-        title?: string
-        userId?: number | null
-        viewCount?: number
-    }
+        anonymous?: boolean;
+        category?: string | null;
+        commentCount?: number;
+        comments?: string[] | null;
+        content?: string;
+        createdAt: number;
+        id?: number;
+        images?: string[] | null;
+        lastModifiedAt?: number | null;
+        likeCount?: number;
+        nickname?: string | null;
+        profileImage?: string | null;
+        scrapCount?: number;
+        title?: string;
+        userId?: number | null;
+        viewCount?: number;
+    };
 }
 
 type PostDetailParams = {
-    PostDetail: { postId: number } //postId: number
-}
+    PostDetail: { postId: number }; //postId: number
+};
 export default function PostItem({ post, page }: PostProps) {
     const categoryMap: Record<string, string> = {
         TEENS: '10대',
         TWENTIES: '20대',
-        THIRTIES: '30대',
+        THIRTIES_AND_ABOVE: '30대↑',
         PARENTS: '학부모',
-    }
+    };
 
     // post의 각 속성들에 안전하게 접근하도록 변경
     const {
@@ -47,7 +47,7 @@ export default function PostItem({ post, page }: PostProps) {
         createdAt,
         images,
         id,
-    } = post || {}
+    } = post || {};
 
     // postItems 정의
     const postItems = {
@@ -85,7 +85,7 @@ export default function PostItem({ post, page }: PostProps) {
                 comments?.length ?? 0,
             ],
         },
-    }
+    };
 
     // 페이지에 따라 postItems 선택
     const thisPage =
@@ -93,7 +93,7 @@ export default function PostItem({ post, page }: PostProps) {
             ? postItems.homeRealTime
             : page === 'myPage'
               ? postItems.myPage
-              : postItems.homeOther
+              : postItems.homeOther;
 
     const formattedDate = new Date(createdAt * 1000).toLocaleDateString(
         'ko-KR',
@@ -102,14 +102,14 @@ export default function PostItem({ post, page }: PostProps) {
             month: '2-digit',
             day: '2-digit',
         },
-    )
-    const navigation = useNavigation<NavigationProp<PostDetailParams>>()
+    );
+    const navigation = useNavigation<NavigationProp<PostDetailParams>>();
     return (
         <TouchableOpacity
             style={styles.container}
             key={id}
             onPress={() => {
-                //navigation.navigate('PostDetail', { postId: post.id })
+                navigation.navigate('PostDetail', { postId: post.id });
             }}
         >
             <View style={styles.RightContainer}>
@@ -125,9 +125,10 @@ export default function PostItem({ post, page }: PostProps) {
                             <Image
                                 source={imageUri}
                                 style={
-                                    imageUri == require('@/public/assets/views.png')
-                                    ? [styles.iconImage, { marginRight: 2 }]
-                                    : styles.iconImage
+                                    imageUri ==
+                                    require('@/public/assets/views.png')
+                                        ? [styles.iconImage, { marginRight: 2 }]
+                                        : styles.iconImage
                                 }
                             />
                             <Text
@@ -157,5 +158,5 @@ export default function PostItem({ post, page }: PostProps) {
                 </View>
             )}
         </TouchableOpacity>
-    )
+    );
 }
