@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,68 +6,71 @@ import {
     ScrollView,
     Image,
     Modal,
-} from 'react-native'
-import { styles, text } from './MedNewReviewStyle'
-import { useNavigation, useRoute } from '@react-navigation/native'
-import { useTranslation } from 'react-i18next'
-import { Rating } from 'react-native-elements'
-import { TextInput } from 'react-native-gesture-handler'
-import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
-import * as ImagePicker from 'expo-image-picker'
-import { sendMedReviewApi } from '@/api/medicine/medReviewApi'
-import MedSelectModal from './MedSelectModal/MedSelectModal'
-//import medStore from '@/state/medState/medStore'
-import { uploadImageApi } from '@/api/image/imageApi'
+} from 'react-native';
+import { styles, text } from './MedNewReviewStyle';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { Rating } from 'react-native-elements';
+import { TextInput } from 'react-native-gesture-handler';
+import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents';
+import * as ImagePicker from 'expo-image-picker';
+import { sendMedReviewApi } from '@/api/medicine/medReviewApi';
+import MedSelectModal from './MedSelectModal/MedSelectModal';
+import { uploadImageApi } from '@/api/image/imageApi';
 
 interface MedNewReviewProps {
-    medId: number
+    medId: number;
 }
 
 const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(')
-    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
-}
+    const bracketIndex = name.indexOf('(');
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name;
+};
 
+export default function MedNewReview(med: any) {
+    //const data = med.route.params;
+    const route = useRoute();
+    const data = route.params;
 
-export default function MedNewReview(med : any) {
-    const data = med.route.params
+    console.log('Received params:', data);
 
     // prop으로 medId 받아와야 함
-    const { t } = useTranslation('medicine')
+    const { t } = useTranslation('medicine');
 
-    const navigation = useNavigation()
-    const scrollViewRef = useRef<ScrollView>(null)
+    const navigation = useNavigation();
+    const scrollViewRef = useRef<ScrollView>(null);
     //const [data, setData] = useState<any>(null)
 
-    const [rating, setRating] = useState(0)
-    const [isCoMed, setIsCoMed] = useState(true)
-    const [coMedName, setCoMedName] = useState('')
-    const [coMedId, setCoMedId] = useState(0)
-    const [content, setContent] = useState('')
-    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([])
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
-    const [isFocused, setIsFocused] = useState(false)
-    const [age, setAge] = useState('')
-    const [sex, setSex] = useState('')
-    const [modalVisible, setModalVisible] = useState(false)
-    const [selectedMed, setSelectedMed] = useState<MedListItem[]>([])
+    const [rating, setRating] = useState(0);
+    const [isCoMed, setIsCoMed] = useState(true);
+    const [coMedName, setCoMedName] = useState('');
+    const [coMedId, setCoMedId] = useState(0);
+    const [content, setContent] = useState('');
+    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([]);
+    const [status, requestPermission] =
+        ImagePicker.useMediaLibraryPermissions();
+    const [isFocused, setIsFocused] = useState(false);
+    const [age, setAge] = useState('');
+    const [sex, setSex] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedMed, setSelectedMed] = useState<MedListItem[]>([]);
 
     const handleImageUpload = async (imageFile: any) => {
         try {
-            const response = await uploadImageApi(imageFile)
-            const imagePathList = response.data.imagePathList // response.data로 접근
-            return imagePathList
+            const response = await uploadImageApi(imageFile);
+            const imagePathList = response.data.imagePathList; // response.data로 접근
+            return imagePathList;
         } catch (error) {
-            console.error('Error uploading image:', error)
-            throw error
+            console.error('Error uploading image:', error);
+            throw error;
         }
-    }
+    };
 
     //MedDetail로 이동
     const gotoMedDetail = () => {
         //navigation.navigate('MedDetail' as never)
-        navigation.goBack()
-    }
+        navigation.goBack();
+    };
 
     const handleReviewSend = async () => {
         try {
@@ -75,36 +78,48 @@ export default function MedNewReview(med : any) {
                 attachedPhotos.map((photo) =>
                     handleImageUpload({ uri: photo }),
                 ),
-            )
+            );
+
+            const mainMedicineId = data.medicineId;
+            const coMedicationIds = isCoMed
+                ? selectedMed
+                      .filter((med) => med.medicineId !== mainMedicineId)
+                      .map((med) => med.medicineId)
+                : [];
 
             const reviewData = {
-                medicineId: data.medicineId,
-                coMedications: isCoMed ? selectedMed.map(med => med.id) : [],
+                medicineId: mainMedicineId,
+                coMedications: coMedicationIds,
                 content: content,
                 images: imagePathList.flat(), // 이미지 경로를 배열로 포함
                 grade: rating,
-            }
-            await sendMedReviewApi(reviewData)
-            console.log('Review sent successfully:', reviewData)
+                ageRange: age,
+                gender: sex,
+                createdAt: Date.now(),
+                lastModifiedAt: Date.now(),
+                helpCount: 0,
+                averageGrade: 0,
+            };
+            await sendMedReviewApi(reviewData);
         } catch (error) {
-            console.error('Error sending review:', error)
+            console.error('Error sending review:', error);
         }
-    }
+    };
 
     const handleReviewButton = () => {
-        handleReviewSend()
-        navigation.navigate('Home' as never)
-    }
+        handleReviewSend();
+        navigation.goBack();
+    };
 
     const onRatingCompleted = (rating: number) => {
-        const roundedRating = Math.round(rating * 2) / 2 // 반올림
-        setRating(roundedRating)
-    }
+        const roundedRating = Math.round(rating * 2) / 2; // 반올림
+        setRating(roundedRating);
+    };
 
     const handleCoMed = () => {
-        setIsCoMed((prev) => !prev)
+        setIsCoMed((prev) => !prev);
         setSelectedMed([]);
-    }
+    };
     // 공동복용약 없음 선택 시 초기화
     useEffect(() => {
         if (!isCoMed) {
@@ -116,18 +131,18 @@ export default function MedNewReview(med : any) {
 
     // TextInput 관련 로직
     const handleFocus = () => {
-        setIsFocused(true)
-    }
+        setIsFocused(true);
+    };
     const handleBlur = () => {
-        setIsFocused(false)
-    }
+        setIsFocused(false);
+    };
     // 사진 업로드 로직
     const uploadImage = async () => {
         // 갤러리 접근 권한
         if (!status?.granted) {
-            const permission = await requestPermission()
+            const permission = await requestPermission();
             if (!permission.granted) {
-                return null
+                return null;
             }
         }
         // 이미지 업로드 기능
@@ -135,56 +150,61 @@ export default function MedNewReview(med : any) {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             quality: 1,
-        })
+        });
         if (result.canceled) {
-            return null // 이미지 업로드 취소한 경우
+            return null; // 이미지 업로드 취소한 경우
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
-    }
+        setAttachedPhotos((prevPhotos) => [
+            ...prevPhotos,
+            result.assets[0].uri,
+        ]);
+    };
 
     const handleDeletePhoto = (index: number) => {
-        const updatedPhotos = [...attachedPhotos]
-        updatedPhotos.splice(index, 1) // 해당 인덱스의 사진 삭제
-        setAttachedPhotos(updatedPhotos)
-    }
+        const updatedPhotos = [...attachedPhotos];
+        updatedPhotos.splice(index, 1); // 해당 인덱스의 사진 삭제
+        setAttachedPhotos(updatedPhotos);
+    };
     // 옵션 로직
     const handleAgeOption = (option: string) => {
-        setAge(option)
-    }
+        setAge(option);
+    };
     const handleSexOption = (option: string) => {
-        setSex(option)
-    }
+        setSex(option);
+    };
 
     // 리뷰 버튼 활성화
     const isReviewButtonEnabled = () => {
         return (
             rating > 0 &&
             content.length >= 20 &&
-            (isCoMed ? coMedName.length > 0 : true)
-        )
-    }
+            (isCoMed ? selectedMed.length > 0 : true)
+        );
+    };
 
-    useEffect (() => {
-        setRating(rating)
-        setIsCoMed(isCoMed)
-        setContent(content)
-        setAttachedPhotos(attachedPhotos)
-        setAge(age)
-        setSex(sex)
-    })
+    useEffect(() => {
+        setRating(rating);
+        setIsCoMed(isCoMed);
+        setContent(content);
+        setAttachedPhotos(attachedPhotos);
+        setAge(age);
+        setSex(sex);
+    }, [rating, isCoMed, content, attachedPhotos, age, sex]);
 
     const handleMedSelection = (meds: MedListItem[]) => {
-        console.log("MedNewReview에서 받은 선택된 약:", meds)
-        setSelectedMed(meds)
-    }
+        console.log('MedNewReview에서 받은 선택된 약:', meds);
+        setSelectedMed(meds);
+    };
 
     return (
         <View style={styles.container}>
             {/* 헤더 */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => {navigation.goBack()}}
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
                 >
                     <Image
                         style={styles.gobackIcon}
@@ -195,11 +215,12 @@ export default function MedNewReview(med : any) {
                 <View style={styles.gobackIcon} />
             </View>
 
-
             <ScrollView ref={scrollViewRef} style={styles.scrollStyle}>
                 {/* 약 이름, 약 사진 */}
                 <View style={styles.contentBox1}>
-                    <Text style={text.medTitleText}>{truncateItemName(data.itemName)}</Text>
+                    <Text style={text.medTitleText}>
+                        {truncateItemName(data.itemName)}
+                    </Text>
                     <View style={styles.imageContainer}>
                         <Image
                             source={{
@@ -229,28 +250,50 @@ export default function MedNewReview(med : any) {
                 {/* 함께 복용중인 약 */}
                 <View style={styles.contentBox3}>
                     <Text style={text.subTitleText}>{t('other-med')}</Text>
-                    <TouchableOpacity onPress={() => setModalVisible(true)}>
-                        <View style={[styles.searchBar, {flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12}]}>
+                    <TouchableOpacity
+                        onPress={() => setModalVisible(true)}
+                        disabled={!isCoMed}
+                    >
+                        <View
+                            style={[
+                                styles.searchBar,
+                                {
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingHorizontal: 12,
+                                },
+                            ]}
+                        >
                             <Image
                                 style={styles.IconImage}
                                 source={require('@/public/assets/greenSearch.png')}
                             />
                             {selectedMed.length > 0 ? (
-                                <Text 
-                                    style={[text.coMedText, {flex:1, marginLeft:8}]}
+                                <Text
+                                    style={[
+                                        text.coMedText,
+                                        { flex: 1, marginLeft: 8 },
+                                    ]}
                                     numberOfLines={1}
                                     ellipsizeMode="tail"
-                                >{selectedMed.map(med => med.itemName).join(', ')}
+                                >
+                                    {selectedMed
+                                        .map((med) => med.itemName)
+                                        .join(', ')}
                                 </Text>
                             ) : (
-                                <Text style={text.coMedText}>{t('약을 선택해주세요')}</Text> 
+                                <Text style={text.coMedText}>
+                                    {t('약을 선택해주세요')}
+                                </Text>
                             )}
                         </View>
                     </TouchableOpacity>
                     {/* 있/없 확인 */}
                     <TouchableOpacity
                         style={styles.coMedClick}
-                        onPress={() => {handleCoMed()}}
+                        onPress={() => {
+                            handleCoMed();
+                        }}
                     >
                         <Image
                             source={
@@ -547,12 +590,13 @@ export default function MedNewReview(med : any) {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalContainer}>
-                    <MedSelectModal 
+                    <MedSelectModal
                         onClose={() => setModalVisible(false)}
                         onSelectMed={handleMedSelection}
-                        savedSelectedMed={selectedMed}/>
+                        savedSelectedMed={selectedMed}
+                    />
                 </View>
             </Modal>
         </View>
-    )
+    );
 }

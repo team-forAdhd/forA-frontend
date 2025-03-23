@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
     header: {
         position: 'absolute',
         backgroundColor: 'white',
-        top: 52,
+        //top: 52,
+        top: '6.8%',
         width: '100%',
         height: 35,
         flexDirection: 'row',
@@ -71,7 +72,7 @@ export const styles = StyleSheet.create({
         height: 33,
         paddingVertical: 4,
         paddingHorizontal: 17.9,
-
+        marginBottom: 10,
     },
     recentSearchContainer: {
         //최근 검색어와 모두 지우기를 담고 있는 컨테이너
@@ -95,13 +96,13 @@ export const styles = StyleSheet.create({
         height: 28,
         objectFit: 'contain',
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     medRecentSearchText: {
@@ -116,7 +117,7 @@ export const text = {
         fontSize: 16,
         fontWeight: '400',
         lineHeight: 22.4,
-        letterSpacing: -0.8
+        letterSpacing: -0.8,
     },
     deleteText: {
         fontSize: 18,
@@ -138,5 +139,5 @@ export const text = {
         letterSpacing: -1,
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

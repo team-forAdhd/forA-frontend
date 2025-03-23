@@ -1,73 +1,68 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { RouteProp, useNavigation } from '@react-navigation/native'
-import { View, Image, TouchableOpacity, Text } from 'react-native'
-import { styles, text } from './../medicineScreen/MedicineStyle'
-import TabBar from '@/components/common/tabBar/tabBar'
-import MedicineListItem from '../medListItem/MedicineListItem'
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { View, Image, TouchableOpacity, Text } from 'react-native';
+import { styles, text } from './../medicineScreen/MedicineStyle';
+import TabBar from '@/components/common/tabBar/tabBar';
+import MedicineListItem from '../medListItem/MedicineListItem';
 import {
     getMedListApi,
     getMedListByIngredientApi,
-} from '@/api/medicine/medListApi'
-import { ScrollView } from 'react-native-gesture-handler'
-import BottomSheet from '../medBottomSheet/BottomSheet'
-import { RootStackParamList } from '@/components/navigation'
+} from '@/api/medicine/medListApi';
+import { ScrollView } from 'react-native-gesture-handler';
+import BottomSheet from '../medBottomSheet/BottomSheet';
+import { RootStackParamList } from '@/components/navigation';
 
 type Med = {
-    id: number
-    itemName: string
-    itemEngName: string
-    entpName: string
-    itemImage: string
-    className: string
-    rating: number
-    favorite: boolean
-}
+    id: number;
+    itemName: string;
+    itemEngName: string;
+    entpName: string;
+    itemImage: string;
+    className: string;
+    rating: number;
+    favorite: boolean;
+};
 
 interface MedSearchResultProps {
-    resultList: Med[]
-    searchInputValue: string
+    resultList: Med[];
+    searchInputValue: string;
 }
 
-type MedSearchResultRouteProp = RouteProp<RootStackParamList, 'MedSearchResult'>
+type MedSearchResultRouteProp = RouteProp<
+    RootStackParamList,
+    'MedSearchResult'
+>;
 
 type MedSearchResultScreenProps = {
-    route: MedSearchResultRouteProp
-}
+    route: MedSearchResultRouteProp;
+};
 
 export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
-    const { resultList, searchInputValue, selectedShapeForm, selectedColor } = route.params
-    const { t } = useTranslation('medicine')
-    const navigation = useNavigation()
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
+    const { resultList, searchInputValue, selectedShapeForm, selectedColor } =
+        route.params;
+    const { t } = useTranslation('medicine');
+    const navigation = useNavigation();
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState<string | null>(
         null,
-    )
-    const [medList, setMedList] = useState<Med[]>([])
-    const ingredientList = [
-        '메틸페니데이트',
-        '아토목세틴',
-        '클로니딘',
-    ]
+    );
+    const [medList, setMedList] = useState<Med[]>([]);
+    const ingredientList = ['메틸페니데이트', '아토목세틴', '클로니딘'];
     const ingredientMap: { [key: string]: string } = {
         메틸페니데이트: 'METHYLPHENIDATE',
         아토목세틴: 'ATOMOXETINE',
         클로니딘: 'CLONIDINE',
-    }
+    };
 
     //정렬 리스트
-    const rangeList = [
-        '가나다 순',
-        '성분 순',
-        '별점 높은 순',
-        '즐겨찾기',
-    ]
-    const [sortOption, setSortOption] = useState(rangeList[0])
+    const rangeList = ['가나다 순', '성분 순', '별점 높은 순', '즐겨찾기'];
+    const [sortOption, setSortOption] = useState(rangeList[0]);
 
     // 성분 선택 시 해당 성분의 약 리스트 API 호출
     const fetchMedListByIngredient = async (ingredient: string) => {
-        const englishName = ingredientMap[ingredient] // 한글명을 영문명으로 변환
-        const data = await getMedListByIngredientApi(englishName)
+        const englishName = ingredientMap[ingredient]; // 한글명을 영문명으로 변환
+        const data = await getMedListByIngredientApi(englishName);
         const filteredData = data.map((med: any) => ({
             id: med.medicineId,
             itemName: med.itemName,
@@ -75,28 +70,28 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             itemEngName: med.itemEngName,
             itemImage: med.itemImage,
             className: med.className || '알 수 없음',
-            rating: med.rating ?? 0, 
+            rating: med.rating ?? 0,
             favorite: med.favorite ?? false,
-        }))
-        setMedList(filteredData)
-        setSelectedIngredient(ingredient) // 성분을 선택한 상태로 유지
-    }
+        }));
+        setMedList(filteredData);
+        setSelectedIngredient(ingredient); // 성분을 선택한 상태로 유지
+    };
 
     const gotoMedSearch = () => {
         // 약 일반 검색창으로 이동
-        navigation.navigate('MedSearch' as never)
-    }
-    const gotoMedShapeSearch = () => {
-        // 약 모양 검색창으로 이동
-        navigation.navigate('ShapeSearch' as never)
-    }
+        navigation.navigate('MedSearch' as never);
+    };
+    // const gotoMedShapeSearch = () => {
+    //     // 약 모양 검색창으로 이동
+    //     navigation.navigate('ShapeSearch' as never)
+    // }
 
     const shapeMap: { [key: string]: string } = {
         원형: '원형',
         장방형: '장방형',
         타원형: '타원형',
-    }
-    
+    };
+
     const colorMap: { [key: string]: string } = {
         하양: '하양',
         노랑: '노랑',
@@ -114,31 +109,30 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         회색: '회색',
         검정: '검정',
         투명: '투명',
-    }
-    
+    };
+
     const tabletTypeMap: { [key: string]: string } = {
-        "정제": "TABLET",
-        "경질캡슐제": "HARD_CAPSULE",
-        "연질캡슐제": "SOFT_CAPSULE",
-        "서방정": "EXTENDED_RELEASE_TABLET",
-        "서방성필름코팅정": "EXTENDED_RELEASE_FILM_COATED_TABLET",
-        "경질캡슐제, 산제": "HARD_CAPSULE",
-        "장용성캡슐제, 펠렛": "ENTERIC_COATED_CAPSULE",
-        "나정": "TABLET",
-        "필름코팅정": "FILM_COATED_TABLET",
-        "경질캡슐제, 산제, 펠렛": "HARD_CAPSULE",
-    }
+        정제: 'TABLET',
+        경질캡슐제: 'HARD_CAPSULE',
+        연질캡슐제: 'SOFT_CAPSULE',
+        서방정: 'EXTENDED_RELEASE_TABLET',
+        서방성필름코팅정: 'EXTENDED_RELEASE_FILM_COATED_TABLET',
+        '경질캡슐제, 산제': 'HARD_CAPSULE',
+        '장용성캡슐제, 펠렛': 'ENTERIC_COATED_CAPSULE',
+        나정: 'TABLET',
+        필름코팅정: 'FILM_COATED_TABLET',
+        '경질캡슐제, 산제, 펠렛': 'HARD_CAPSULE',
+    };
 
     // 정렬 함수
     const sortMedList = () => {
         if (!resultList || resultList.length === 0) {
-            console.log('검색 결과 없음', resultList)
-            return []
+            console.log('검색 결과 없음', resultList);
+            return [];
         }
 
         console.log('API 응답 데이터:', JSON.stringify(resultList, null, 2));
 
-        
         // // 필수 속성이 있는지 확인
         // if (!resultList[0].drugShape || !resultList[0].colorClass1 || !resultList[0].formCodeName) {
         //     console.warn("응답 데이터에 필수 필터링 속성이 없음!");
@@ -166,18 +160,18 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         //     const medShape = med.drugShape ? med.drugShape.trim() : ''
         //     const medColor1 = med.colorClass1 ? med.colorClass1.trim() : ''
         //     const medColor2 = med.colorClass2 ? med.colorClass2.trim() : ''
-        //     const medType = med.formCodeName ? (tabletTypeMap[med.formCodeName.trim()] ?? med.formCodeName.trim()).toLowerCase() : ''     
-    
+        //     const medType = med.formCodeName ? (tabletTypeMap[med.formCodeName.trim()] ?? med.formCodeName.trim()).toLowerCase() : ''
+
         //     console.log('현재 약 정보:', med)
         //     console.log('매칭 데이터:', { medShape, medColor1, medColor2, medType });
-    
+
         //     const searchKeywords = searchInputValue.split(', ').map((kw) => kw.trim())
 
         //     return (
         //         (!selectedShapeForm || med.drugShape === selectedShapeForm) &&
         //         (!selectedColor || med.colorClass1 === selectedColor || med.colorClass2 === selectedColor)
         //     )
-        // });            
+        // });
 
         // console.log("필터링 후 남은 약 개수:", filteredData.length);
 
@@ -185,7 +179,7 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
         // const filteredData = resultList.map((med: any) => ({
         //let sortedList = filteredData.map((med: any) => ({
         let sortedList = resultList.map((med: any) => ({
-            id: med.itemSeq,
+            id: med.medicineId,
             itemName: med.itemName,
             entpName: med.entpName,
             itemEngName: med.itemEngName || '알 수 없음',
@@ -193,7 +187,7 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             className: med.className || '알 수 없음',
             rating: med.rating ?? 0,
             favorite: med.favorite ?? false,
-        }))
+        }));
 
         console.log('변환된 리스트:', sortedList);
 
@@ -201,20 +195,20 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
 
         switch (sortOption) {
             case '가나다 순':
-                sortedList.sort((a, b) => a.itemName.localeCompare(b.itemName))
-                break
+                sortedList.sort((a, b) => a.itemName.localeCompare(b.itemName));
+                break;
             case '별점 높은 순':
-                sortedList.sort((a, b) => b.rating - a.rating)
-                break
+                sortedList.sort((a, b) => b.rating - a.rating);
+                break;
             case '즐겨찾기':
-                sortedList = sortedList.filter((med) => med.favorite)
-                break
+                sortedList = sortedList.filter((med) => med.favorite);
+                break;
             default:
-                break
+                break;
         }
-        console.log('최종 정렬 리스트:', sortedList)
-        return sortedList
-    }
+        console.log('최종 정렬 리스트:', sortedList);
+        return sortedList;
+    };
 
     return (
         <View style={styles.container}>
@@ -237,13 +231,13 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View>
+                    {/* <View>
                         <TouchableOpacity onPress={gotoMedShapeSearch}>
                             <Text style={text.shapeSearchText}>
                                 {t('search-shape')}
                             </Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
             </View>
             {/* 정렬 옵션 부분 */}
@@ -296,8 +290,7 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             ) : (
                 <ScrollView style={styles.medList}>
                     {sortMedList().map((med) => {
-                        console.log('렌더링되는 약 정보:', med);
-                        return <MedicineListItem key={med.id} item={med} />
+                        return <MedicineListItem key={med.id} item={med} />;
                     })}
                 </ScrollView>
             )}
@@ -313,5 +306,5 @@ export default function MedSearchResult({ route }: MedSearchResultScreenProps) {
             )}
             <TabBar />
         </View>
-    )
+    );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,125 +6,144 @@ import {
     ScrollView,
     Image,
     LayoutChangeEvent,
-} from 'react-native'
-import { styles, text } from './MedDetailStyle'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { useTranslation } from 'react-i18next'
-import MedReview from './MedReview' // 리뷰 목록 페이지
-import { RootStackParamList } from '@/components/navigation' // 파라미터 안전하게 전달
-import { medBookmarkApi } from '@/api/medicine/medBookmarkApi'
-
+} from 'react-native';
+import { styles, text } from './MedDetailStyle';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import MedReview from './MedReview'; // 리뷰 목록 페이지
+import { RootStackParamList } from '@/components/navigation'; // 파라미터 안전하게 전달
+import { medBookmarkApi } from '@/api/medicine/medBookmarkApi';
+import { getSingleMedInfoApi } from '@/api/medicine/medListApi';
 
 const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(') // 괄호가 없다면 indexOf는 -1 반환
-    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name
-}
+    const bracketIndex = name.indexOf('('); // 괄호가 없다면 indexOf는 -1 반환
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name;
+};
 
+export default function MedDetail(med: any) {
+    const data = med.route.params;
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const { t: t } = useTranslation('medicine');
+    const { t: dataT } = useTranslation('medDetail');
+    const [activeTab, setActiveTab] = useState('정보');
+    const [activeButton, setActiveButton] = useState('all');
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const sectionPositions = useRef<{ [key: string]: number }>({});
 
-export default function MedDetail(med : any) {
-    const data = med.route.params
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-    const { t: t } = useTranslation('medicine')
-    const { t: dataT } = useTranslation('medDetail')
-    const [activeTab, setActiveTab] = useState('정보') 
-    const [activeButton, setActiveButton] = useState('all')
-    const [isBookmarked, setIsBookmarked] = useState<boolean>(data.favorite) 
-    const scrollViewRef = useRef<ScrollView>(null)
-    const sectionPositions = useRef<{ [key: string]: number }>({})
-    
-    const medInfoList = ['effect', 'usage', 'precaution', 'med-info', 'company']
+    const medInfoList = [
+        'effect',
+        'usage',
+        'precaution',
+        'med-info',
+        'company',
+    ];
 
-    const postBookmark = async (medId: number) => { 
+    const postBookmark = async (medId: number) => {
         try {
-            const response = await medBookmarkApi(medId) 
+            const response = await medBookmarkApi(medId);
+
             if (response.status === 200) {
-                setIsBookmarked((prev) => !prev) 
+                const newFavoriteStatus = !isBookmarked;
+                setIsBookmarked((prev) => !prev);
+                data.favorite = !isBookmarked;
+
+                setTimeout(async () => {
+                    //await fetchMedList()
+                    const updatedMed = await getSingleMedInfoApi(medId);
+
+                    setIsBookmarked(updatedMed.favorite);
+                    data.favorite = updatedMed.favorite;
+
+                    //if (updatedMed.favorite !== data.favorite) {
+                    if (updatedMed.favorite !== isBookmarked) {
+                    }
+                }, 2000);
             }
-        } catch (error) {
-            console.error('북마크 변경 실패:', error)
-        }
-    }
+        } catch (error) {}
+    };
+
+    useEffect(() => {}, [isBookmarked]);
 
     useEffect(() => {
-        setIsBookmarked(data.favorite) 
-    }, [data.favorite]) 
-    
+        setIsBookmarked(data.favorite);
+    }, [data.favorite]);
 
     const handleLeftArrowPress = () => {
         //navigation.navigate('MedicineMain' as never)
-        navigation.goBack()
-    }
+        navigation.goBack();
+    };
 
     // 항목별 이동을 위한 동적 로직
     const handleScrollToSection = (section: string) => {
-        setActiveButton(section) 
-        const targetSection = section === 'all' ? 'effect' : section 
-        const position = sectionPositions.current[targetSection] 
-        if (position !== undefined) { 
-            scrollViewRef.current?.scrollTo({ y: position, animated: true })
+        setActiveButton(section);
+        const targetSection = section === 'all' ? 'effect' : section;
+        const position = sectionPositions.current[targetSection];
+        if (position !== undefined) {
+            scrollViewRef.current?.scrollTo({ y: position, animated: true });
         }
-    }
+    };
     // 각 섹션의 위치(y 좌표) 저장 – 이후 특정 섹션으로 스크롤을 이동할 때 사용됨
     const handleLayout = (section: string) => (event: LayoutChangeEvent) => {
-        const { y } = event.nativeEvent.layout 
-        sectionPositions.current[section] = y 
-    }
+        const { y } = event.nativeEvent.layout;
+        sectionPositions.current[section] = y;
+    };
 
     // data.id에 따른 약 내용 설정
     const getTranslationKey = (id: number, type: string) => {
         if (type === 'usage') {
-            if ([11, 12].includes(id)) return '도모.usage'
+            if ([11, 12].includes(id)) return '도모.usage';
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
-                return '아토.usage'
-            if ([18, 19, 29, 21, 7].includes(id)) return '아트.usage'
-            if ([24, 25, 26, 1].includes(id)) return '메디.usage'
-            if (id === 2) return '켑베.usage'
-            if ([4, 29, 30].includes(id)) return '콘서.usage'
-            if (id === 31) return '페니.usage'
-            if ([32, 33].includes(id)) return '페로.usage'
+                return '아토.usage';
+            if ([18, 19, 29, 21, 7].includes(id)) return '아트.usage';
+            if ([24, 25, 26, 1].includes(id)) return '메디.usage';
+            if (id === 2) return '켑베.usage';
+            if ([4, 29, 30].includes(id)) return '콘서.usage';
+            if (id === 31) return '페니.usage';
+            if ([32, 33].includes(id)) return '페로.usage';
         } else if (type === 'effect') {
-            if ([11, 12].includes(id)) return '도모.effect'
+            if ([11, 12].includes(id)) return '도모.effect';
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
-                return '아토.effect'
-            if ([18, 19, 29, 21, 7].includes(id)) return '아트.effect'
-            if ([1, 24, 25, 26].includes(id)) return '메디.effect'
-            if (id === 2) return '켑베.effect'
-            if ([4, 29, 30].includes(id)) return '콘서.effect'
-            if (id === 31) return '페니.effect'
-            if ([32, 33].includes(id)) return '페로.effect'
+                return '아토.effect';
+            if ([18, 19, 29, 21, 7].includes(id)) return '아트.effect';
+            if ([1, 24, 25, 26].includes(id)) return '메디.effect';
+            if (id === 2) return '켑베.effect';
+            if ([4, 29, 30].includes(id)) return '콘서.effect';
+            if (id === 31) return '페니.effect';
+            if ([32, 33].includes(id)) return '페로.effect';
         } else if (type === 'precaution') {
-            if ([11, 12].includes(id)) return '도모.precaution'
+            if ([11, 12].includes(id)) return '도모.precaution';
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
-                return '아토.precaution'
-            if ([18, 19, 29, 21, 7].includes(id)) return '아트.precaution'
-            if ([24, 25, 26, 1].includes(id)) return '메디.precaution'
-            if (id === 2) return '켑베.precaution'
-            if ([4, 29, 30].includes(id)) return '콘서.precaution'
-            if (id === 31) return '페니.precaution'
-            if ([32, 33].includes(id)) return '페로.precaution'
+                return '아토.precaution';
+            if ([18, 19, 29, 21, 7].includes(id)) return '아트.precaution';
+            if ([24, 25, 26, 1].includes(id)) return '메디.precaution';
+            if (id === 2) return '켑베.precaution';
+            if ([4, 29, 30].includes(id)) return '콘서.precaution';
+            if (id === 31) return '페니.precaution';
+            if ([32, 33].includes(id)) return '페로.precaution';
         } else if (type === 'med-info') {
-            if ([11, 12].includes(id)) return '도모.med-info'
+            if ([11, 12].includes(id)) return '도모.med-info';
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
-                return '아토.med-info'
-            if ([18, 19, 29, 21, 7].includes(id)) return '아트.med-info'
-            if ([24, 25, 26, 1].includes(id)) return '메디.med-info'
-            if (id === 2) return '켑베.med-info'
-            if ([4, 29, 30].includes(id)) return '콘서.med-info'
-            if (id === 31) return '페니.med-info'
-            if ([32, 33].includes(id)) return '페로.med-info'
+                return '아토.med-info';
+            if ([18, 19, 29, 21, 7].includes(id)) return '아트.med-info';
+            if ([24, 25, 26, 1].includes(id)) return '메디.med-info';
+            if (id === 2) return '켑베.med-info';
+            if ([4, 29, 30].includes(id)) return '콘서.med-info';
+            if (id === 31) return '페니.med-info';
+            if ([32, 33].includes(id)) return '페로.med-info';
         } else if (type === 'company') {
-            if ([11, 12].includes(id)) return '도모.company'
+            if ([11, 12].includes(id)) return '도모.company';
             if ([6, 13, 14, 15, 16, 17, 3, 5, 8, 9, 23, 24].includes(id))
-                return '아토.company'
-            if ([18, 19, 29, 21, 7].includes(id)) return '아트.company'
-            if ([24, 25, 26, 1].includes(id)) return '메디.company'
-            if (id === 2) return '켑베.company'
-            if ([4, 29, 30].includes(id)) return '콘서.company'
-            if (id === 31) return '페니.company'
-            if ([32, 33].includes(id)) return '페로.company'
+                return '아토.company';
+            if ([18, 19, 29, 21, 7].includes(id)) return '아트.company';
+            if ([24, 25, 26, 1].includes(id)) return '메디.company';
+            if (id === 2) return '켑베.company';
+            if ([4, 29, 30].includes(id)) return '콘서.company';
+            if (id === 31) return '페니.company';
+            if ([32, 33].includes(id)) return '페로.company';
         }
-        return '' // 기본값
-    }
+        return ''; // 기본값
+    };
 
     return (
         <View style={styles.container}>
@@ -132,7 +151,7 @@ export default function MedDetail(med : any) {
             <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.goBack()
+                        navigation.goBack();
                     }}
                 >
                     <Image
@@ -153,13 +172,13 @@ export default function MedDetail(med : any) {
                     <TouchableOpacity
                         // setActiveTab(tab)이 실행되어 현재 선택된 탭이 변경됨
                         onPress={() => setActiveTab(tab)}
-                    style={[
-                        activeTab === tab
-                            // tab 선택 시
-                            ? styles.activeContaine
-                            // 선택되지 않았을 시
-                            : styles.inactiveContainer
-                    ]}
+                        style={[
+                            activeTab === tab
+                                ? // tab 선택 시
+                                  styles.activeContainer
+                                : // 선택되지 않았을 시
+                                  styles.inactiveContainer,
+                        ]}
                     >
                         {/* 탭 버튼 안의 글자(정보 또는 리뷰)를 표시함 */}
                         <Text
@@ -176,9 +195,7 @@ export default function MedDetail(med : any) {
             </View>
 
             {/* 바디 */}
-            <ScrollView ref={scrollViewRef}
-                        style={styles.scrollContainer}
-            >
+            <ScrollView ref={scrollViewRef} style={styles.scrollContainer}>
                 {activeTab === '정보' ? (
                     <View style={styles.infoContainer}>
                         <View style={styles.imageContainer}>
@@ -239,12 +256,12 @@ export default function MedDetail(med : any) {
                                                 : text.inactiveButtonText
                                         }
                                     >
-                                    {t(info)}
-                                </Text>
+                                        {t(info)}
+                                    </Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
-                        
+
                         {medInfoList.map((info) => (
                             <View onLayout={handleLayout(info)}>
                                 <View style={styles.contentTitle}>
@@ -258,7 +275,6 @@ export default function MedDetail(med : any) {
                                 </Text>
                             </View>
                         ))}
-
                     </View>
                 ) : (
                     // 리뷰 화면을 보여주는 MedReview 컴포넌트 렌더링. medId를 MedReview 컴포넌트에 전달
@@ -269,27 +285,32 @@ export default function MedDetail(med : any) {
             {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
                 {/* data.favorite 서버에서 가져온 북마크 여부, isBookmarked 클라이언트에서 확인된 북마크 상태 */}
-                {data.favorite || isBookmarked
-                ? (
+                {/* {data.favorite || isBookmarked */}
+                {isBookmarked ? (
                     <Image
                         // 북마크된 상태면 이미지 표시
                         source={require('@/public/assets/clickScrabButton.png')}
                         style={styles.scrapIamge}
                     />
-                )
-                : (
+                ) : (
                     // 북마크 되지 않은 경우. 클릭 시 postBookmark(data.medicineId) 함수를 호출해 북마크에 추가
-                    <TouchableOpacity onPress={() => {postBookmark(data.medicineId)}}>
-                    <Image
-                        source={require('@/public/assets/scrabButton.png')}
-                        style={styles.scrapIamge}
-                    />
+                    <TouchableOpacity
+                        onPress={() => {
+                            postBookmark(data.medicineId);
+                        }}
+                    >
+                        <Image
+                            source={require('@/public/assets/scrabButton.png')}
+                            style={styles.scrapIamge}
+                        />
                     </TouchableOpacity>
                 )}
 
                 <TouchableOpacity
                     // 리뷰 작성화면(MedNewReview)으로 이동하면서 data 전달
-                    onPress={() => {navigation.navigate('MedNewReview', data)}}
+                    onPress={() => {
+                        navigation.navigate('MedNewReview', data);
+                    }}
                     style={styles.reviewButton}
                 >
                     <Text style={text.reviewButtonText}>
@@ -297,7 +318,6 @@ export default function MedDetail(med : any) {
                     </Text>
                 </TouchableOpacity>
             </View>
-
         </View>
-    )
+    );
 }

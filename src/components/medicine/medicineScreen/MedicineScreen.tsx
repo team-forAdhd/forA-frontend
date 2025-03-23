@@ -93,10 +93,10 @@ export default function MedScreen() {
         // 약 일반 검색창으로 이동
         navigation.navigate('MedSearch' as never);
     };
-    const gotoMedShapeSearch = () => {
-        // 약 모양 검색창으로 이동
-        navigation.navigate('ShapeSearch' as never);
-    };
+    // const gotoMedShapeSearch = () => {
+    //     // 약 모양 검색창으로 이동
+    //     navigation.navigate('ShapeSearch' as never);
+    // };
 
     // 정렬 함수
     const sortMedList = () => {
@@ -130,17 +130,20 @@ export default function MedScreen() {
                 </View>
                 {/* 검색 창 */}
                 <View style={styles.searchBarContainer}>
-                    <View style={styles.searchBar}>
+                    <TouchableOpacity
+                        style={styles.searchBar}
+                        onPress={gotoMedSearch}
+                    >
                         <Image
                             style={styles.IconImage}
                             source={require('@/public/assets/greenSearch.png')}
                         />
-                        <TouchableOpacity onPress={gotoMedSearch}>
+                        <View>
                             <Text style={text.searchBarText}>
                                 {t('search-placeholder')}
                             </Text>
-                        </TouchableOpacity>
-                    </View>
+                        </View>
+                    </TouchableOpacity>
                     {/* <View>
                         <TouchableOpacity onPress={gotoMedShapeSearch}>
                             <Text style={text.shapeSearchText}>

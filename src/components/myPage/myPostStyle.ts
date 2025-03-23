@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     boardListContainer: {
         width: 304,
         flexDirection: 'row',
-        paddingLeft: 14,
+        paddingLeft: '3%',
         paddingRight: 14,
     },
     baseContainer: {
@@ -114,13 +114,13 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 18,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -155,5 +155,5 @@ export const text = {
         textAlign: 'center',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

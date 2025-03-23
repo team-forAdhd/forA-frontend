@@ -252,7 +252,10 @@ export default function TodayPostDetail({
                 {/* 댓글 */}
                 <View style={styles.commentCountConatiner}>
                     <Text style={text.commentCountText}>
-                        {t('comment')} {commentLength}
+                        {t('comment')}{' '}
+                        {Array.isArray(postDetail.comments)
+                            ? postDetail.comments.length
+                            : 0}
                     </Text>
                 </View>
                 {postDetail &&
