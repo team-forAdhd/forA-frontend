@@ -1,6 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TouchableOpacity, Text, View, TextInput, Modal } from 'react-native';
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    TextInput,
+    Modal,
+    Alert,
+} from 'react-native';
 import { styles, text } from './LoginStyle';
 import { TitleTextIcon } from '@/public/assets/SvgComponents';
 import { useNavigation } from '@react-navigation/native';
@@ -72,8 +79,10 @@ export default function LoginScreen() {
                 setPassword('');
             }
         } catch (error) {
-            console.error('Error while logging in:', error);
-            setLoginFailed(true);
+            if (error instanceof Error) {
+                Alert.alert('로그인에 실패했습니다.', error.message);
+                setLoginFailed(true);
+            }
         }
     };
 

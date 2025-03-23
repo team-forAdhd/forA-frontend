@@ -54,7 +54,7 @@ export default function HospitalMaps() {
     const { myLocation, refresh, address, handleRegionChange, zoomLevel } =
         useLocation(pushError);
 
-    const [radius, setRadius] = useState<number>(3000); // 기본값 설정 (예: 1000미터)
+    const [radius, setRadius] = useState<number>(2000); // 기본값 설정 (예: 1000미터)
     const [size, setSize] = useState<number>(4); // 한 번에 가져올 데이터의 개수
     const [sort, setSort] = useState<SortOptions>('DIST_ASC'); // 정렬 옵션
     const [filter, setFilter] = useState<string>('ALL'); // 필터 옵션
@@ -74,7 +74,7 @@ export default function HospitalMaps() {
         if (!hasNextPage) return;
         fetchNextPage();
     }
-
+    console.log(data?.pages.flatMap((p) => p.hospitalList));
     const hospitals = useMemo(
         () => data?.pages.flatMap((page) => page.hospitalList) ?? [],
         [data?.pages],

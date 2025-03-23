@@ -1,9 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Alert, Linking } from 'react-native';
 import { CameraCapturedPicture, useCameraPermissions } from 'expo-camera';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export const useCameraPermission = () => {
     const [permission, requestPermission] = useCameraPermissions();
+    const navigation = useNavigation();
 
     const checkPermissions = async () => {
         if (!permission) return;
@@ -14,7 +16,7 @@ export const useCameraPermission = () => {
                     '알림',
                     '영수증 인식을 위해서는 카메라 권한이 필요합니다.',
                     [
-                        { text: '취소', style: 'cancel' },
+                        { text: '취소', onPress: () => navigation.goBack() },
                         {
                             text: '설정 열기',
                             onPress: () => Linking.openSettings(),
@@ -28,9 +30,11 @@ export const useCameraPermission = () => {
         }
     };
 
-    useEffect(() => {
-        checkPermissions();
-    }, [permission]);
+    useFocusEffect(
+        useCallback(() => {
+            checkPermissions();
+        }, [permission]),
+    );
 
     return { permission, checkPermissions };
 };
@@ -47,25 +51,31 @@ export const useCameraActions = () => {
         CameraCapturedPicture | undefined
     > => {
         if (!cameraRef.current) return;
-
-        try {
-            const result = await cameraRef.current.takePictureAsync({
-                quality: 0.4,
-                base64: true,
-            });
-            return result;
-        } catch (e) {
-            console.error('사진 촬영 오류:', e);
-        }
+        const result = await cameraRef.current.takePictureAsync({
+            quality: 0.4,
+            base64: true,
+        });
+        return result;
     };
 
-    return { cameraRef, facing, toggleCameraFacing, takePictureHandler };
+    const updateCameraRef = (newRef: any) => {
+        cameraRef.current = newRef;
+    };
+
+    return {
+        cameraRef,
+        facing,
+        toggleCameraFacing,
+        takePictureHandler,
+        updateCameraRef,
+    };
 };
 
 export const useCamera = () => {
-    const { permission } = useCameraPermission();
     const { cameraRef, facing, takePictureHandler, toggleCameraFacing } =
         useCameraActions();
+    const { permission } = useCameraPermission();
+
     return {
         permission,
         cameraRef,

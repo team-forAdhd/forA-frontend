@@ -30,7 +30,10 @@ export function useTodayPostScrapMutation(postId: number) {
             if (previousPost) {
                 queryClient.setQueryData(['todayPostDetail', postId], {
                     ...previousPost,
-                    scrapCount: previousPost.scrapCount + 1,
+                    isScrapped: !previousPost.isScrapped,
+                    scrapCount: previousPost.isScrapped
+                        ? previousPost.scrapCount - 1
+                        : previousPost.scrapCount + 1,
                 });
             }
             return { previousPost };

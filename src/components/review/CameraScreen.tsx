@@ -27,8 +27,13 @@ export default function CameraScreen({
     route,
 }: StackScreenProps<HospitalStackParams, 'CameraScreen'>) {
     const { hospitalInfo, ribbonEvaluation } = route.params;
-    const { cameraRef, facing, takePictureHandler, toggleCameraFacing } =
-        useCamera();
+    const {
+        cameraRef,
+        facing,
+        takePictureHandler,
+        toggleCameraFacing,
+        permission,
+    } = useCamera();
 
     const [price, setPrice] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
@@ -83,19 +88,26 @@ export default function CameraScreen({
             });
         }
     };
+    const cameraPermission = permission?.status === 'granted';
 
     return (
         <>
             <View style={styles.container}>
-                <CameraView
-                    style={styles.camera}
-                    facing={facing}
-                    ref={cameraRef}
-                >
-                    {/* HEADER */}
-                    <View style={styles.headerTextContainer}>
-                        <Text style={text.headerText}>{hospitalInfo.name}</Text>
-                    </View>
+                {/* 카메라 뷰 */}
+                {cameraPermission ? (
+                    <CameraView
+                        style={styles.camera}
+                        facing={facing}
+                        ref={cameraRef}
+                    />
+                ) : (
+                    <View
+                        style={[styles.camera, { backgroundColor: 'black' }]}
+                    />
+                )}
+                {/* HEADER */}
+                <View style={styles.headerTextContainer}>
+                    <Text style={text.headerText}>{hospitalInfo.name}</Text>
                     <TouchableOpacity
                         activeOpacity={1}
                         style={styles.headerButtonContainer}
@@ -108,71 +120,69 @@ export default function CameraScreen({
                             style={styles.iconHeaderImage}
                         />
                     </TouchableOpacity>
+                </View>
 
-                    {/* MESSAGE BOX */}
-                    <View style={styles.messageBoxContainer}>
-                        <View style={styles.informMessageBox}>
-                            <Text style={text.messageText}>
-                                영수증의 글자가
+                {/* MESSAGE BOX */}
+                <View style={styles.messageBoxContainer}>
+                    <View style={styles.informMessageBox}>
+                        <Text style={text.messageText}>영수증의 글자가</Text>
+                        <Text style={text.messageText}>
+                            잘 보이게 찍어주세요
+                        </Text>
+                    </View>
+                    {ribbonEvaluation && (
+                        <View style={styles.ribbonMessageBox}>
+                            <Image
+                                source={require('@/public/assets/ribbon.png')}
+                                style={styles.ribbon}
+                            />
+                            <Text
+                                style={{
+                                    color: color.ribbon,
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                포에이 리본 달아주기
                             </Text>
-                            <Text style={text.messageText}>
-                                잘 보이게 찍어주세요
-                            </Text>
+                            <Image
+                                source={require('@/public/assets/ribbon.png')}
+                                style={styles.ribbon}
+                            />
                         </View>
-                        {ribbonEvaluation && (
-                            <View style={styles.ribbonMessageBox}>
-                                <Image
-                                    source={require('@/public/assets/ribbon.png')}
-                                    style={styles.ribbon}
-                                />
-                                <Text
-                                    style={{
-                                        color: color.ribbon,
-                                        fontWeight: 'bold',
-                                    }}
-                                >
-                                    포에이 리본 달아주기
-                                </Text>
-                                <Image
-                                    source={require('@/public/assets/ribbon.png')}
-                                    style={styles.ribbon}
-                                />
-                            </View>
-                        )}
-                    </View>
+                    )}
+                </View>
 
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => {
-                                navigation.goBack();
-                            }}
-                        >
-                            <Image
-                                source={require('@/public/assets/x_white.png')}
-                                style={styles.iconImage}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={takePicture}
-                        >
-                            <Image
-                                source={require('@/public/assets/shoot.png')}
-                                style={styles.iconShootImage}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={toggleCameraFacing}
-                        >
-                            <Image
-                                source={require('@/public/assets/refresh-ccw.png')}
-                                style={styles.iconImage}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </CameraView>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Image
+                            source={require('@/public/assets/x_white.png')}
+                            style={styles.iconImage}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={takePicture}
+                    >
+                        <Image
+                            source={require('@/public/assets/shoot.png')}
+                            style={styles.iconShootImage}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={toggleCameraFacing}
+                    >
+                        <Image
+                            source={require('@/public/assets/refresh-ccw.png')}
+                            style={styles.iconImage}
+                        />
+                    </TouchableOpacity>
+                </View>
 
                 <View style={{ position: 'absolute' }}>
                     <Modal
@@ -235,26 +245,32 @@ const styles = StyleSheet.create({
     headerTextContainer: {
         position: 'absolute',
         top: 52,
+        width: '100%',
         height: 36,
+        zIndex: 20,
         justifyContent: 'center',
         alignSelf: 'center',
         alignItems: 'center',
     },
     headerButtonContainer: {
         position: 'absolute',
-        top: 52,
+        top: 0,
+        right: 0,
         height: 36,
         paddingRight: 20,
         alignSelf: 'flex-end',
         alignItems: 'flex-end',
     },
     camera: {
-        flex: 1,
+        zIndex: 10,
+        width: '100%',
+        height: '100%',
     },
     messageBoxContainer: {
         position: 'absolute',
         top: 120,
         width: '80%',
+        zIndex: 20,
         height: 80,
         justifyContent: 'center',
         alignSelf: 'center',
@@ -284,11 +300,13 @@ const styles = StyleSheet.create({
         width: '95%',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        zIndex: 20,
     },
     button: {
         flex: 1,
         alignSelf: 'flex-end',
         alignItems: 'center',
+        zIndex: 20,
     },
     iconHeaderImage: {
         width: 42,

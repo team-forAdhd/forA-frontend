@@ -74,12 +74,14 @@ export default function TodayPostOptions({
     }
     return (
         <>
-            <TouchableOpacity onPress={switchOptionBottomSheet}>
-                <Image
-                    source={require('@/public/assets/more.png')}
-                    style={{ width: 24, height: 26 }}
-                />
-            </TouchableOpacity>
+            {postId === -1 ? null : (
+                <TouchableOpacity onPress={switchOptionBottomSheet}>
+                    <Image
+                        source={require('@/public/assets/more.png')}
+                        style={{ width: 24, height: 26 }}
+                    />
+                </TouchableOpacity>
+            )}
             <BottomSheet
                 visible={optionBottomSheet}
                 onClose={switchOptionBottomSheet}

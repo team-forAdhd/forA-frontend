@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 //자주 반복되는 색 객체로 빼서 사용
 const color = {
@@ -10,18 +10,26 @@ const color = {
     faintBlack: '#555555',
     backgroundGray: '#EDEDEA',
     faintGray: '#EEEEEE',
-}
+};
 
 export const styles = StyleSheet.create({
+    overLay: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     container: {
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        width: 382,
+        width: 350,
         height: 'auto',
         borderRadius: 12,
-        padding: 23,
+        padding: 25,
         flex: 1,
     },
     flexContainer: {
@@ -57,14 +65,14 @@ export const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-})
+});
 
 // 공통 스타일 정의
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 // 공통 스타일을 확장하여 개별 스타일 정의
 export const text = {
@@ -92,5 +100,5 @@ export const text = {
         marginBottom: 2,
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

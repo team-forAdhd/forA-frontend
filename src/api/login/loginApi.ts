@@ -72,18 +72,26 @@ apiClient.interceptors.response.use(
     },
 );
 
+const loginInstance = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 3500,
+});
 // 로그인 함수
 export const login = async (email: string, password: string) => {
     try {
-        const response = await apiClient.post('/auth/login', {
+        const response = await loginInstance.post('/auth/login', {
             username: email,
             password: password,
         });
         const { accessToken, refreshToken } = response.data;
         return { accessToken, refreshToken };
     } catch (error) {
-        console.error('Error logging in:', error);
-        throw error;
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401) {
+                throw new Error('아이디와 비밀번호가 일치하지 않습니다.');
+            } else throw new Error('서버와의 오류가 발생했습니다.');
+        }
+        throw new Error('서버와의 오류가 발생했습니다.');
     }
 };
 

@@ -18,16 +18,17 @@ import { formatDate } from '@/common/formatDate';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
 import TodayPostComment from '../components/TodayPostComment';
 import { ScrollView } from 'react-native-gesture-handler';
-import { LikedIcon, ScrapIcon, ShareIcon } from '@/public/assets/SvgComponents';
-import * as Clipboard from 'expo-clipboard';
+import {
+    ClikedLikedIcon,
+    LikedIcon,
+    ScrapIcon,
+} from '@/public/assets/SvgComponents';
 import { useDeletePostMutation } from '@/domains/TodayPostDetail/api/deletePost.api';
-import { API_URL } from '@env';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { imagePathMerge } from '@/utils/imagePathMerge';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 import { useTodayPostDetail } from '@/domains/TodayPostDetail/api/getTodayPostDetail.api';
 import CommentInput from '@/domains/TodayPostDetail/components/CommentInput';
-import { useAuthStore } from '@/store/authStore';
 import { usePostLikeMutation } from '@/domains/TodayPostDetail/api/todayPostLike.api';
 import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
 import { useTodayPostScrapMutation } from '@/domains/TodayPostDetail/api/todayPostScrap.api';
@@ -37,14 +38,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/common/ui/header';
 import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
 
-const reportList = [
-    '특정인에 대한 욕설 및 비하',
-    '잘못된 정보',
-    '개인정보 유출',
-    '상업적 광고 및 판매글',
-    '타인에게 혐오감을 주는 게시글',
-];
-
 export default function TodayPostDetail({
     route,
     navigation,
@@ -52,52 +45,36 @@ export default function TodayPostDetail({
     const { t } = useTranslation('board');
     const { postId } = route.params;
 
-    const userId = useAuthStore((state) => state.email);
     const postNavigation =
         useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
 
     const handleEdit = async () => {
         postNavigation.navigate('EditPost', { postId });
     };
-    const { data: postDetail, isPending, isError } = useTodayPostDetail(postId);
-
+    const {
+        data: postDetail,
+        isPending,
+        isError,
+        error,
+    } = useTodayPostDetail(postId);
     const [showSharedAlert, setShowSharedAlert] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
-    const [showDeleteDoneAlert, setShowDeleteDoneAlert] = useState(false);
 
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
-    const rangeList = ['차단하기', '신고하기', '공유하기'];
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [replyCommentId, setReplyCommentId] = useState();
-
-    const isAuthor = postDetail?.userId === userId;
 
     const { mutate: postLike } = usePostLikeMutation(postDetail as Post);
     const { mutate: postScrap } = useTodayPostScrapMutation(postId);
     const { mutate: deletePost } = useDeletePostMutation({ navigation });
 
-    const handleReport = () => {
-        setIsModalVisible(false);
-        console.log('게시글 신고 완료');
-    };
-
-    const [range, setRange] = useState<string>(rangeList[0]);
-
     const handleSendReply = async (commentId: any) => {
         setReplyCommentId(commentId);
-    };
-
-    const handleShare = () => {
-        const postLink = `${API_URL}posts/${postId}`; // postId에 따라 실제 주소 생성
-        Clipboard.setString(postLink);
-        setShowSharedAlert(true);
     };
 
     const onDelete = () => {
         handleDelete();
     };
-    console.log(postDetail);
+
     const handleDelete = async () => {
         Alert.alert('게시글 삭제', '게시글을 삭제하시겠습니까?', [
             { text: '아니오', style: 'cancel' },
@@ -105,9 +82,15 @@ export default function TodayPostDetail({
         ]);
     };
 
-    const handleNothing = () => {
-        setShowAlert(false);
-    };
+    const commentLength = postDetail?.comments.reduce(
+        (acc: number, cur: any) => {
+            if (cur.children.length) {
+                return acc + cur.children.length + 1;
+            }
+            return acc + 1;
+        },
+        0,
+    );
 
     if (isPending) return <LoadingScreen />;
     if (!postDetail || isError)
@@ -130,7 +113,7 @@ export default function TodayPostDetail({
                 navigation={navigation}
             >
                 <View style={styles.postOptionsContainer}>
-                    {true && (
+                    {postDetail.isAuthor && (
                         <View style={styles.isAuthorButtonBox}>
                             <TouchableOpacity onPress={handleEdit}>
                                 <FontAwesome name="pencil" size={24} />
@@ -185,18 +168,19 @@ export default function TodayPostDetail({
                                     onPress={() => postLike()}
                                 >
                                     <View style={styles.marginBox}>
-                                        {/* {liked ? (
+                                        {postDetail.isLiked ? (
                                             <ClikedLikedIcon />
-                                        ) : ( */}
-                                        <LikedIcon />
-                                        {/* )} */}
+                                        ) : (
+                                            <LikedIcon />
+                                        )}
                                         <Text
                                             style={[
                                                 text.countText,
-                                                // liked && { color: '#52A55D' },
+                                                postDetail.isLiked && {
+                                                    color: '#52A55D',
+                                                },
                                             ]}
                                         >
-                                            {/* {likeCount} */}
                                             {postDetail.likeCount}
                                         </Text>
                                     </View>
@@ -207,13 +191,15 @@ export default function TodayPostDetail({
                                     onPress={() => postScrap()}
                                 >
                                     <View style={styles.marginBox}>
-                                        <ScrapIcon />
+                                        <ScrapIcon
+                                            fill={postDetail.isScrapped}
+                                        />
                                         <Text
                                             style={[
                                                 text.countText,
-                                                // scrapped === 1 && {
-                                                //     color: '#52A55D',
-                                                // },
+                                                postDetail.isScrapped && {
+                                                    color: '#52A55D',
+                                                },
                                             ]}
                                         >
                                             {postDetail.scrapCount}
@@ -221,12 +207,12 @@ export default function TodayPostDetail({
                                     </View>
                                 </TouchableOpacity>
                                 {/* 공유 버튼 */}
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
                                     style={styles.actionButton2}
                                     onPress={handleShare}
                                 >
                                     <ShareIcon />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         )}
                     </View>
@@ -280,7 +266,6 @@ export default function TodayPostDetail({
                         <TodayPostComment
                             key={comment.commentId}
                             comment={comment}
-                            postId={postDetail.id}
                             onReply={handleSendReply}
                         />
                     ))}
