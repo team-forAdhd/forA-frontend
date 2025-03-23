@@ -1,6 +1,6 @@
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { apiClient } from '../login/loginApi'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiClient } from '../login/loginApi';
 
 export const getMyComment = async (
     sortOption: 'NEWEST_FIRST' | 'OLDEST_FIRST',
@@ -8,10 +8,9 @@ export const getMyComment = async (
     try {
         const response = await apiClient.get(
             `/comments/my-comments?sortOption=${sortOption}`,
-        )
-        return response.data.postList
+        );
+        return response.data;
     } catch (error) {
-        console.error('Error fetching comments:', error)
-        throw error
+        throw error;
     }
-}
+};
