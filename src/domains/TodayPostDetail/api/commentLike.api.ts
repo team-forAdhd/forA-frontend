@@ -1,9 +1,12 @@
 import { apiClient } from '@/api/login/loginApi';
+import { CommentResponse } from '@/domains/TodayPostDetail/api/comment.api';
+import { Comment, Post } from '@/domains/TodayPostDetail/types/today.types';
 import {
-    Comment,
-    Post,
-} from '@/domains/TodayPostDetail/types/todayPostDetail.types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+    InfiniteData,
+    useMutation,
+    useQueryClient,
+} from '@tanstack/react-query';
+import { propagateMaybeChanged } from 'mobx/dist/internal';
 import { Alert } from 'react-native';
 
 export const todayCommentLike = async (comment: Comment) => {
@@ -17,19 +20,19 @@ export function useCommentLikeMutation() {
     return useMutation({
         mutationFn: todayCommentLike,
         onMutate: async (comment) => {
-            console.log('qwrqwrqwr');
             await queryClient.cancelQueries({
-                queryKey: ['todayPostDetail', comment.postId],
+                queryKey: ['todayComment', comment.postId],
             });
-            const previousPost = queryClient.getQueryData<Post>([
-                'todayPostDetail',
-                comment.postId,
-            ]);
+            const previousPost = queryClient.getQueryData<
+                InfiniteData<CommentResponse, number>
+            >(['todayComment', comment.postId]);
+            console.log(previousPost);
             if (previousPost) {
-                queryClient.setQueryData(['todayPostDetail', comment.postId], {
+                queryClient.setQueryData(['todayComment', comment.postId], {
                     ...previousPost,
-                    comments: [
-                        ...previousPost.comments.map((c) => {
+                    pages: previousPost.pages.map((page) => ({
+                        ...page,
+                        commentList: page.commentList.map((c) => {
                             if (c.id === comment.id) {
                                 return {
                                     ...c,
@@ -57,7 +60,7 @@ export function useCommentLikeMutation() {
                             }
                             return c;
                         }),
-                    ],
+                    })),
                 });
             }
             return { previousPost };
@@ -67,7 +70,6 @@ export function useCommentLikeMutation() {
                 '좋아요 도중 오류가 발생했습니다.',
                 '잠시 후 다시 시도해주세요',
             );
-            console.log(err);
             if (context?.previousPost) {
                 queryClient.setQueryData(
                     ['todayPostDetail', comment.postId],
