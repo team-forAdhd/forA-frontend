@@ -1,7 +1,6 @@
 import {
     InfiniteData,
     useInfiniteQuery,
-    UseInfiniteQueryOptions,
     UseInfiniteQueryResult,
 } from '@tanstack/react-query';
 import { apiClient } from '../../../api/login/loginApi';
