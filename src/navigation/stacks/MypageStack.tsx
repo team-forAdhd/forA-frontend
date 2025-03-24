@@ -5,7 +5,7 @@ import MyPost from '@/components/myPage/myPost';
 import { createStackNavigator } from '@react-navigation/stack';
 import AdminReport from '@/components/myPage/adminReport';
 
-type MypageStackParams = {
+export type MypageStackParams = {
     MyPage: undefined;
     AccountSettings: undefined;
     ChangeNickname: undefined;
@@ -13,7 +13,7 @@ type MypageStackParams = {
     MyComments: { postType: 'myComments' };
     MyReviews: { postType: 'myReviews' };
     SavedPosts: { postType: 'savedPosts' };
-    SavedPharmacies: { postType: 'savedPharmacies'};
+    SavedPharmacies: { postType: 'savedPharmacies' };
     AdminReport: undefined;
 };
 const Mypage = createStackNavigator<MypageStackParams>();
@@ -53,10 +53,7 @@ export default function MypageStack() {
                 component={MyPost}
                 initialParams={{ postType: 'savedPharmacies' }}
             />
-            <Mypage.Screen 
-                name="AdminReport" 
-                component={AdminReport} 
-            />
+            <Mypage.Screen name="AdminReport" component={AdminReport} />
         </Mypage.Navigator>
     );
 }
