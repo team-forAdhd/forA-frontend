@@ -13,66 +13,37 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import CarouselComponent from '../../components/common/carousel/carousel';
-import PostListItem from './components/PostListItem';
 import FloatingButton from '../../components/home/FloatingButton';
-import {
-    getMainCategoryApi,
-    getMainRealtimeApi,
-    Post,
-} from '@/api/home/getPostsApi';
 import HomeModal from './components/homeModal';
 import { notification, support } from '../../components/home/homeModalData';
 import { useAuthStore } from '@/store/authStore';
 import AuthWrapper from '@/components/common/wrapper/authWrapper';
 import { StackScreenProps } from '@react-navigation/stack';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
+import { TodayPostList } from '@/domains/Today/components/PostListItem';
+import { PostCategory } from '@/domains/TodayPostDetail/types/today.types';
+
+const rankMap: Record<string, PostCategory | 'RANKING'> = {
+    실시간: 'RANKING',
+    '10대': 'TEENS',
+    '20대': 'TWENTIES',
+    '30대↑': 'THIRTIES_AND_ABOVE',
+    학부모: 'PARENTS',
+} as const;
 
 const rankingList = ['실시간', '10대', '20대', '30대↑', '학부모'];
+
 function Home({ navigation }: StackScreenProps<TodayStackParams, 'Home'>) {
     const a = useAuthStore();
     //랭킹 클릭 상태
-    const [rankingClick, setRankingClick] = useState<string>('실시간');
-    //새로고침 리랜더링
-    const [reRender, setReRender] = useState(false);
+    const [category, setCategory] = useState<PostCategory | 'RANKING'>(
+        'RANKING',
+    );
+
     //랭킹 리스트 띄울 이름 키 값
     //공지사항이나 후원 모달을 띄울 state
     const [modalTitle, setModalTitle] = useState<string>('');
     const { t } = useTranslation('home');
-
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [visiblePostsCount, setVisiblePostsCount] = useState<number>(5);
-
-    useEffect(() => {
-        const fetchPosts = async () => {
-            let fetchedPosts: Post[] = [];
-            try {
-                if (rankingClick === '실시간') {
-                    fetchedPosts = await getMainRealtimeApi();
-                } else {
-                    const category =
-                        rankingClick === '10대'
-                            ? 'TEENS'
-                            : rankingClick === '20대'
-                              ? 'TWENTIES'
-                              : rankingClick === '30대↑'
-                                ? 'THIRTIES_AND_ABOVE'
-                                : rankingClick === '학부모'
-                                  ? 'PARENTS'
-                                  : '';
-                    fetchedPosts = await getMainCategoryApi(category);
-                }
-                setPosts(fetchedPosts);
-            } catch (error) {
-                console.error('Error fetching posts:', error);
-                setPosts([]); // 에러 발생 시 빈 배열로 설정
-            }
-        };
-        fetchPosts();
-    }, [rankingClick, reRender]);
-
-    const handleLoadMore = () => {
-        setVisiblePostsCount((prevCount) => prevCount + 5);
-    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -114,46 +85,45 @@ function Home({ navigation }: StackScreenProps<TodayStackParams, 'Home'>) {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                {/* 캐러셀 */}
-                <View style={styles.carouselContainer}>
-                    <CarouselComponent setModalTitle={setModalTitle} />
-                </View>
-                {/* 랭킹 리스트 */}
-                <View style={styles.rankingListContainer}>
-                    {rankingList.map((rankingName, index) => {
-                        return (
-                            <TouchableOpacity
-                                key={index}
+            {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}> */}
+            {/* 캐러셀 */}
+            <View style={styles.carouselContainer}>
+                <CarouselComponent setModalTitle={setModalTitle} />
+            </View>
+            {/* 랭킹 리스트 */}
+            <View style={styles.rankingListContainer}>
+                {rankingList.map((rankingName, index) => {
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            style={
+                                category === rankMap[rankingName]
+                                    ? styles.clickContainer
+                                    : styles.baseContainer
+                            }
+                            onPress={() => {
+                                setCategory(rankMap[rankingName]);
+                                console.log(rankingName);
+                            }}
+                        >
+                            <Text
                                 style={
-                                    rankingClick === rankingName
-                                        ? styles.clickContainer
-                                        : styles.baseContainer
+                                    category === rankMap[rankingName]
+                                        ? text.clickText
+                                        : text.baseText
                                 }
-                                onPress={() => {
-                                    setRankingClick(rankingName);
-                                    console.log(rankingName);
-                                }}
                             >
-                                <Text
-                                    style={
-                                        rankingClick === rankingName
-                                            ? text.clickText
-                                            : text.baseText
-                                    }
-                                >
-                                    {rankingName}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </View>
-                {/* 랭킹 */}
+                                {rankingName}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+            {/* 랭킹
                 <View style={styles.ranking}>
                     <Text style={text.rankingText}>{t('ranking')}</Text>
                     <TouchableOpacity
                         onPress={() => {
-                            console.log('새로고침하기');
                             setReRender(!reRender);
                         }}
                     >
@@ -162,41 +132,10 @@ function Home({ navigation }: StackScreenProps<TodayStackParams, 'Home'>) {
                             source={require('@/public/assets/refresh.png')}
                         />
                     </TouchableOpacity>
-                </View>
-
-                {/* 게시글 목록 */}
-                <ScrollView style={styles.postListContainer}>
-                    {rankingClick === '실시간' && (
-                        <PostListItem
-                            key={-1}
-                            post={writeNotification}
-                            index={-1}
-                            navigation={navigation}
-                        />
-                    )}
-                    {posts.slice(0, visiblePostsCount).map((post, index) => (
-                        <PostListItem
-                            key={post.id}
-                            post={post}
-                            index={index}
-                            navigation={navigation}
-                        />
-                    ))}
-                    {/* 더보기 버튼 */}
-                    <View style={styles.loadButtonConatiner}>
-                        {visiblePostsCount < posts.length && (
-                            <TouchableOpacity
-                                style={styles.loadMoreButton}
-                                onPress={handleLoadMore}
-                            >
-                                <Text style={text.loadMoreButton}>
-                                    {t('more-button')}
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                </ScrollView>
-            </ScrollView>
+                </View> */}
+            {/* 게시글 목록 */}
+            <TodayPostList category={category} navigation={navigation} />
+            {/* </ScrollView> */}
 
             {/* FAB */}
             <FloatingButton
