@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import { apiClient } from '@/api/login/loginApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
+import { Post } from '@/domains/TodayPostDetail/types/today.types';
 import { Alert } from 'react-native';
 
 export const getScrapCount = async (postId: number) => {
