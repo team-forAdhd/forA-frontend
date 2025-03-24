@@ -42,7 +42,7 @@ export default function Header<T extends ParamListBase = ParamListBase>({
 }: {
     backIconType: keyof typeof leftIconsType;
     headerText: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     navigation: StackNavigationProp<T>;
 }) {
     const handleBackButton = () => {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 52,
         width: '100%',
-        height: 36,
+        height: 50,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
