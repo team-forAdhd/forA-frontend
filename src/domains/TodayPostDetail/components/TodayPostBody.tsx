@@ -1,165 +1,148 @@
+import { formatDate } from '@/common/formatDate';
+import TodayPostComment from '@/domains/TodayPostDetail/components/TodayPostComment';
+import { PostDetail } from '@/domains/TodayPostDetail/types/today.types';
 import {
-    View,
-    TouchableOpacity,
-    Modal,
-    TouchableWithoutFeedback,
-    StyleSheet,
-    StyleProp,
-    TextStyle,
-    SafeAreaView,
-    Alert,
-    FlatList,
-} from 'react-native';
+    ClikedLikedIcon,
+    LikedIcon,
+    ScrapIcon,
+} from '@/public/assets/SvgComponents';
+import { imagePathMerge } from '@/utils/imagePathMerge';
+
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import SimpleModal from '@/components/common/simpleModal/SimpleModal';
+import {
+    Image,
+    StyleProp,
+    StyleSheet,
+    Text,
+    TextStyle,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
-import { useDeletePostMutation } from '@/domains/TodayPostDetail/api/deletePost.api';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import { TodayStackParams } from '@/navigation/stacks/TodayStack';
-import { useTodayPostDetail } from '@/domains/TodayPostDetail/api/getTodayPostDetail.api';
-import CommentInput from '@/domains/TodayPostDetail/components/CommentInput';
-import { usePostLikeMutation } from '@/domains/TodayPostDetail/api/todayPostLike.api';
-import { Post } from '@/domains/TodayPostDetail/types/today.types';
-import { useTodayPostScrapMutation } from '@/domains/TodayPostDetail/api/todayPostScrap.api';
-import { LoadingScreen } from '@/components/common/Loading';
-import { NotFound } from '@/components/common/NotFound';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Header from '@/components/common/ui/header';
-import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
-import TodayPostBody from '@/domains/TodayPostDetail/components/TodayPostBody';
-
-export default function TodayPostDetail({
-    route,
-    navigation,
-}: StackScreenProps<TodayStackParams, 'PostDetail'>) {
+export default function TodayPostBody({
+    post,
+    postLike,
+    postScrap,
+    onReply,
+}: {
+    post: PostDetail;
+    postLike: () => void;
+    postScrap: () => void;
+    onReply: (commentId: number) => void;
+}) {
     const { t } = useTranslation('board');
-    const { postId } = route.params;
-
-    const postNavigation =
-        useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
-
-    const handleEdit = async () => {
-        postNavigation.navigate('EditPost', { postId });
-    };
-    const {
-        data: postDetail,
-        isPending,
-        isError,
-        error,
-    } = useTodayPostDetail(postId);
-    const [showSharedAlert, setShowSharedAlert] = useState(false);
-
-    const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
-    const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [replyCommentId, setReplyCommentId] = useState();
-
-    const { mutate: postLike } = usePostLikeMutation(postDetail as Post);
-    const { mutate: postScrap } = useTodayPostScrapMutation(postId);
-    const { mutate: deletePost } = useDeletePostMutation({ navigation });
-
-    const handleSelectReply = async (commentId: any) => {
-        setReplyCommentId(commentId);
-    };
-
-    const onDelete = () => {
-        handleDelete();
-    };
-
-    const handleDelete = async () => {
-        Alert.alert('게시글 삭제', '게시글을 삭제하시겠습니까?', [
-            { text: '아니오', style: 'cancel' },
-            { text: '확인', onPress: () => deletePost({ postId: postId }) },
-        ]);
-    };
-
-    const commentLength = postDetail?.comments
-        ? postDetail?.comments.reduce((acc: number, cur: any) => {
+    const commentLength = post?.comments
+        ? post?.comments.reduce((acc: number, cur: any) => {
               if (cur.children.length) {
                   return acc + cur.children.length + 1;
               }
               return acc + 1;
           }, 0)
         : 0;
-
-    if (isPending) return <LoadingScreen />;
-    if (!postDetail || isError)
-        return <NotFound informText="게시물을 찾을 수 없습니다." />;
-
+    if (!post) return null;
     return (
-        <SafeAreaView style={styles.container}>
-            {rangeBottomSheet ||
-                (modalVisible && (
-                    <View style={styles.bottomActivatedContainer}>
-                        <TouchableOpacity
-                            onPress={() => setRangeBottomSheet(false)}
-                            style={{ flex: 1 }}
+        <React.Fragment>
+            <View style={styles.bodyConatiner}>
+                {/* 작성자 정보 */}
+                <View style={styles.userInfoContainer}>
+                    {post.profileImage ? (
+                        <Image
+                            source={{
+                                uri: imagePathMerge(post.profileImage),
+                            }}
+                            style={styles.icon}
                         />
+                    ) : (
+                        <Image
+                            source={require('@/public/assets/defaultProfile.png')}
+                            style={styles.icon}
+                        />
+                    )}
+                    <View style={styles.userInfoTextContainer}>
+                        <Text style={text.userText}>
+                            {post.anonymous ? '익명' : post.nickname}
+                        </Text>
+                        {/* 작성 날짜 및 시간 */}
+                        <Text style={text.createdAt}>
+                            {formatDate(post.createdAt)}
+                        </Text>
                     </View>
-                ))}
-            <Header
-                backIconType="chevron"
-                headerText={postDetail.category}
-                navigation={navigation}
-            >
-                <View style={styles.postOptionsContainer}>
-                    {postDetail.isAuthor && (
-                        <View style={styles.isAuthorButtonBox}>
-                            <TouchableOpacity onPress={handleEdit}>
-                                <FontAwesome name="pencil" size={24} />
+                    {post.id !== -1 && (
+                        <View style={styles.actionButtonContainer}>
+                            {/* 좋아요 버튼 */}
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                onPress={() => postLike()}
+                            >
+                                <View style={styles.marginBox}>
+                                    {post.isLiked ? (
+                                        <ClikedLikedIcon />
+                                    ) : (
+                                        <LikedIcon />
+                                    )}
+                                    <Text
+                                        style={[
+                                            text.countText,
+                                            post.isLiked && {
+                                                color: '#52A55D',
+                                            },
+                                        ]}
+                                    >
+                                        {post.likeCount}
+                                    </Text>
+                                </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={onDelete}>
-                                <FontAwesome name="trash" size={24} />
+                            {/* 스크랩 버튼 */}
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                onPress={() => postScrap()}
+                            >
+                                <View style={styles.marginBox}>
+                                    <ScrapIcon fill={post.isScrapped} />
+                                    <Text
+                                        style={[
+                                            text.countText,
+                                            post.isScrapped && {
+                                                color: '#52A55D',
+                                            },
+                                        ]}
+                                    >
+                                        {post.scrapCount}
+                                    </Text>
+                                </View>
                             </TouchableOpacity>
                         </View>
                     )}
-                    <TodayPostOptions
-                        userId={postDetail.userId}
-                        navigation={navigation}
-                        postId={postId}
-                    />
                 </View>
-            </Header>
-            <FlatList
-                data={[postDetail]}
-                renderItem={({ item }) => (
-                    <TodayPostBody
-                        post={item}
-                        postLike={postLike}
-                        postScrap={postScrap}
-                        onReply={handleSelectReply}
-                    />
-                )}
-            />
-            {/* 댓글 작성 */}
-            <CommentInput
-                postId={postDetail.id}
-                replyCommentId={replyCommentId}
-            />
 
-            {/* 공유하기 완료 모달 */}
-            <Modal
-                visible={showSharedAlert}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowSharedAlert(false)}
-            >
-                <TouchableWithoutFeedback
-                    onPress={() => setShowSharedAlert(false)}
-                >
-                    <View style={styles.overlay}>
-                        <View style={styles.modalContainer}>
-                            <SimpleModal
-                                visible={false}
-                                baseText={t('post-copied')}
-                                highlightText={t('post-url')}
-                            />
+                {/* 본문 */}
+                <View style={styles.titleContainer}>
+                    <Text style={text.titleText}>{post.title}</Text>
+                    <View style={styles.titleUnderBar} />
+                </View>
+                <View style={styles.contentContainer}>
+                    {/* 첨부 사진이 있는 경우 나타나는 첨부사진 view */}
+                    {post.images && post.images.length > 0 && (
+                        <View style={styles.imageContainer}>
+                            {post.images.map((img, index) => (
+                                <Image
+                                    key={index}
+                                    source={{
+                                        uri: imagePathMerge(img),
+                                    }}
+                                    style={styles.imageBox}
+                                />
+                            ))}
                         </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
-        </SafeAreaView>
+                    )}
+                    <Text style={text.contentText}>{post.content}</Text>
+                </View>
+            </View>
+
+            {/* 댓글 */}
+            <TodayPostComment postId={post.id} onReply={onReply} />
+        </React.Fragment>
     );
 }
 
@@ -274,6 +257,8 @@ const styles = StyleSheet.create({
     },
     bodyConatiner: {
         marginTop: 40,
+        borderBottomWidth: 1,
+        borderBottomColor: '#EDEDEA',
     },
     userInfoContainer: {
         flexDirection: 'row',
@@ -360,10 +345,6 @@ const styles = StyleSheet.create({
     },
     commentContainer: {
         marginTop: 16,
-    },
-    commentCountConatiner: {
-        marginHorizontal: 16,
-        marginVertical: 16,
     },
     commentAnonymousContainer: {
         flexDirection: 'row',
