@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20,
     },
     buttonGroup: {
         flexDirection: 'row',
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         height: 143,
-        paddingVertical: 20,
+        padding: 20,
     },
     questionText: {
         color: '#232323',
