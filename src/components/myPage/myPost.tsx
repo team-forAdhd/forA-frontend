@@ -86,7 +86,7 @@ export default function MyPost({ route }: PostProps) {
     const categoryList: string[] = Array.from(new Set(categories)); // 게시판 리스트랑 비교해서 화면에 표시하기 위한 배열
 
     // 게시판 선택
-    const [boardClick, setBoardClick] = useState<string>(categoryList[0]);
+    const [boardClick, setBoardClick] = useState<string>('10대');
 
     // 정렬 기준 리스트
     const rangeList =
@@ -241,88 +241,80 @@ export default function MyPost({ route }: PostProps) {
                 </Text>
                 <View style={styles.IconImage} />
             </View>
-            {dataList && dataList.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
-                <Fragment>
-                    {/* 게시판 리스트 */}
-                    <View style={styles.topContainer}>
-                        {postType !== 'savedPharmacies' &&
-                            postType !== 'myComments' && (
-                                <View style={styles.boardListContainer}>
-                                    {tabList.map((board, index) => (
-                                        <View key={index}>
-                                            <TouchableOpacity
-                                                style={
-                                                    boardClick === board
-                                                        ? styles.clickContainer
-                                                        : styles.baseContainer
-                                                }
-                                                onPress={() => {
-                                                    const newCategory =
-                                                        categoryMap[board] ||
-                                                        'TEENS';
-                                                    setBoardClick(board);
-                                                    setCategory(newCategory);
-                                                    fetchData(
-                                                        sortOption,
-                                                        newCategory,
-                                                    );
-                                                }}
-                                            >
-                                                <Text
-                                                    style={
-                                                        boardClick === board
-                                                            ? text.clickText
-                                                            : text.baseText
-                                                    }
-                                                >
-                                                    {board}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))}
+            <Fragment>
+                {/* 게시판 리스트 */}
+                <View style={styles.topContainer}>
+                    {postType === 'myPosts' && (
+                        <View style={styles.boardListContainer}>
+                            {tabList.map((board, index) => (
+                                <View key={index}>
+                                    <TouchableOpacity
+                                        style={
+                                            boardClick === board
+                                                ? styles.clickContainer
+                                                : styles.baseContainer
+                                        }
+                                        onPress={() => {
+                                            const newCategory =
+                                                categoryMap[board] || 'TEENS';
+                                            setBoardClick(board);
+                                            setCategory(newCategory);
+                                            fetchData(sortOption, newCategory);
+                                        }}
+                                    >
+                                        <Text
+                                            style={
+                                                boardClick === board
+                                                    ? text.clickText
+                                                    : text.baseText
+                                            }
+                                        >
+                                            {board}
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
-                            )}
-                        {/* 정렬 */}
-                        <View
-                            style={{ flex: 1, alignItems: 'flex-end' }}
-                        ></View>
-                        <TouchableOpacity
-                            onPress={() => setRangeBottomSheet(true)}
-                            style={styles.rangeContainer}
-                        >
-                            <Text style={text.rangeText}>{range}</Text>
-                            <Image
-                                source={require('@/public/assets/under.png')}
-                                style={styles.underIcon}
-                            />
-                        </TouchableOpacity>
-                        {/* 정렬 옵션 바텀시트 */}
-                        {rangeBottomSheet && (
-                            <BottomSheet
-                                visible={rangeBottomSheet}
-                                onClose={() => setRangeBottomSheet(false)}
-                                options={rangeList} // 변경된 정렬 리스트 적용
-                                onSelect={(selectedRange) => {
-                                    setRange(selectedRange);
+                            ))}
+                        </View>
+                    )}
+                    {/* 정렬 */}
+                    <View style={{ flex: 1, alignItems: 'flex-end' }}></View>
+                    <TouchableOpacity
+                        onPress={() => setRangeBottomSheet(true)}
+                        style={styles.rangeContainer}
+                    >
+                        <Text style={text.rangeText}>{range}</Text>
+                        <Image
+                            source={require('@/public/assets/under.png')}
+                            style={styles.underIcon}
+                        />
+                    </TouchableOpacity>
+                </View>
+                {/* 정렬 옵션 바텀시트 */}
+                {rangeBottomSheet && (
+                    <BottomSheet
+                        visible={rangeBottomSheet}
+                        onClose={() => setRangeBottomSheet(false)}
+                        options={rangeList} // 변경된 정렬 리스트 적용
+                        onSelect={(selectedRange) => {
+                            setRange(selectedRange);
 
-                                    const sortOptionMap: Record<string, any> = {
-                                        최신순: 'NEWEST_FIRST',
-                                        '오래된 순': 'OLDEST_FIRST',
-                                        '조회수 순': 'MOST_VIEWED',
-                                        '좋아요 순': 'MOST_LIKED',
-                                    };
+                            const sortOptionMap: Record<string, any> = {
+                                최신순: 'NEWEST_FIRST',
+                                '오래된 순': 'OLDEST_FIRST',
+                                '조회수 순': 'MOST_VIEWED',
+                                '좋아요 순': 'MOST_LIKED',
+                            };
 
-                                    const newSortOption =
-                                        sortOptionMap[selectedRange] ||
-                                        'NEWEST_FIRST';
+                            const newSortOption =
+                                sortOptionMap[selectedRange] || 'NEWEST_FIRST';
 
-                                    setsortOption(newSortOption);
-                                    fetchData(newSortOption, category);
-                                }}
-                                selectedOption={range}
-                            />
-                        )}
-                    </View>
+                            setsortOption(newSortOption);
+                            fetchData(newSortOption, category);
+                        }}
+                        selectedOption={range}
+                    />
+                )}
+                {dataList && dataList.length > 0 ? ( // 게시물의 길이가 0 이상인 경우
                     <View style={styles.postsContainer}>
                         {postType === 'savedPharmacies' ? (
                             <PharmacyItem pharmacies={dataList || []} />
@@ -336,48 +328,48 @@ export default function MyPost({ route }: PostProps) {
                             ))
                         )}
                     </View>
-                    {rangeBottomSheet && (
-                        <BottomSheet
-                            visible={rangeBottomSheet}
-                            onClose={() => setRangeBottomSheet(false)}
-                            options={rangeList}
-                            onSelect={(selectedRange) => {
-                                setRange(selectedRange);
-                                const newSortOption =
-                                    selectedRange === '최신순'
-                                        ? 'NEWEST_FIRST'
-                                        : 'OLDEST_FIRST';
-
-                                setsortOption(newSortOption);
-                                //상태 업데이트 후 fetchData 실행
-                                setTimeout(() => {
-                                    fetchData(newSortOption, category);
-                                }, 0);
-                            }}
-                            selectedOption={range}
+                ) : (
+                    // 아무것도 없는 경우에 띄울 화면
+                    <View style={styles.emptyContainer}>
+                        <Image
+                            style={styles.emptyIcon}
+                            source={
+                                postTypeList.find(
+                                    (post) => post.postType === postType,
+                                )?.icon
+                            }
                         />
-                    )}
-                </Fragment>
-            ) : (
-                // 아무것도 없는 경우에 띄울 화면
-                <View style={styles.emptyContainer}>
-                    <Image
-                        style={styles.emptyIcon}
-                        source={
-                            postTypeList.find(
-                                (post) => post.postType === postType,
-                            )?.icon
-                        }
+                        <Text style={text.emptyText}>
+                            {
+                                postTypeList.find(
+                                    (post) => post.postType === postType,
+                                )?.content
+                            }
+                        </Text>
+                    </View>
+                )}
+                {rangeBottomSheet && (
+                    <BottomSheet
+                        visible={rangeBottomSheet}
+                        onClose={() => setRangeBottomSheet(false)}
+                        options={rangeList}
+                        onSelect={(selectedRange) => {
+                            setRange(selectedRange);
+                            const newSortOption =
+                                selectedRange === '최신순'
+                                    ? 'NEWEST_FIRST'
+                                    : 'OLDEST_FIRST';
+
+                            setsortOption(newSortOption);
+                            //상태 업데이트 후 fetchData 실행
+                            setTimeout(() => {
+                                fetchData(newSortOption, category);
+                            }, 0);
+                        }}
+                        selectedOption={range}
                     />
-                    <Text style={text.emptyText}>
-                        {
-                            postTypeList.find(
-                                (post) => post.postType === postType,
-                            )?.content
-                        }
-                    </Text>
-                </View>
-            )}
+                )}
+            </Fragment>
         </View>
     );
 }
