@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     },
     emptyContainer: {
         position: 'absolute',
-        top: 103,
+        top: 159,
         backgroundColor: '#EDEDEA',
         width: '100%',
         height: 800,
