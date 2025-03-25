@@ -82,6 +82,7 @@ export default function CommentInput({
                             : t('post-give-comment')
                     }
                     placeholderTextColor="#949494"
+                    value={commentContent}
                 />
                 <TouchableOpacity
                     style={styles.commentButton}

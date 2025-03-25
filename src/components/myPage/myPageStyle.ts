@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -130,7 +130,7 @@ export const styles = StyleSheet.create({
     bottomContainer: {
         top: -30,
         width: '92%',
-        height: 162,
+        height: 60,
         justifyContent: 'space-around',
         flexDirection: 'column',
         backgroundColor: 'white',
@@ -181,13 +181,13 @@ export const styles = StyleSheet.create({
         objectFit: 'contain',
         marginVertical: 30,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -228,14 +228,14 @@ export const text = {
         fontSize: 12,
         color: '#555555',
         letterSpacing: -0.6,
-        lineHeight: 16.8
+        lineHeight: 16.8,
     },
     bottomTextNormal: {
         ...baseText,
         fontSize: 12,
         color: '#555555',
         letterSpacing: -0.6,
-        lineHeight: 16.8
+        lineHeight: 16.8,
     },
     bottomInfoVector: {
         ...baseText,
@@ -245,5 +245,5 @@ export const text = {
         letterSpacing: -0.6,
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

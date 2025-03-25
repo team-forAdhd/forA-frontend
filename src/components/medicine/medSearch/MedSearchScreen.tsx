@@ -1,43 +1,48 @@
-import { useState, useContext, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
-import { medSearchStoreContext } from '@/state/medSearchState'
-import { styles, text } from './MedSearchStyle'
-import { TextInput } from 'react-native-gesture-handler'
-import { Observer } from 'mobx-react'
-import MedSearchResult from './MedSearchResult'
-import { getMedSearchResult } from '@/api/medicine/medSearchApi'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList } from '@/components/navigation'
+import { useState, useContext, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { Text, TouchableOpacity, View, Image, Pressable } from 'react-native';
+import { medSearchStoreContext } from '@/state/medSearchState';
+import { styles, text } from './MedSearchStyle';
+import { TextInput } from 'react-native-gesture-handler';
+import { Observer } from 'mobx-react';
+import { getMedSearchResult } from '@/api/medicine/medSearchApi';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '@/components/navigation';
 
 type MedSearchScreenNavigationProp = StackNavigationProp<
     RootStackParamList,
     'MedSearchResult'
->
+>;
 export default function MedSearchScreen() {
-    const navigation = useNavigation<MedSearchScreenNavigationProp>()
-    const navigationG = useNavigation()
+    const navigation = useNavigation<MedSearchScreenNavigationProp>();
+    const navigationG = useNavigation();
 
     //텍스트 인풋에서 받을 검색어
-    const [searchInputValue, setSearchInputValue] = useState<string>('')
+    const [searchInputValue, setSearchInputValue] = useState<string>('');
     //submit 상태에 따라 화면에 조건부 렌더링
-    const [submit, setSubmit] = useState<boolean>(false)
+    const [submit, setSubmit] = useState<boolean>(false);
     //검색 결과 리스트
-    const [searchResultList, setSearchResultList] = useState([])
+    const [searchResultList, setSearchResultList] = useState([]);
 
-    const store = useContext(medSearchStoreContext)
+    const store = useContext(medSearchStoreContext);
     //검색창 포커스 여부에 따라 placeholder 변화 주기 위해
-    const [isFocused, setIsFocused] = useState<boolean>(false)
+    const [isFocused, setIsFocused] = useState<boolean>(false);
 
-    const { t } = useTranslation('search')
+    const { t } = useTranslation('search');
 
     const handleSearch = async () => {
-        setSubmit(true)
-        store.setSearchTerm(searchInputValue)
-        const result = await getMedSearchResult(searchInputValue)
-        setSearchResultList(result)
-    }
+        setSubmit(true);
+        store.setSearchTerm(searchInputValue);
+        const result = await getMedSearchResult(searchInputValue);
+        setSearchResultList(result);
+    };
+
+    const handlePressRecentSearch = async (search: string) => {
+        setSubmit(true);
+        const result = await getMedSearchResult(search);
+        setSearchResultList(result);
+    };
 
     useEffect(() => {
         if (submit) {
@@ -46,14 +51,14 @@ export default function MedSearchScreen() {
                 navigation.navigate('MedSearchResult', {
                     resultList: searchResultList,
                     searchInputValue: searchInputValue,
-                })
+                });
             }
         }
-    }, [submit, searchResultList]) // submit 또는 searchResultList가 변경될 때마다 실행
+    }, [submit, searchResultList]); // submit 또는 searchResultList가 변경될 때마다 실행
 
     useEffect(() => {
-        submit && setSearchResultList([])
-    }, [submit]) //제출 여부 변경시에 api호출
+        submit && setSearchResultList([]);
+    }, [submit]); //제출 여부 변경시에 api호출
     // medsearchapi 호출
 
     return (
@@ -69,8 +74,8 @@ export default function MedSearchScreen() {
                         <TextInput
                             value={searchInputValue}
                             onChangeText={(text) => {
-                                setSubmit(false)
-                                setSearchInputValue(text)
+                                setSubmit(false);
+                                setSearchInputValue(text);
                             }}
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
@@ -82,7 +87,7 @@ export default function MedSearchScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            setSearchInputValue('')
+                            setSearchInputValue('');
                         }}
                     >
                         <Image
@@ -93,7 +98,7 @@ export default function MedSearchScreen() {
                 </View>
                 <TouchableOpacity
                     onPress={() => {
-                        navigationG.goBack()
+                        navigationG.goBack();
                     }}
                 >
                     <Text style={text.deleteText}>{t('cancel')}</Text>
@@ -122,7 +127,7 @@ export default function MedSearchScreen() {
                         </Text>
                         <TouchableOpacity
                             onPress={() => {
-                                store.deleteAll()
+                                store.deleteAll();
                             }}
                             style={styles.deleteAllContainer}
                         >
@@ -138,7 +143,12 @@ export default function MedSearchScreen() {
                                 <View>
                                     {store.recentSearchTerm.map(
                                         (search, index) => (
-                                            <View
+                                            <TouchableOpacity
+                                                onPress={() =>
+                                                    handlePressRecentSearch(
+                                                        search,
+                                                    )
+                                                }
                                                 key={index}
                                                 style={styles.recentSearchBox}
                                             >
@@ -149,7 +159,7 @@ export default function MedSearchScreen() {
                                                 >
                                                     {search}
                                                 </Text>
-                                            </View>
+                                            </TouchableOpacity>
                                         ),
                                     )}
                                 </View>
@@ -159,5 +169,5 @@ export default function MedSearchScreen() {
                 </View>
             )}
         </View>
-    )
+    );
 }

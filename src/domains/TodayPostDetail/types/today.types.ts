@@ -16,7 +16,7 @@ export type Comment = {
     profileImage: string;
 };
 
-export type Post = {
+export type PostDetail = {
     id: number;
     userId: string;
     title: string;
@@ -38,3 +38,31 @@ export type Post = {
     isAuthor?: boolean;
     isBlocked?: boolean;
 };
+
+export type Post = {
+    id: number;
+    userId: string;
+    title: string;
+    content: string;
+    anonymous: boolean;
+    images: string[] | null;
+    isLiked?: boolean;
+    isScrapped?: boolean;
+    likeCount: number;
+    commentCount: number;
+    scrapCount: number;
+    viewCount: number;
+    category: PostCategory;
+    nickname: string | null;
+    profileImage: string | null;
+    createdAt: number;
+    lastModifiedAt: number;
+    isAuthor?: boolean;
+};
+
+export type PostCategory =
+    | 'TEENS'
+    | 'TWENTIES'
+    | 'THIRTIES_AND_ABOVE'
+    | 'PARENTS'
+    | 'NOTICE';

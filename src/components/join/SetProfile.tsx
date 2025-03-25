@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigation } from '@react-navigation/native'
-import { ArrowIcon } from '@/public/assets/SvgComponents'
+import React, { useState, useContext, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { ArrowIcon } from '@/public/assets/SvgComponents';
 import {
     TouchableOpacity,
     Text,
@@ -9,37 +9,64 @@ import {
     TextInput,
     Image,
     Alert,
-} from 'react-native'
-import { styles, text } from './JoinStyle'
-import { CameraIcon } from '@/public/assets/SvgComponents'
-import * as ImagePicker from 'expo-image-picker'
-import { ProfileStoreContext } from '@/state/signupState'
+} from 'react-native';
+import { styles, text } from './JoinStyle';
+import { CameraIcon } from '@/public/assets/SvgComponents';
+import * as ImagePicker from 'expo-image-picker';
+import { ProfileStoreContext } from '@/state/signupState';
+import { checkNicknameDuplication } from '@/api/join/checkNicknameDuplication';
+import { set } from 'date-fns';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const nicknameReg = /^[가-힣a-zA-Z]{2,10}$/;
 export default function SetProfile() {
-    const { t } = useTranslation('login-join')
-    const navigation = useNavigation()
-
+    const { t } = useTranslation('login-join');
+    const navigation = useNavigation();
+    let debounceTimer: NodeJS.Timeout;
+    const [validityMessage, setValidityMessage] = useState<string>('');
+    const [validationChekcking, setValidationChecking] =
+        useState<boolean>(false);
+    const [nickname, setNickname] = useState('');
+    useEffect(() => {
+        setValidationChecking(true);
+        debounceTimer = setTimeout(async () => {
+            console.log('deee');
+            if (!nicknameReg.test(nickname)) {
+                setValidityMessage(
+                    '닉네임은 2~10자의 한글, 영문만 입력 가능합니다.',
+                );
+            } else {
+                const { isValidNickname } =
+                    await checkNicknameDuplication(nickname);
+                isValidNickname
+                    ? setValidityMessage('')
+                    : setValidityMessage('이미 사용중인 닉네임입니다.');
+            }
+            setValidationChecking(false);
+        }, 500);
+        return () => clearTimeout(debounceTimer);
+    }, [nickname]);
     const gotoBeforeScreen = () => {
-        navigation.navigate('SetPassword' as never)
-    }
+        navigation.navigate('SetPassword' as never);
+    };
     const gotoNextScreen = () => {
-        navigation.navigate('JoinLast' as never)
-    }
-    const [nickname, setNickname] = useState('')
-    const [inputFocused, setInputFocused] = useState(false)
-    const [selectedImage, setSelectedImage] = useState<string | null>(null)
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions()
+        navigation.navigate('JoinLast' as never);
+    };
+    const [inputFocused, setInputFocused] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [status, requestPermission] =
+        ImagePicker.useMediaLibraryPermissions();
 
-    const profileStore = useContext(ProfileStoreContext)
+    const profileStore = useContext(ProfileStoreContext);
+    const nickNameValidity = !validationChekcking && !validityMessage;
 
-    const [reRendering, setRerendering] = useState<boolean>(false)
+    const [reRendering, setRerendering] = useState<boolean>(false);
     const uploadImage = async () => {
         // 갤러리 접근 권한 - 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
         if (!status?.granted) {
-            const permission = await requestPermission()
+            const permission = await requestPermission();
             if (!permission.granted) {
-                return null
+                return null;
             }
         }
         // 이미지 업로드 기능
@@ -48,23 +75,23 @@ export default function SetProfile() {
             allowsEditing: false, //추가 편집이 가능하게 할 것인지- 불가
             quality: 0.2, //이미지 압축 여부 1이 가장 높은 화질의 이미지
             aspect: [1, 1], //이미지 비율 설정
-        })
+        });
         if (result.canceled) {
-            return null // 이미지 업로드 취소한 경우
+            return null; // 이미지 업로드 취소한 경우
         }
         if (
             result.assets[0].fileSize &&
             result.assets[0].fileSize >= MAX_FILE_SIZE
         ) {
-            Alert.alert('이미지가 너무 커 업로드할 수 없습니다.')
-            return
+            Alert.alert('이미지가 너무 커 업로드할 수 없습니다.');
+            return;
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        console.log(result.assets[0])
-        profileStore.setImageUrl(result.assets[0])
-        setSelectedImage(result.assets[0].uri)
-        setRerendering(!reRendering)
-    }
+        console.log(result.assets[0]);
+        profileStore.setImageUrl(result.assets[0]);
+        setSelectedImage(result.assets[0].uri);
+        setRerendering(!reRendering);
+    };
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.header} onPress={gotoBeforeScreen}>
@@ -112,9 +139,10 @@ export default function SetProfile() {
                         placeholder={t('signup-nickname-input')}
                         value={nickname}
                         onChangeText={(text) => {
-                            setNickname(text)
-                            profileStore.setNickName(text)
+                            setNickname(text);
+                            profileStore.setNickName(text);
                         }}
+                        maxLength={10}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
                     />
@@ -124,25 +152,31 @@ export default function SetProfile() {
                             inputFocused
                                 ? styles.inputUserBar
                                 : styles.inputBar,
+                            validityMessage
+                                ? { borderBottomColor: '#FE4E4E' }
+                                : styles.inputUserBar,
                         ]}
                     />
+                    <Text style={{ color: 'red' }}>{validityMessage}</Text>
                 </View>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={[
                         styles.nextButton,
-                        nickname
+                        nickNameValidity
                             ? { backgroundColor: '#52A55D' }
                             : { backgroundColor: '#EEE' },
                     ]}
-                    disabled={!nickname}
+                    disabled={!nickNameValidity}
                     onPress={gotoNextScreen}
                 >
                     <Text
                         style={[
                             text.buttonText,
-                            nickname ? { color: '#FFF' } : { color: '#232323' },
+                            nickNameValidity
+                                ? { color: '#FFF' }
+                                : { color: '#232323' },
                         ]}
                     >
                         {t('next-button')}
@@ -150,5 +184,5 @@ export default function SetProfile() {
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }

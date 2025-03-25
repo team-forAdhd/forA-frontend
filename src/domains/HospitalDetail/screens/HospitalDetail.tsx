@@ -266,10 +266,14 @@ export default function HospitalDetail({
                                 {/*의사가 있으면 의사 선생님 목록이 뜨도록 */}
                                 {hospital.doctorList.length ? (
                                     <DoctorList
-                                        doctorList={hospital.doctorList}
+                                        hospital={hospital}
+                                        navigation={navigation}
                                     />
                                 ) : (
-                                    <NoDoctorContent />
+                                    <NoDoctorContent
+                                        hospital={hospital}
+                                        navigation={navigation}
+                                    />
                                 )}
                             </View>
                         </React.Fragment>
@@ -305,15 +309,21 @@ export default function HospitalDetail({
                 {button[0] ? (
                     <>
                         <TouchableOpacity
+                            disabled={hospital.totalEvaluationReviewCount < 10}
                             onPress={() => {
                                 if (hospital) {
                                     navigation.navigate('CameraScreen', {
                                         hospitalInfo: hospital,
-                                        ribbonEvaluation: false,
+                                        ribbonEvaluation: true,
                                     });
                                 }
                             }}
-                            style={styles.forARibbonContainer}
+                            style={[
+                                styles.forARibbonContainer,
+                                hospital.totalEvaluationReviewCount < 10 && {
+                                    opacity: 0.4,
+                                },
+                            ]}
                         >
                             <Image
                                 source={require('@/public/assets/whiteRibbon.png')}

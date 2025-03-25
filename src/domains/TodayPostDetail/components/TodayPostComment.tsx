@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     View,
@@ -9,24 +9,26 @@ import {
     TextStyle,
     StyleSheet,
     Alert,
+    FlatList,
 } from 'react-native';
 import { formatDate } from '@/common/formatDate';
 import { LikedIcon, ClikedLikedIcon } from '@/public/assets/SvgComponents';
 import { imagePathMerge } from '@/utils/imagePathMerge';
-import { Comment } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
+import { Comment } from '@/domains/TodayPostDetail/types/today.types';
 import { useCommentLikeMutation } from '@/domains/TodayPostDetail/api/commentLike.api';
 import { useDeleteCommentMutation } from '@/domains/TodayPostDetail/api/deleteComment.api';
 import ConfirmModal from '@/components/common/modals/ConfirmModal';
 import LoadingModal from '@/components/common/modals/loadingModal';
+import { useTodayComments } from '@/domains/TodayPostDetail/api/comment.api';
 
 interface CommentProps {
-    comment: Comment;
+    postId: number;
     onReply: (commentId: number) => void;
 }
 
-const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
+const TodayPostComment: React.FC<CommentProps> = ({ postId, onReply }) => {
     const { t } = useTranslation('board');
-
+    const { data, error, fetchNextPage } = useTodayComments(postId);
     const { mutate: likeComment, isPending: isLikePending } =
         useCommentLikeMutation();
     const { mutate: deleteComment, isPending: isDeletePending } =
@@ -34,6 +36,59 @@ const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
     const [deleteCommentTarget, setDeleteCommentTarget] =
         useState<Comment | null>(null);
 
+    if (!data) return null;
+    if (error) return <Text>에러가 발생했습니다.</Text>;
+    const comments = data.pages.map((page) => page.commentList).flat();
+
+    return (
+        <>
+            <View style={styles.commentCountConatiner}>
+                <Text style={text.commentCountText}>
+                    {t('comment')} {comments.length}
+                </Text>
+            </View>
+            <FlatList
+                data={comments}
+                renderItem={({ item }) => (
+                    <PostCommentItem
+                        comment={item}
+                        deleteComment={deleteComment}
+                        likeComment={likeComment}
+                        onReply={onReply}
+                        setDeleteCommentTarget={setDeleteCommentTarget}
+                    />
+                )}
+                onEndReached={() => fetchNextPage()}
+            />
+            <ConfirmModal
+                title="댓글 삭제"
+                message="해당 댓글을 삭제하시겠습니까?"
+                visible={!!deleteCommentTarget}
+                onConfirm={() => {
+                    deleteComment(deleteCommentTarget as Comment);
+                    setDeleteCommentTarget(null);
+                }}
+                onCancel={() => setDeleteCommentTarget(null)}
+            />
+            <LoadingModal visible={isDeletePending || isLikePending} />
+        </>
+    );
+};
+
+function PostCommentItem({
+    comment,
+    deleteComment,
+    likeComment,
+    onReply,
+    setDeleteCommentTarget,
+}: {
+    comment: Comment;
+    likeComment: (comment: Comment) => void;
+    onReply: (commentNum: number) => void;
+    deleteComment: (commentNum: Comment) => void;
+    setDeleteCommentTarget: (comment: Comment) => void;
+}) {
+    const { t } = useTranslation('board');
     return (
         <View style={styles.commentContainer}>
             <View style={styles.commentContent}>
@@ -74,7 +129,9 @@ const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
                                 <Text
                                     style={[
                                         text.countText,
-                                        comment.isLiked && { color: '#52A55D' },
+                                        comment.isLiked && {
+                                            color: '#52A55D',
+                                        },
                                     ]}
                                 >
                                     {comment.likeCount}
@@ -146,7 +203,21 @@ const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
                                     style={[styles.actionButton]}
                                     onPress={() => {
                                         if (!reply.isCommentAuthor)
-                                            likeComment(reply);
+                                            Alert.alert(
+                                                '댓글 좋아요',
+                                                '해당 댓글에 좋아요를 누르시겠습니까?',
+                                                [
+                                                    {
+                                                        text: '아니오',
+                                                        style: 'cancel',
+                                                    },
+                                                    {
+                                                        text: '네',
+                                                        onPress: () =>
+                                                            likeComment(reply),
+                                                    },
+                                                ],
+                                            );
                                     }}
                                 >
                                     <View style={styles.marginBox}>
@@ -174,14 +245,14 @@ const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
                             <Text style={text.timestampText}>
                                 {formatDate(reply.createdAt)}
                             </Text>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => onReply(comment.id)}
                                 style={styles.deleteButton}
                             >
                                 <Text style={text.replyButtonText}>
                                     {t('comment-reply')}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             {reply.isCommentAuthor && (
                                 <TouchableOpacity
                                     onPress={() =>
@@ -198,19 +269,15 @@ const TodayPostComment: React.FC<CommentProps> = ({ comment, onReply }) => {
                     </View>
                 ))}
             </View>
-            <ConfirmModal
-                title="댓글 삭제"
-                message="해당 댓글을 삭제하시겠습니까?"
-                visible={!!deleteCommentTarget}
-                onConfirm={() => deleteComment(deleteCommentTarget as Comment)}
-                onCancel={() => setDeleteCommentTarget(null)}
-            />
-            <LoadingModal visible={isDeletePending || isLikePending} />
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
+    commentCountConatiner: {
+        marginHorizontal: 16,
+        marginVertical: 16,
+    },
     commentContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -331,6 +398,12 @@ const text = {
         fontWeight: '400',
         lineHeight: 19.6,
         letterSpacing: -0.7,
+    },
+    commentCountText: {
+        color: '#232323',
+        fontSize: 18,
+        fontWeight: '600',
+        lineHeight: 22.4,
     },
 } as {
     [key: string]: StyleProp<TextStyle>;

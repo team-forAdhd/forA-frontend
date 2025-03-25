@@ -1,26 +1,39 @@
 import { useTranslation } from 'react-i18next';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    ScrollView,
+    Linking,
+} from 'react-native';
 import { styles, text } from './myPageStyle';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileStoreContext } from '@/state/signupState';
 import { Observer } from 'mobx-react';
 import getUser from '@/api/myPage/getUser';
-import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove'; 
+import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove';
 import { getUserProfileApi } from '@/api/getUserProfileApi';
-import { useAuthStore } from '@/store/authStore'; 
+import { useAuthStore } from '@/store/authStore';
 
 interface UserProfile {
-    email: string; 
+    email: string;
     forAdhdType: 'FOR_MY_ADHD';
-    nickname: string; 
-    profileImage: string; 
+    nickname: string;
+    profileImage: string;
     userRole?: string;
 }
+const TERMS_OF_USE_URL =
+    'https://coal-swordfish-3f8.notion.site/13880c35a4168097a4e6cd5fc1b85d73';
+const PRIVACY_POLICY_URL =
+    'https://coal-swordfish-3f8.notion.site/13880c35a4168095a3dbeabea1e9ca88';
+const TERMS_OF_LOCATION_USE_URL =
+    'https://coal-swordfish-3f8.notion.site/13880c35a41680cdb461dd6f49aea3d8';
 
 export default function MyPage() {
-    const store = useContext(ProfileStoreContext); 
-    const updateUser = useAuthStore((state) => state.updateUser); 
+    const store = useContext(ProfileStoreContext);
+    const updateUser = useAuthStore((state) => state.updateUser);
 
     const { t } = useTranslation('MyPage');
 
@@ -47,8 +60,8 @@ export default function MyPage() {
         myScrabNavigation: ['SavedPosts', 'SavedHospitals', 'SavedPharmacies'],
         settings: [
             t('account-setting'),
-            t('push-noti'),
-            t('allow-locationInfo'),
+            // t('push-noti'),
+            // t('allow-locationInfo'),
         ],
     };
 
@@ -65,7 +78,7 @@ export default function MyPage() {
                     getUser(),
                 ]);
 
-                // 상태 업데이트 
+                // 상태 업데이트
                 const mergedData = { ...hospitalData, ...profileData };
                 updateUser(mergedData);
                 setUserInfo(mergedData);
@@ -173,7 +186,7 @@ export default function MyPage() {
                             ))}
                         </View>
                         {/*내가 저장한 내용 컨테이너  */}
-                        <View style={styles.scrabContainer}>
+                        {/* <View style={styles.scrabContainer}>
                             {user.myScrab.map((scrab, index) => (
                                 <TouchableOpacity
                                     onPress={() => {
@@ -200,7 +213,7 @@ export default function MyPage() {
                                     </View>
                                 </TouchableOpacity>
                             ))}
-                        </View>
+                        </View> */}
                         {/*내가 저장한 내용 컨테이너  */}
                         <View style={styles.bottomContainer}>
                             {user.settings.map((setting, index) => (
@@ -264,45 +277,59 @@ export default function MyPage() {
                         </View>
                         {/* 어드민 계정일 때만 신고 내역 확인 버튼 활성화 */}
                         {isAdmin && (
-                        <View style={styles.complaintContainer}>
-                        <TouchableOpacity
-                                onPress={() => {
-                                    navigation.navigate('AdminReport' as never);
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        justifyContent: 'space-between',
-                                        flexDirection: 'row',
+                            <View style={styles.complaintContainer}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        navigation.navigate(
+                                            'AdminReport' as never,
+                                        );
                                     }}
                                 >
-                                    <Text style={text.commonText}>
-                                        신고 내역 확인
-                                    </Text>
-                                    <Image
-                                        source={require('@/public/assets/next.png')}
-                                        style={styles.scrabImage}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                                    <View
+                                        style={{
+                                            justifyContent: 'space-between',
+                                            flexDirection: 'row',
+                                        }}
+                                    >
+                                        <Text style={text.commonText}>
+                                            신고 내역 확인
+                                        </Text>
+                                        <Image
+                                            source={require('@/public/assets/next.png')}
+                                            style={styles.scrabImage}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         )}
 
                         {/* 맨 밑 화면 (이용약관, 처리방침, 포에이로고, 사업자정보) */}
                         <View style={styles.bottomInfoContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    Linking.openURL(TERMS_OF_USE_URL)
+                                }
+                            >
                                 <Text style={text.bottomInfoText}>
                                     {t('terms-of-use')}
                                 </Text>
                             </TouchableOpacity>
                             <Text style={text.bottomInfoVector}>|</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    Linking.openURL(PRIVACY_POLICY_URL)
+                                }
+                            >
                                 <Text style={text.bottomInfoText}>
                                     {t('privacy-policy')}
                                 </Text>
                             </TouchableOpacity>
                             <Text style={text.bottomInfoVector}> | </Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    Linking.openURL(TERMS_OF_LOCATION_USE_URL)
+                                }
+                            >
                                 <Text style={text.bottomInfoText}>
                                     {t('locationInfo-termsOfUse')}
                                 </Text>
@@ -323,7 +350,7 @@ export default function MyPage() {
                             </Text>
                             <Text style={text.bottomTextBold}>
                                 주소: 서울시 용산구 청파로 47길 90 창업보육센터
-                                501호
+                                B201
                             </Text>
                             <Text style={text.bottomTextBold}>
                                 제휴문의/이용문의: foradhd2024@gmail.com 혹은
@@ -351,10 +378,6 @@ export default function MyPage() {
                             <Text style={text.bottomTextNormal}>
                                 자사의 사이트의 무단적인 수집을 엄격히 금합니다.
                             </Text>
-                            <Image
-                                source={require('@/public/assets/icon_group.png')}
-                                style={styles.bottomInfoIconImage}
-                            />
                         </View>
                     </View>
                 </ScrollView>

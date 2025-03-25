@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -142,7 +142,6 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 292,
         width: '100%',
-        height: 442,
         justifyContent: 'flex-start',
         flexDirection: 'column',
         backgroundColor: 'white',
@@ -155,6 +154,7 @@ export const styles = StyleSheet.create({
             height: 3,
         },
         shadowOpacity: 0.14,
+        gap: 10,
         shadowRadius: 6.27,
         flex: 1,
     },
@@ -187,9 +187,8 @@ export const styles = StyleSheet.create({
     },
     wrongPasswordContainer: {
         width: '100%',
-        height: 61,
-        borderBottomColor: '#FE4E4E',
-        borderBottomWidth: 1,
+        // borderBottomColor: '#FE4E4E',
+        // borderBottomWidth: 1,
         flexDirection: 'column',
         zIndex: 2,
     },
@@ -236,13 +235,13 @@ export const styles = StyleSheet.create({
         borderRightColor: '#949494',
         height: 23,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -350,5 +349,5 @@ export const text = {
         paddingLeft: 10,
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

@@ -1,5 +1,4 @@
 import GeneralModal from '@/components/common/modals/modal';
-import { Doctor } from '@/components/hospital/types';
 import useModal from '@/hooks/useModal';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +13,21 @@ import {
 } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { imagePathMerge } from '@/utils/imagePathMerge';
+import { StackScreenProps } from '@react-navigation/stack';
+import { HospitalStackParams } from '@/navigation/stacks/hospitalStack';
+import { HospitalInfo } from '@/components/hospital/types';
 
-export function DoctorList({ doctorList }: { doctorList: Array<Doctor> }) {
+export function DoctorList({
+    hospital,
+    navigation,
+}: {
+    hospital: HospitalInfo;
+    navigation: StackScreenProps<
+        HospitalStackParams,
+        'HospitalDetail'
+    >['navigation'];
+}) {
+    const { doctorList } = hospital;
     const { t } = useTranslation('hospitalDetail');
     const { displayModal, informText, modalVisible, switchModal } = useModal();
 
@@ -83,7 +95,12 @@ export function DoctorList({ doctorList }: { doctorList: Array<Doctor> }) {
                 </View>
             ))}
             <TouchableOpacity
-                onPress={() => {}}
+                onPress={() => {
+                    navigation.push('CameraScreen', {
+                        hospitalInfo: hospital,
+                        ribbonEvaluation: false,
+                    });
+                }}
                 style={styles.writeReviewContainer}
             >
                 <Text style={text.activeText}>{t('write-review')}</Text>
@@ -98,7 +115,16 @@ export function DoctorList({ doctorList }: { doctorList: Array<Doctor> }) {
     );
 }
 
-export function NoDoctorContent() {
+export function NoDoctorContent({
+    hospital,
+    navigation,
+}: {
+    hospital: HospitalInfo;
+    navigation: StackScreenProps<
+        HospitalStackParams,
+        'HospitalDetail'
+    >['navigation'];
+}) {
     const { t } = useTranslation('hospitalDetail');
     return (
         <View style={styles.notReadyContainer}>
@@ -109,7 +135,12 @@ export function NoDoctorContent() {
             <Text style={text.faintText}>{t('not-ready')}</Text>
             <TouchableOpacity
                 style={styles.writeReviewContainer}
-                onPress={() => {}}
+                onPress={() =>
+                    navigation.push('CameraScreen', {
+                        hospitalInfo: hospital,
+                        ribbonEvaluation: false,
+                    })
+                }
             >
                 <Text style={text.activeText}>{t('write-review')}</Text>
             </TouchableOpacity>

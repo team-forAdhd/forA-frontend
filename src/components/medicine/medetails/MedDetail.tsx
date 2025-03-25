@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import MedReview from './MedReview'; // 리뷰 목록 페이지
 import { RootStackParamList } from '@/components/navigation'; // 파라미터 안전하게 전달
 import { medBookmarkApi } from '@/api/medicine/medBookmarkApi';
-import { getSingleMedInfoApi } from '@/api/medicine/medListApi';
 
 const truncateItemName = (name: string) => {
     const bracketIndex = name.indexOf('('); // 괄호가 없다면 indexOf는 -1 반환
@@ -42,28 +41,11 @@ export default function MedDetail(med: any) {
     const postBookmark = async (medId: number) => {
         try {
             const response = await medBookmarkApi(medId);
-
-            if (response.status === 200) {
-                const newFavoriteStatus = !isBookmarked;
-                setIsBookmarked((prev) => !prev);
-                data.favorite = !isBookmarked;
-
-                setTimeout(async () => {
-                    //await fetchMedList()
-                    const updatedMed = await getSingleMedInfoApi(medId);
-
-                    setIsBookmarked(updatedMed.favorite);
-                    data.favorite = updatedMed.favorite;
-
-                    //if (updatedMed.favorite !== data.favorite) {
-                    if (updatedMed.favorite !== isBookmarked) {
-                    }
-                }, 2000);
-            }
-        } catch (error) {}
+            setIsBookmarked((prev) => !prev);
+        } catch (error) {
+            console.error('북마크 변경 실패:', error);
+        }
     };
-
-    useEffect(() => {}, [isBookmarked]);
 
     useEffect(() => {
         setIsBookmarked(data.favorite);
@@ -285,26 +267,18 @@ export default function MedDetail(med: any) {
             {/* 하단 버튼탭 */}
             <View style={styles.revivewButtonContainer}>
                 {/* data.favorite 서버에서 가져온 북마크 여부, isBookmarked 클라이언트에서 확인된 북마크 상태 */}
-                {/* {data.favorite || isBookmarked */}
-                {isBookmarked ? (
+
+                <TouchableOpacity onPress={() => postBookmark(data.medicineId)}>
                     <Image
                         // 북마크된 상태면 이미지 표시
-                        source={require('@/public/assets/clickScrabButton.png')}
+                        source={
+                            isBookmarked
+                                ? require('@/public/assets/clickScrabButton.png')
+                                : require('@/public/assets/scrabButton.png')
+                        }
                         style={styles.scrapIamge}
                     />
-                ) : (
-                    // 북마크 되지 않은 경우. 클릭 시 postBookmark(data.medicineId) 함수를 호출해 북마크에 추가
-                    <TouchableOpacity
-                        onPress={() => {
-                            postBookmark(data.medicineId);
-                        }}
-                    >
-                        <Image
-                            source={require('@/public/assets/scrabButton.png')}
-                            style={styles.scrapIamge}
-                        />
-                    </TouchableOpacity>
-                )}
+                </TouchableOpacity>
 
                 <TouchableOpacity
                     // 리뷰 작성화면(MedNewReview)으로 이동하면서 data 전달

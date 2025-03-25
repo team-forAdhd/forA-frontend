@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_URL } from '@env';
 import { apiClient } from '@/api/login/loginApi';
-import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
+import { Post } from '@/domains/TodayPostDetail/types/today.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 
