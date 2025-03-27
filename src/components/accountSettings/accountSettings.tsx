@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    Pressable,
+    ScrollView,
+    SafeAreaView,
+} from 'react-native';
 import { styles, text } from './accountSettingsStyle';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -59,36 +67,34 @@ export default function AccountSettings({
     const [logOutModal, setLogOutModal] = useState<boolean>(false);
 
     return (
-        <View style={styles.container}>
-            {/* 배경에 깔리는 회색 배경  */}
-            <View style={styles.grayContainer}></View>
-            {/*헤더 */}
+        <SafeAreaView style={{ backgroundColor: 'white' }}>
             <Header
                 backIconType="chevron"
                 navigation={navigation}
                 headerText="계정 설정"
             />
-            {/* 프로필 컨테이너 */}
-            <View style={styles.profileContainer}>
-                <View>
-                    <Text style={text.profileTitleText}>
-                        {t('profile-title')}
-                    </Text>
-                    {userProfileList.map((profileInfo) => (
-                        <View style={styles.profileItemContainer}>
-                            <Text style={text.profileLabelText}>
-                                {profileInfo.label}
-                            </Text>
-                            <Text
-                                style={
-                                    profileInfo.label === '닉네임'
-                                        ? text.profileNickNameText
-                                        : text.profileValueText
-                                }
-                            >
-                                {profileInfo.value}
-                            </Text>
-                            {/* {profileInfo.label === '닉네임' && (
+            <ScrollView contentContainerStyle={styles.container}>
+                {/* 프로필 컨테이너 */}
+                <View style={styles.profileContainer}>
+                    <View>
+                        <Text style={text.profileTitleText}>
+                            {t('profile-title')}
+                        </Text>
+                        {userProfileList.map((profileInfo) => (
+                            <View style={styles.profileItemContainer}>
+                                <Text style={text.profileLabelText}>
+                                    {profileInfo.label}
+                                </Text>
+                                <Text
+                                    style={
+                                        profileInfo.label === '닉네임'
+                                            ? text.profileNickNameText
+                                            : text.profileValueText
+                                    }
+                                >
+                                    {profileInfo.value}
+                                </Text>
+                                {/* {profileInfo.label === '닉네임' && (
                                 <TouchableOpacity
                                     onPress={() =>
                                         navigation.navigate(
@@ -102,52 +108,55 @@ export default function AccountSettings({
                                     />
                                 </TouchableOpacity>
                             )} */}
-                        </View>
-                    ))}
-                </View>
-                <Pressable
-                    onPress={() => {}}
-                    style={styles.ProfileImageContainer}
-                >
-                    <Image
-                        source={
-                            user.profileImage
-                                ? {
-                                      uri: imagePathMerge(user.profileImage),
-                                  }
-                                : require('@/public/assets/defaultProfile.png')
-                        }
-                        style={styles.ProfileImage}
-                    />
-                    {/* <View style={styles.blackZone}>
+                            </View>
+                        ))}
+                    </View>
+                    <Pressable
+                        onPress={() => {}}
+                        style={styles.ProfileImageContainer}
+                    >
+                        <Image
+                            source={
+                                user.profileImage
+                                    ? {
+                                          uri: imagePathMerge(
+                                              user.profileImage,
+                                          ),
+                                      }
+                                    : require('@/public/assets/defaultProfile.png')
+                            }
+                            style={styles.ProfileImage}
+                        />
+                        {/* <View style={styles.blackZone}>
                         <Image
                             source={require('@/public/assets/camera.png')}
                             style={styles.cameraIcon}
                         />
                     </View> */}
-                </Pressable>
-            </View>
-            {/*비밀 번호 변경 */}
-            <ChangePassword />
-            {/*로그아웃 회원탈퇴 */}
-            <View style={styles.bottomContainer}>
-                <TouchableOpacity
-                    onPress={() => {
-                        setLogOutModal(true);
-                    }}
-                    style={styles.logOutContainer}
-                >
-                    <Text style={text.logOutText}>로그아웃</Text>
-                </TouchableOpacity>
-                <WithdrawAccount />
-            </View>
-            {logOutModal && (
-                <ChoiceModal
-                    modalVisible={logOutModal}
-                    setModalVisible={setLogOutModal}
-                    question={t('logOut-question')}
-                />
-            )}
-        </View>
+                    </Pressable>
+                </View>
+                {/*비밀 번호 변경 */}
+                <ChangePassword />
+                {/*로그아웃 회원탈퇴 */}
+                <View style={styles.bottomContainer}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setLogOutModal(true);
+                        }}
+                        style={styles.logOutContainer}
+                    >
+                        <Text style={text.logOutText}>로그아웃</Text>
+                    </TouchableOpacity>
+                    <WithdrawAccount />
+                </View>
+                {logOutModal && (
+                    <ChoiceModal
+                        modalVisible={logOutModal}
+                        setModalVisible={setLogOutModal}
+                        question={t('logOut-question')}
+                    />
+                )}
+            </ScrollView>
+        </SafeAreaView>
     );
 }
