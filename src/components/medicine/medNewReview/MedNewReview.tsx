@@ -6,9 +6,10 @@ import {
     ScrollView,
     Image,
     Modal,
+    SafeAreaView,
 } from 'react-native';
 import { styles, text } from './MedNewReviewStyle';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Rating } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
@@ -17,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { sendMedReviewApi } from '@/api/medicine/medReviewApi';
 import MedSelectModal from './MedSelectModal/MedSelectModal';
 import { uploadImageApi } from '@/api/image/imageApi';
+import Header from '@/components/common/ui/header';
 
 interface MedNewReviewProps {
     medId: number;
@@ -27,7 +29,7 @@ const truncateItemName = (name: string) => {
     return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name;
 };
 
-export default function MedNewReview(med: any) {
+export default function MedNewReview({ navigation }) {
     //const data = med.route.params;
     const route = useRoute();
     const data = route.params;
@@ -37,7 +39,6 @@ export default function MedNewReview(med: any) {
     // prop으로 medId 받아와야 함
     const { t } = useTranslation('medicine');
 
-    const navigation = useNavigation();
     const scrollViewRef = useRef<ScrollView>(null);
     //const [data, setData] = useState<any>(null)
 
@@ -80,7 +81,7 @@ export default function MedNewReview(med: any) {
                 ),
             );
 
-            const mainMedicineId = data.medicineId;
+            const mainMedicineId = data?.medicineId;
             const coMedicationIds = isCoMed
                 ? selectedMed
                       .filter((med) => med.medicineId !== mainMedicineId)
@@ -198,24 +199,19 @@ export default function MedNewReview(med: any) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* 헤더 */}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                >
-                    <Image
-                        style={styles.gobackIcon}
-                        source={require('@/public/assets/cancel-black.png')}
-                    />
-                </TouchableOpacity>
-                <Text style={text.titleText}>{t('review-title')}</Text>
-                <View style={styles.gobackIcon} />
-            </View>
+            <Header
+                backIconType="chevron"
+                headerText={t('review-title')}
+                navigation={navigation}
+            />
 
-            <ScrollView ref={scrollViewRef} style={styles.scrollStyle}>
+            <ScrollView
+                ref={scrollViewRef}
+                style={styles.scrollStyle}
+                contentContainerStyle={{ paddingBottom: 200 }}
+            >
                 {/* 약 이름, 약 사진 */}
                 <View style={styles.contentBox1}>
                     <Text style={text.medTitleText}>
@@ -597,6 +593,6 @@ export default function MedNewReview(med: any) {
                     />
                 </View>
             </Modal>
-        </View>
+        </SafeAreaView>
     );
 }
