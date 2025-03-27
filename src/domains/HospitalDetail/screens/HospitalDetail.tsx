@@ -309,7 +309,6 @@ export default function HospitalDetail({
                 {button[0] ? (
                     <>
                         <TouchableOpacity
-                            disabled={hospital.totalEvaluationReviewCount < 10}
                             onPress={() => {
                                 if (hospital) {
                                     navigation.navigate('CameraScreen', {
@@ -318,12 +317,7 @@ export default function HospitalDetail({
                                     });
                                 }
                             }}
-                            style={[
-                                styles.forARibbonContainer,
-                                hospital.totalEvaluationReviewCount < 10 && {
-                                    opacity: 0.4,
-                                },
-                            ]}
+                            style={[styles.forARibbonContainer]}
                         >
                             <Image
                                 source={require('@/public/assets/whiteRibbon.png')}
