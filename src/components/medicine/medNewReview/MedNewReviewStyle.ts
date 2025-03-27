@@ -1,101 +1,86 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 //자주 반복되는 색 객체로 빼서 사용
 const color = {
-  primary: '#52A35D',
-  inactive: '#949494',
-  inactiveBottom: '#EFEFF0',
-  ribbon: '#FF5D5D',
-  normal: '#232323',
-  faintBlack: '#555555',
-  backgroundGray: '#EDEDEA',
-  faintGray: '#EEEEEE',
-}
+    primary: '#52A35D',
+    inactive: '#949494',
+    inactiveBottom: '#EFEFF0',
+    ribbon: '#FF5D5D',
+    normal: '#232323',
+    faintBlack: '#555555',
+    backgroundGray: '#EDEDEA',
+    faintGray: '#EEEEEE',
+};
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-      },
+        paddingTop: 60,
+    },
     scrollStyle: {
-      position: 'absolute',
-      top: 100,
-      height: 660,
-      paddingBottom: 300,
-      alignSelf: 'center',
-      flex: 1,
+        paddingTop: 50,
+        alignSelf: 'center',
+        flex: 1,
     },
     gobackIcon: {
         width: 28,
         height: 28,
         objectFit: 'contain',
     },
-      header: {
-        position: 'absolute',
-        top: 52,
-        width: '100%',
-        height: 36,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        zIndex: 2,
-      },
-      titleStyle: {
+
+    titleStyle: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-      },
-      contentBox1: {
+    },
+    contentBox1: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        top: 37,
         borderBottomColor: '#EEEEEE',
         borderBottomWidth: 1,
-      },
-      imageContainer: {
+    },
+    imageContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginBottom: 16,
-      },
-      pillImage: {
+    },
+    pillImage: {
         marginTop: 10,
         marginBottom: 25,
         width: 258,
         height: 143,
         borderRadius: 12,
-      },
-      contentBox2: {
+    },
+    contentBox2: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        top: 37,
         borderBottomColor: '#EEEEEE',
         borderBottomWidth: 1,
         marginVertical: 20,
-      },
-      rating: {
+    },
+    rating: {
         paddingVertical: 10,
-      },
-      buttonContainer: {
+    },
+    buttonContainer: {
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-       marginTop: 5,
-       marginBottom: 20,
-      },
-      contentBox3: {
+        marginTop: 5,
+        marginBottom: 20,
+    },
+    contentBox3: {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        top: 37,
         borderBottomColor: '#EEEEEE',
         borderBottomWidth: 1,
         marginVertical: 20,
-      },
-      searchBar: {
+    },
+    searchBar: {
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: '#52A55D',
@@ -106,15 +91,15 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginVertical: 20,
-        paddingLeft: 35, 
+        paddingLeft: 35,
     },
-      IconImage: {
+    IconImage: {
         position: 'absolute',
         width: 28,
         height: 28,
         left: 12,
     },
-    coMedClick:{
+    coMedClick: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 38,
@@ -128,12 +113,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        top: 37,
         borderBottomColor: '#EEEEEE',
         borderBottomWidth: 1,
         marginVertical: 20,
-      },
-      revivewButtonContainer:{
+    },
+    revivewButtonContainer: {
         flexDirection: 'row',
         position: 'absolute',
         width: '100%',
@@ -145,8 +129,8 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: -1 }, // 그림자 위치를 위쪽으로 설정
         shadowOpacity: 1, // 그림자 투명도 설정
         zIndex: 30,
-      },
-      cancelButton: {
+    },
+    cancelButton: {
         justifyContent: 'center',
         alignItems: 'center',
         top: 16,
@@ -155,7 +139,7 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: '#eeeeee',
     },
-      reviewButton: {
+    reviewButton: {
         justifyContent: 'center',
         alignItems: 'center',
         top: 16,
@@ -165,14 +149,14 @@ export const styles = StyleSheet.create({
         backgroundColor: '#52A55D',
     },
     reviewDisabledButton: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      top: 16,
-      width: 248,
-      height: 60,
-      borderRadius: 8,
-      backgroundColor: '#949494',
-  },
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 16,
+        width: 248,
+        height: 60,
+        borderRadius: 8,
+        backgroundColor: '#949494',
+    },
     inputContainer: {
         position: 'relative',
     },
@@ -190,95 +174,93 @@ export const styles = StyleSheet.create({
         borderColor: '#52A55D',
     },
     photoUploadContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 20,
-  },
-  photoPreview: {
-      width: 70,
-      height: 70,
-      borderRadius: 12,
-      backgroundColor: '#FFF',
-      marginRight: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowColor: 'rgba(0, 0, 0, 0.15)',
-      shadowOffset: {
-          width: 0,
-          height: 0,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 3,
-      elevation: 2,
-  },
-  deleteIcon: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
-      borderRadius: 10,
-      padding: 5,
-  },
-  contentBox5: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    top: 17,
-    backgroundColor: '#EDEDEA',
-    paddingBottom: 130,
-  },
-  optionButtonContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-   marginTop: 5,
-   marginBottom: 20,
-  },
-  clickedButton: {
-    borderColor: '#52A35D',
-    backgroundColor: '#F4F9D9',
-    borderWidth: 1,
-    width: '30%',
-    height: 55,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  generalButton: {
-    borderColor: '#949494',
-    borderWidth: 1,
-    width: '30%',
-    height: 55,
-    backgroundColor: "#fff",
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
-},
-closeModalButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: '#FFF',
-    padding: 10,
-    borderRadius: 20,
-},
-})
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    photoPreview: {
+        width: 70,
+        height: 70,
+        borderRadius: 12,
+        backgroundColor: '#FFF',
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: 'rgba(0, 0, 0, 0.15)',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    deleteIcon: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        backgroundColor: 'rgba(47, 24, 24, 0.5)',
+        borderRadius: 10,
+        padding: 5,
+    },
+    contentBox5: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        backgroundColor: 'white',
+    },
+    optionButtonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginTop: 5,
+        marginBottom: 20,
+    },
+    clickedButton: {
+        borderColor: '#52A35D',
+        backgroundColor: '#F4F9D9',
+        borderWidth: 1,
+        width: '30%',
+        height: 55,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    generalButton: {
+        borderColor: '#949494',
+        borderWidth: 1,
+        width: '30%',
+        height: 55,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+    },
+    closeModalButton: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        backgroundColor: '#FFF',
+        padding: 10,
+        borderRadius: 20,
+    },
+});
 
 export const text = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     titleText: {
-      color: color.normal,
-      fontSize: 18,
-      fontWeight: 'bold',
-      letterSpacing: -0.7,
-      lineHeight: 22.4,
-      textAlign: 'center',
+        color: color.normal,
+        fontSize: 18,
+        fontWeight: 'bold',
+        letterSpacing: -0.7,
+        lineHeight: 22.4,
+        textAlign: 'center',
     },
     medTitleText: {
         color: '#232323',
@@ -292,7 +274,7 @@ export const text = {
         fontWeight: '600',
         lineHeight: 22.4,
         marginTop: 38,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     rateNumText: {
         color: '#52A55D',
@@ -327,49 +309,48 @@ export const text = {
         fontSize: 14,
         fontWeight: '400',
         lineHeight: 30,
-        textAlign: 'right'
+        textAlign: 'right',
     },
-    cancelButtonText:{
+    cancelButtonText: {
         color: '#232323',
         fontSize: 18,
         fontWeight: '600',
-        lineHeight: 24
+        lineHeight: 24,
     },
-    submitButtonText:{
+    submitButtonText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: '600',
-        lineHeight: 24
+        lineHeight: 24,
     },
-    coMedText:{
-      color: '#52A55D',
-      fontSize: 18,
-      fontWeight: '500',
-      lineHeight: 26,
-      letterSpacing: -0.9,
-
-  },
-    optionText:{
-      color: '#555',
-      fontSize: 12,
-      fontWeight: '400',
-      lineHeight: 30,
-      marginBottom: 20,
-  },
-  activeButtonText:{
-    color: '#52A55D',
-    fontSize: 18,
-    fontWeight: '500',
-    lineHeight: 24,
-    letterSpacing: -0.9
-},
-inactiveButtonText:{
-    color: '#555',
-    fontSize: 18,
-    fontWeight: '500',
-    lineHeight: 24,
-    letterSpacing: -0.9
-},
+    coMedText: {
+        color: '#52A55D',
+        fontSize: 18,
+        fontWeight: '500',
+        lineHeight: 26,
+        letterSpacing: -0.9,
+    },
+    optionText: {
+        color: '#555',
+        fontSize: 12,
+        fontWeight: '400',
+        lineHeight: 30,
+        marginBottom: 20,
+    },
+    activeButtonText: {
+        color: '#52A55D',
+        fontSize: 18,
+        fontWeight: '500',
+        lineHeight: 24,
+        letterSpacing: -0.9,
+    },
+    inactiveButtonText: {
+        color: '#555',
+        fontSize: 18,
+        fontWeight: '500',
+        lineHeight: 24,
+        letterSpacing: -0.9,
+    },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};

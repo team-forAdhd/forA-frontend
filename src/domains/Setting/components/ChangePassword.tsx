@@ -161,8 +161,6 @@ export default function ChangePassword() {
 
 export const styles = StyleSheet.create({
     passwordChangeContainer: {
-        position: 'absolute',
-        top: 292,
         width: '100%',
         justifyContent: 'flex-start',
         flexDirection: 'column',

@@ -2,18 +2,11 @@ import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: 'white',
         justifyContent: 'center',
         flexDirection: 'column',
-    },
-    grayContainer: {
-        position: 'absolute',
-        top: 57,
-        backgroundColor: '#EDEDEA',
-        width: '100%',
-        height: '100%',
-        zIndex: 1,
+        paddingTop: 60,
+        gap: 20,
     },
     bottomActivatedContainer: {
         width: '100%',
@@ -39,15 +32,13 @@ export const styles = StyleSheet.create({
         zIndex: 3,
     },
     profileContainer: {
-        position: 'absolute',
         backgroundColor: 'white',
-        top: 87,
         width: '100%',
-        height: 182,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 16,
+        padding: 20,
+
         borderBottomLeftRadius: 16,
         borderBottomRightRadius: 16,
         shadowColor: '#000',
@@ -57,7 +48,6 @@ export const styles = StyleSheet.create({
         },
         shadowOpacity: 0.14,
         shadowRadius: 6.27,
-        zIndex: 3,
     },
     clickContainer: {
         width: 70,
@@ -223,8 +213,7 @@ export const styles = StyleSheet.create({
     },
     bottomContainer: {
         flexDirection: 'row',
-        position: 'absolute',
-        bottom: 50,
+        backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',

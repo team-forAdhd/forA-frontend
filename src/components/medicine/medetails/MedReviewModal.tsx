@@ -1,2 +1,0 @@
-// MedReviewSearchModal
-// Med

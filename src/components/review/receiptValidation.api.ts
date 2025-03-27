@@ -36,7 +36,6 @@ export const receiptValidationCheck = async (
         },
         config,
     );
-
     if (
         data.images[0].inferResult === 'FAILURE' ||
         data.images[0].inferResult === 'ERROR'
@@ -51,8 +50,7 @@ export const receiptValidationCheck = async (
             '이미지 확인이 제대로 되지 않았습니다. 다시 찍어주세요.',
         );
     }
-    let hospital = receiptData.result.storeInfo.name;
-
+    let hospital = receiptData.result.storeInfo.name.formatted.value;
     hospital = filterNameList
         .reduce((name, suffix) => name.replace(suffix, ''), hospital)
         .trim();
@@ -67,7 +65,8 @@ export const receiptValidationCheck = async (
             '영수증 검증에 실패했습니다. 다시 찍어주세요.',
         );
     }
-    const totalPrice = receiptData.result.totalPrice?.price?.formatted;
+
+    const totalPrice = receiptData.result.totalPrice.price.formatted.value;
     if (!totalPrice || isNaN(+totalPrice)) {
         throw new ValidationError('영수증에서 총 금액을 확인할 수 없습니다.');
     }

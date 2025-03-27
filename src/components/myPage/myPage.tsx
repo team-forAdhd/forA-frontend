@@ -46,17 +46,13 @@ export default function MyPage() {
             icon: require('@/public/assets/myComment.png'),
             navigator: 'MyComments',
         },
-        [t('my-review')]: {
-            icon: require('@/public/assets/myReview.png'),
-            navigator: 'MyPosts',
+        ['나의 약']: {
+            icon: require('@/public/assets/myMedicine.png'),
+            navigator: 'SavedPharmacies',
         },
     };
     const user = {
-        myScrab: [
-            t('my-scrabArticle'),
-            t('my-scrabHospital'),
-            t('my-scrabMed'),
-        ],
+        myScrab: [t('my-scrabArticle'), t('my-scrabHospital'), '나의 약'],
         myScrabNavigation: ['SavedPosts', 'SavedHospitals', 'SavedPharmacies'],
         settings: [
             t('account-setting'),
@@ -345,9 +341,7 @@ export default function MyPage() {
                             <Text style={text.bottomTextBold}>
                                 대표: 박세진
                             </Text>
-                            <Text style={text.bottomTextBold}>
-                                010-3370-8506
-                            </Text>
+
                             <Text style={text.bottomTextBold}>
                                 주소: 서울시 용산구 청파로 47길 90 창업보육센터
                                 B201
