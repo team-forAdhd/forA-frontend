@@ -49,7 +49,7 @@ export async function getTodayPostsByCategory({
     page: number;
 }): Promise<PostList> {
     const { data } = await apiClient.get<PostList>(
-        `/posts/category?category=${category}&page=${page}`,
+        `/posts/category?category=${category}&page=${page}&sortOption=NEWEST_FIRST`,
     );
     return data;
 }
