@@ -6,7 +6,7 @@ import { Alert } from 'react-native';
 type PostCommentRequest = {
     postId: number;
     content: string;
-    isAnonymous: boolean;
+    anonymous: boolean;
     parentCommentId?: number;
 };
 
