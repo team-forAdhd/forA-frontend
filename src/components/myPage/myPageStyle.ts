@@ -2,8 +2,9 @@ import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#EDEDEA',
         justifyContent: 'center',
         flexDirection: 'column',
     },
@@ -20,10 +21,8 @@ export const styles = StyleSheet.create({
         zIndex: 3,
     },
     scrollContainer: {
-        position: 'absolute',
-        top: 88,
-        height: 680,
         width: '100%',
+        height: '100%',
         backgroundColor: '#EDEDEA',
     },
     Flex: {
@@ -74,8 +73,8 @@ export const styles = StyleSheet.create({
         zIndex: 2,
     },
     ProfilePositionContainer: {
-        position: 'relative',
-        top: 32,
+        width: '100%',
+        paddingTop: 20,
     },
     ProfileImageContainer: {
         width: '100%',
@@ -141,7 +140,6 @@ export const styles = StyleSheet.create({
         zIndex: 2,
     },
     complaintContainer: {
-        top: -20,
         width: '92%',
         height: 44,
         justifyContent: 'space-around',

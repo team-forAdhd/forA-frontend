@@ -16,6 +16,7 @@ import getUser from '@/api/myPage/getUser';
 import updatePushNotificationApprovals from '@/api/myPage/putNotiApprove';
 import { getUserProfileApi } from '@/api/getUserProfileApi';
 import { useAuthStore } from '@/store/authStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface UserProfile {
     email: string;
@@ -115,14 +116,19 @@ export default function MyPage() {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={text.headerText}>{t('my-page')}</Text>
             </View>
 
             <View style={styles.scrollContainer}>
-                <ScrollView>
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingTop: 20,
+                        paddingBottom: 50,
+                    }}
+                >
                     {/* 프로필 컨테이너 */}
                     <View style={styles.ProfileContainer}>
                         <View style={styles.ProfilePositionContainer}>
@@ -376,6 +382,6 @@ export default function MyPage() {
                     </View>
                 </ScrollView>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
