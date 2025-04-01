@@ -34,7 +34,7 @@ export default function ChangePassword() {
     const [validPassword, setValidPassword] = useState([false, false, false]);
 
     const passwordRegex =
-        /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+        /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@^$!%*#?&])[A-Za-z\d@$^!%*#?&]{8,}$/;
 
     const handlePasswordChange = (value: string, index: number) => {
         const tempList = [...validPassword];
@@ -138,11 +138,10 @@ export default function ChangePassword() {
                             },
                         });
                     }}
-                    style={
-                        isFormValid
-                            ? styles.activateEditButton
-                            : styles.editButton
-                    }
+                    style={[
+                        styles.editButton,
+                        isFormValid && { backgroundColor: '#52A55D' },
+                    ]}
                 >
                     <Text
                         style={
@@ -162,6 +161,8 @@ export default function ChangePassword() {
 export const styles = StyleSheet.create({
     passwordChangeContainer: {
         width: '100%',
+        marginBottom: 30,
+        paddingBottom: 20,
         justifyContent: 'flex-start',
         flexDirection: 'column',
         backgroundColor: 'white',
@@ -191,7 +192,6 @@ export const styles = StyleSheet.create({
     },
     passwordContainer: {
         width: '100%',
-        height: 61,
         borderBottomColor: '#555555',
         borderBottomWidth: 1,
         flexDirection: 'column',
@@ -218,22 +218,8 @@ export const styles = StyleSheet.create({
         right: 0,
     },
     editButton: {
-        position: 'absolute',
-        bottom: 34,
-        width: 382,
-        height: 60,
+        padding: 20,
         backgroundColor: '#EEEEEE',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 8,
-        zIndex: 5,
-    },
-    activateEditButton: {
-        position: 'absolute',
-        bottom: 34,
-        width: 382,
-        height: 60,
-        backgroundColor: '#52A55D',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
@@ -241,7 +227,7 @@ export const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: '100%',
-        marginTop: 140,
+        marginTop: 50,
         justifyContent: 'center',
     },
 });
