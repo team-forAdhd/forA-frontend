@@ -117,9 +117,9 @@ export default function EmailDuplicateCheck() {
                                 placeholder={t('join-birth-input')}
                                 value={birthYearMonth}
                                 onChangeText={(text) => {
-                                    if (/^\d+$/.test(text)) {
+                                    if (/^\d*$/.test(text)) {
                                         setBirthYearMonth(text);
-                                        setBirthChecked(true);
+                                        setBirthChecked(text.length === 6);
                                     }
                                 }}
                                 onFocus={() => setInputFocused(true)}
