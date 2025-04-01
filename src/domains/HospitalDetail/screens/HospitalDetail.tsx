@@ -24,6 +24,7 @@ import {
     DoctorList,
     NoDoctorContent,
 } from '@/domains/HospitalDetail/components/DoctorList';
+import { HospitalRibbon } from '@/domains/HospitalDetail/components/hospitalRibbon';
 
 type HospitalDetailNavigationProp = StackScreenProps<
     HospitalStackParams,
@@ -182,19 +183,8 @@ export default function HospitalDetail({
                                     },
                                 ]}
                             >
-                                {hospital &&
-                                    hospital.totalEvaluationReviewCount > 0 && ( //포에이 리본 리뷰가 0이상인 경우 표시
-                                        // 포에이 리본인 경우에 표시되는 부분
-                                        <View style={styles.flex}>
-                                            <Image
-                                                source={require('@/public/assets/ribbon.png')}
-                                                style={styles.ribbonImage}
-                                            />
-                                            <Text style={text.ribbonText}>
-                                                {t('forA-ribbon')}
-                                            </Text>
-                                        </View>
-                                    )}
+                                {/* TODO: 여기에 리본 데이터만 넣어놓으면 됨 */}
+                                <HospitalRibbon count={1} />
                                 <View style={[styles.flex]}>
                                     <Text style={text.hospitalText}>
                                         {hospital && hospital.name}
