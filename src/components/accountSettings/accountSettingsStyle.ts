@@ -212,6 +212,7 @@ export const styles = StyleSheet.create({
         zIndex: 5,
     },
     bottomContainer: {
+        paddingBottom: 40,
         flexDirection: 'row',
         backgroundColor: 'transparent',
         justifyContent: 'center',

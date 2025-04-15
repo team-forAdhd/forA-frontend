@@ -182,6 +182,8 @@ export default function HospitalDetail({
                                     },
                                 ]}
                             >
+                                {/* TODO: 여기에 리본 넣기 */}
+                                {/* <HospitalRibbon count={}/> */}
                                 {hospital &&
                                     hospital.totalEvaluationReviewCount > 0 && ( //포에이 리본 리뷰가 0이상인 경우 표시
                                         // 포에이 리본인 경우에 표시되는 부분
