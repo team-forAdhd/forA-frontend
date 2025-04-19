@@ -83,11 +83,22 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({
         setSelectedImage(null);
     };
 
-    const handleDelete = async () => {
-        try {
-            await deleteMedReviewApi(review.id);
-            onDelete(review.id);
-        } catch (error) {}
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteCompleteModal, setDeleteCompleteModal] = useState(false);
+
+    const handleDelete = () => {
+        setDeleteConfirm(false);
+        setDeleteCompleteModal(true);
+
+        setTimeout(async () => {
+            setDeleteCompleteModal(false);
+            try {
+                await deleteMedReviewApi(review.id);
+                onDelete(review.id);
+            } catch (error) {
+                console.error('삭제 실패:', error);
+            }
+        }, 1800);
     };
 
     return (
@@ -105,7 +116,7 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({
             <View style={styles.textContainer}>
                 <View style={styles.reviewHeader}>
                     <Text style={text.nicknameText}>{review.nickname}</Text>
-                    <TouchableOpacity onPress={handleDelete}>
+                    <TouchableOpacity onPress={() => setDeleteConfirm(true)}>
                         <Text style={text.deleteText}>삭제</Text>
                     </TouchableOpacity>
                 </View>
@@ -195,6 +206,59 @@ const MedReviewListItem: React.FC<MedReviewListItemProps> = ({
                         )}
                     </View>
                 </TouchableWithoutFeedback>
+            </Modal>
+            <Modal
+                visible={deleteConfirm}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setDeleteConfirm(false)}
+            >
+                <TouchableWithoutFeedback
+                    onPress={() => setDeleteConfirm(false)}
+                >
+                    <View style={styles.modalBackground}>
+                        <View style={styles.modalDeleteContainer}>
+                            <Text style={text.modalDelete}>
+                                삭제하신 리뷰는 복구가 불가합니다.{'\n'}그래도
+                                삭제하시겠습니까?
+                            </Text>
+                            <View style={styles.modalDeleteButton}>
+                                <TouchableOpacity
+                                    onPress={handleDelete}
+                                    style={styles.modalDeleteConfirmButton}
+                                >
+                                    <Text style={text.modalDeleteConfirm}>
+                                        예
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => setDeleteConfirm(false)}
+                                    style={styles.modalDeleteCancelButton}
+                                >
+                                    <Text style={text.modalDeleteCancel}>
+                                        아니오
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+            <Modal
+                visible={deleteCompleteModal}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setDeleteCompleteModal(false)}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalDeleteCommentContainer}>
+                        <Text style={text.modalDeleteComment}>
+                            리뷰가{' '}
+                            <Text style={{ color: '#52A55D' }}>삭제</Text>
+                            되었습니다
+                        </Text>
+                    </View>
+                </View>
             </Modal>
         </View>
     );
