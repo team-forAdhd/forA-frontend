@@ -1,96 +1,145 @@
 import React from 'react';
 import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
     TextStyle,
     StyleProp,
     StyleSheet,
+    FlatList,
+    ActivityIndicator,
+    View,
+    Text,
 } from 'react-native';
-import {
-    CategoryIcon,
-    ViewIcon,
-    ThumbsUpIcon,
-} from '@/public/assets/SvgComponents';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
+import {
+    useTodayPostsByCategory,
+    useTodayTopPostOnce,
+} from '@/domains/Today/api/TodayPostList';
+import PostItem from '@/domains/Today/components/PostItem';
+import {
+    Post,
+    PostCategory,
+} from '@/domains/TodayPostDetail/types/today.types';
 
 interface Props {
-    post: {
-        id: number;
-        userId: string | null;
-        title: string;
-        category: string;
-        viewCount: number;
-        likeCount: number;
-        formattedCreatedAt: string;
-        images?: string[] | null;
-    };
-    index: number;
+    category: PostCategory | 'RANKING';
 }
 
-type PostDetailParams = {
-    PostDetail: { postId: number }; //postId: number
+const notification: Post = {
+    id: -1,
+    userId: 'admin',
+    title: '오늘탭 작성가이드 (필독!)',
+    category: 'NOTICE',
+    content: '오늘탭 작성가이드 (필독!)',
+    createdAt: 123456789,
+    lastModifiedAt: 123456789,
+    nickname: '관리자',
+    profileImage: '',
+    viewCount: 0,
+    likeCount: 0,
+    images: [],
+    anonymous: false,
+    commentCount: 0,
+    scrapCount: 0,
 };
 
-const PostListItem = ({
-    post,
-    index,
+export function TodayPostList({
+    category,
     navigation,
-}: Props & Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) => {
-    const handlePostItemClick = () => {
-        navigation.push('PostDetail', { postId: post.id });
-    };
-    const maxTitleLength = post.images ? 19 : 23;
-    const displayedTitle =
-        post.title.length > maxTitleLength
-            ? `${post.title.slice(0, maxTitleLength)}...`
-            : post.title;
+}: Props & Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) {
+    if (category === 'RANKING') {
+        return <TodayTopPost navigation={navigation} />;
+    } else {
+        return (
+            <TodayPostsByCategory category={category} navigation={navigation} />
+        );
+    }
+}
 
+function TodayTopPost({
+    navigation,
+}: Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) {
+    const { data, isPending, isError, refetch } = useTodayTopPostOnce();
+    const posts = data?.postList;
+
+    if (isPending)
+        return <ActivityIndicator size={'large'} color={'#52A55D'} />;
+    if (isError) return null;
+    const slicedPosts = posts?.slice(0, 9);
     return (
-        <TouchableOpacity
-            onPress={handlePostItemClick}
-            style={styles.postItemContainer}
-        >
-            <View style={styles.postNumberContainer}>
-                <Text style={text.postListNumText}>
-                    {index + 1 < 10 ? `${index + 1}` : index + 1}
-                </Text>
-            </View>
-            <View style={styles.postContentContainer}>
-                <Text style={text.postListTitleText}>{displayedTitle}</Text>
-                <View style={styles.postInfo}>
-                    <CategoryIcon />
-                    <Text style={text.postListCategoryText}>
-                        {post.category}
+        <FlatList
+            contentContainerStyle={styles.postListContainer}
+            data={[notification, ...(slicedPosts ?? [])]}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+                <PostItem
+                    key={item.id}
+                    post={item}
+                    index={index}
+                    navigation={navigation}
+                    order={true}
+                />
+            )}
+            //onEndReached={() => fetchNextPage()}
+            ListHeaderComponent={() => (
+                <View style={{ padding: 10, flexDirection: 'row', gap: 5 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
+                        랭킹
                     </Text>
-                    <View style={{ width: 8 }} />
-                    <ViewIcon />
-                    <Text style={text.postListOthersText}>
-                        {post.viewCount}
-                    </Text>
-                    <View style={{ width: 8 }} />
-                    <ThumbsUpIcon />
-                    <Text style={text.postListOthersText}>
-                        {post.likeCount}
-                    </Text>
+                    <MaterialIcons
+                        name="refresh"
+                        size={25}
+                        onPress={() => refetch()}
+                    />
                 </View>
-                <Text style={text.postListDateText}>
-                    {post.formattedCreatedAt}
-                </Text>
-                {post.images && (
-                    <Image
-                        source={{ uri: post.images[0] }}
-                        style={styles.thumbnailImage}
+            )}
+        />
+    );
+}
+
+function TodayPostsByCategory({
+    category,
+    navigation,
+}: { category: PostCategory } & Pick<
+    StackScreenProps<TodayStackParams, 'Home'>,
+    'navigation'
+>) {
+    const { data, isPending, isError, fetchNextPage } = useTodayPostsByCategory(
+        { category },
+    );
+    const posts = data?.pages.map((page) => page.postList).flat();
+
+    if (isPending)
+        return (
+            <ActivityIndicator
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                color={'green'}
+                size={'large'}
+            />
+        );
+    if (isError) return null;
+    if (posts)
+        return (
+            <FlatList
+                contentContainerStyle={styles.postListContainer}
+                data={posts}
+                renderItem={(post) => (
+                    <PostItem
+                        key={post.item.id}
+                        post={post.item}
+                        index={post.index}
+                        navigation={navigation}
+                        order={false}
                     />
                 )}
-            </View>
-        </TouchableOpacity>
-    );
-};
-
-export default PostListItem;
+                onEndReached={() => fetchNextPage()}
+            />
+        );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -119,7 +168,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
-        zIndex: 2, //ZIndex를 조정해서 터치 이벤트 문제 해소 , 캐러셀 컴포넌트가 터치이벤트를 가로채서 헤더에 있는 아이콘의 터치가 안먹고 있었음
+        zIndex: 2,
     },
     Flex: {
         flex: 1,
