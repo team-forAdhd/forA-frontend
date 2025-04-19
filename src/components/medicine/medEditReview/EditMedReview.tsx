@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,140 +6,145 @@ import {
     ScrollView,
     Image,
     Modal,
-} from 'react-native'
-import { styles, text } from './EditMedReviewStyle'
-import { useNavigation, useRoute } from '@react-navigation/native'
-import { useTranslation } from 'react-i18next'
-import { Rating } from 'react-native-elements' 
-import { TextInput } from 'react-native-gesture-handler' 
-import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents'
-import * as ImagePicker from 'expo-image-picker' 
-import { sendMedReviewApi } from '@/api/medicine/medReviewApi' 
-import MedSelectModal from '../medNewReview/MedSelectModal/MedSelectModal' 
-import medStore from '@/state/medState/medStore' 
-import { getMedReviewApi } from '@/api/medicine/medReviewApi' 
+} from 'react-native';
+import { styles, text } from './EditMedReviewStyle';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { Rating } from 'react-native-elements';
+import { TextInput } from 'react-native-gesture-handler';
+import { DefaultCameraIcon, DeleteIcon } from '@/public/assets/SvgComponents';
+import * as ImagePicker from 'expo-image-picker';
+import { sendMedReviewApi } from '@/api/medicine/medReviewApi';
+import MedSelectModal from '../medNewReview/MedSelectModal/MedSelectModal';
+import medStore from '@/state/medState/medStore';
+import { getMedReviewApi } from '@/api/medicine/medReviewApi';
 
 const truncateItemName = (name: string) => {
-    const bracketIndex = name.indexOf('(') 
-    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name 
-}
+    const bracketIndex = name.indexOf('(');
+    return bracketIndex !== -1 ? name.substring(0, bracketIndex) : name;
+};
 
-interface EditMedReviewProps { 
-    reviewId: number
+interface EditMedReviewProps {
+    reviewId: number;
 }
 
 const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
-    const { t } = useTranslation('medicine')
+    const { t } = useTranslation('medicine');
 
-    const navigation = useNavigation()
-    const scrollViewRef = useRef<ScrollView>(null)
-    const route = useRoute() 
+    const navigation = useNavigation();
+    const scrollViewRef = useRef<ScrollView>(null);
+    const route = useRoute();
 
-    const [rating, setRating] = useState(0)
-    const [isCoMed, setIsCoMed] = useState(false) 
-    const [coMedName, setCoMedName] = useState('') 
-    const [coMedId, setCoMedId] = useState(0) 
-    const [content, setContent] = useState('') 
-    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([]) 
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions() 
-    const [isFocused, setIsFocused] = useState(false) 
-    const [age, setAge] = useState('') 
-    const [sex, setSex] = useState('') 
-    const [modalVisible, setModalVisible] = useState(false) 
+    const [rating, setRating] = useState(0);
+    const [isCoMed, setIsCoMed] = useState(false);
+    const [coMedName, setCoMedName] = useState('');
+    const [coMedId, setCoMedId] = useState(0);
+    const [content, setContent] = useState('');
+    const [attachedPhotos, setAttachedPhotos] = useState<string[]>([]);
+    const [status, requestPermission] =
+        ImagePicker.useMediaLibraryPermissions();
+    const [isFocused, setIsFocused] = useState(false);
+    const [age, setAge] = useState('');
+    const [sex, setSex] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
-    useEffect(() => { 
+    useEffect(() => {
         const fetchReviewData = async () => {
-            try { 
-                const reviewData = await getMedReviewApi(reviewId) 
-                if (reviewData) { 
-                    setRating(reviewData.grade) 
-                    setContent(reviewData.content) 
-                    setAttachedPhotos(reviewData.images) 
-                    setIsCoMed(reviewData.coMedications.length > 0)
-                    if (reviewData.coMedications.length > 0) { 
-                        setCoMedId(reviewData.coMedications[0]) 
-                        setCoMedName(medStore.selectedMed?.itemName || '') 
+            try {
+                const reviewData = await getMedReviewApi(reviewId);
+                if (reviewData) {
+                    setRating(reviewData.grade);
+                    setContent(reviewData.content);
+                    setAttachedPhotos(reviewData.images);
+                    setIsCoMed(reviewData.coMedications.length > 0);
+                    if (reviewData.coMedications.length > 0) {
+                        setCoMedId(reviewData.coMedications[0]);
+                        setCoMedName(medStore.selectedMed?.itemName || '');
                     }
                 }
             } catch (error) {
-                console.error('Error fetching review data:', error)
+                console.error('Error fetching review data:', error);
             }
-        }
+        };
 
-        fetchReviewData() 
-    }, [reviewId]) 
+        fetchReviewData();
+    }, [reviewId]);
 
     const gotoMedDetail = () => {
-        navigation.navigate('MedDetail' as never)
-    }
+        navigation.navigate('MedDetail' as never);
+    };
 
-    const handleReviewSend = () => { 
-        const reviewData = { 
+    const handleReviewSend = () => {
+        const reviewData = {
             // reviewId,
             coMedications:
                 isCoMed && medStore.selectedMed
                     ? [medStore.selectedMed.medId]
-                    : [], 
+                    : [],
             content: content,
-            images: attachedPhotos, 
+            images: attachedPhotos,
             grade: rating,
-        }
-        sendMedReviewApi(reviewData) 
-        navigation.navigate('MedDetail' as never) 
-    }
+        };
+        sendMedReviewApi(reviewData);
+        navigation.navigate('MedDetail' as never);
+    };
 
-    const onRatingCompleted = (rating: number) => { 
-        const roundedRating = Math.round(rating * 2) / 2 
-        setRating(roundedRating) 
-    }
+    const onRatingCompleted = (rating: number) => {
+        const roundedRating = Math.round(rating * 2) / 2;
+        setRating(roundedRating);
+    };
 
     // 공동복용약 여부
-    const handleCoMed = () => { 
-        setIsCoMed((prev) => !prev) 
+    const handleCoMed = () => {
+        setIsCoMed((prev) => !prev);
         if (!isCoMed) {
             // "없음" 선택 시, 선택된 약을 초기화
             medStore.setSelectedMed(null); // 선택된 약을 null로 초기화
             setCoMedName(''); // 공동 복용 약 이름 초기화
             setCoMedId(0); // 공동 복용 약 ID 초기화
         }
-    }
+    };
 
-    const handleFocus = () => { 
-        setIsFocused(true)
-    }
-    const handleBlur = () => { 
-        setIsFocused(false)
-    }
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+    const handleBlur = () => {
+        setIsFocused(false);
+    };
     const uploadImage = async () => {
-        if (!status?.granted) { 
-            const permission = await requestPermission() 
-            if (!permission.granted) { 
-                return null 
+        if (!status?.granted) {
+            const permission = await requestPermission();
+            if (!permission.granted) {
+                return null;
             }
         }
-        const result = await ImagePicker.launchImageLibraryAsync({ 
-            mediaTypes: ImagePicker.MediaTypeOptions.Images, 
-            allowsEditing: false, 
-            quality: 1, 
-        })
-        if (result.canceled) { 
-            return null 
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            quality: 1,
+        });
+        if (result.canceled) {
+            return null;
         }
-        setAttachedPhotos((prevPhotos) => [...prevPhotos, result.assets[0].uri])
-    }
+        setAttachedPhotos((prevPhotos) => [
+            ...prevPhotos,
+            result.assets[0].uri,
+        ]);
+    };
 
-    const handleDeletePhoto = (index: number) => { 
-        const updatedPhotos = [...attachedPhotos] 
-        updatedPhotos.splice(index, 1) 
-        setAttachedPhotos(updatedPhotos) 
-    }
+    const handleDeletePhoto = (index: number) => {
+        const updatedPhotos = [...attachedPhotos];
+        updatedPhotos.splice(index, 1);
+        setAttachedPhotos(updatedPhotos);
+    };
     // 옵션 로직
-    const handleAgeOption = (option: string) => { // 나이 옵션 선택 시 호출
-        setAge(option) // option을 age 상태로 설정해서 선택된 나이 옵션 반영
-    }
+    const handleAgeOption = (option: string) => {
+        // 나이 옵션 선택 시 호출
+        setAge(option); // option을 age 상태로 설정해서 선택된 나이 옵션 반영
+    };
     const handleSexOption = (option: string) => {
-        setSex(option)
-    }
+        setSex(option);
+    };
 
     // 리뷰 버튼 활성화
     const isReviewButtonEnabled = () => {
@@ -147,8 +152,8 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
             rating > 0 && // 평점이 0보다 큰 경우에만 버튼 활성화
             content.length >= 20 && // 리뷰 내용 길이가 20자 이상일 경우에만 버튼 활성화
             (isCoMed ? coMedName.length > 0 : true) // 공동복용약 이름이 1자 이상
-        )
-    }
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -225,10 +230,14 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                    ): (
+                    ) : (
                         <TouchableOpacity onPress={() => setModalVisible(true)}>
-                            <Text style={text.coMedText}>{t('none-selected')}</Text> {/* "없음" 표시 */}
-                        </TouchableOpacity>)}
+                            <Text style={text.coMedText}>
+                                {t('none-selected')}
+                            </Text>{' '}
+                            {/* "없음" 표시 */}
+                        </TouchableOpacity>
+                    )}
                     {/* 있/없 확인 */}
                     {/* 사용자가 이 영역을 클릭하면 handleCoMed 함수가 실행됨 */}
                     <TouchableOpacity
@@ -244,10 +253,10 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                             source={
                                 // isCoMed 값에 따라 다르게 이미지를 표시함
                                 isCoMed
-                                    // true
-                                    ? require('@/public/assets/check-icon.png')
-                                    // false
-                                    : require('@/public/assets/checkbox-icon.png')
+                                    ? // true
+                                      require('@/public/assets/check-icon.png')
+                                    : // false
+                                      require('@/public/assets/checkbox-icon.png')
                             }
                             style={styles.checkboxIcon}
                         />
@@ -301,10 +310,10 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                                         color:
                                             // 첨부된 사진 수
                                             attachedPhotos.length > 0
-                                                // 첨부된 사진이 있음
-                                                ? '#52A55D'
-                                                // 없음
-                                                : '#555',
+                                                ? // 첨부된 사진이 있음
+                                                  '#52A55D'
+                                                : // 없음
+                                                  '#555',
                                     },
                                 ]}
                             >
@@ -558,7 +567,7 @@ const EditMedReview: React.FC<EditMedReviewProps> = ({ reviewId }) => {
                 </View>
             </Modal>
         </View>
-    )
-}
+    );
+};
 
-export default EditMedReview
+export default EditMedReview;

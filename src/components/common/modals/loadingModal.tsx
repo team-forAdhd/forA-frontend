@@ -1,12 +1,18 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
+import {
+    ActivityIndicator,
+    Modal,
+    SafeAreaView,
+    StyleSheet,
+} from 'react-native';
 
 export default function LoadingModal({ visible }: { visible: boolean }) {
-    if (visible)
-        return (
+    return (
+        <Modal transparent={true} style={styles.container} visible={visible}>
             <SafeAreaView style={[styles.container, styles.container]}>
                 <ActivityIndicator color={'#52A55D'} size={'large'} />
             </SafeAreaView>
-        );
+        </Modal>
+    );
 }
 
 const styles = StyleSheet.create({

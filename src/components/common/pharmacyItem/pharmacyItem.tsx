@@ -25,7 +25,9 @@ export default function PharmacyItem({
     pharmacies,
     setSavedPharmacies,
 }: PharmacyItemProps) {
+
     const navigation = useNavigation<StackNavigationProp<MypageStackParams>>();
+
     const handleBookmarkToggle = async (medId: number) => {
         try {
             const response = await medBookmarkApi(medId);

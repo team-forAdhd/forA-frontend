@@ -1,7 +1,5 @@
 import {
     View,
-    Text,
-    Image,
     TouchableOpacity,
     Modal,
     TouchableWithoutFeedback,
@@ -30,6 +28,7 @@ import { NotFound } from '@/components/common/NotFound';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/common/ui/header';
 import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
+
 import { getUserProfileApi } from '@/api/getUserProfileApi';
 import { useAuthStore } from '@/store/authStore';
 import TodayPostBody from '@/domains/TodayPostDetail/components/TodayPostBody';

@@ -16,6 +16,7 @@ type PostList = {
     postList: Post[];
     paging: Paging;
 };
+
 export async function getTodayTopPosts(): Promise<PostList> {
     const res = await apiClient.get<PostList>(
         `/posts/main/top?sortOption=NEWEST_FIRST&page=0&size=10`,

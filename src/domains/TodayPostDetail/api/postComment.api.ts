@@ -6,7 +6,7 @@ import { Alert } from 'react-native';
 type PostCommentRequest = {
     postId: number;
     content: string;
-    isAnonymous: boolean;
+    anonymous: boolean;
     parentCommentId?: number;
 };
 
@@ -21,7 +21,7 @@ export function useCommentMutation(postId: number) {
         onSuccess: async () => {
             Alert.alert('댓글이 등록되었습니다.');
             await queryClient.invalidateQueries({
-                queryKey: ['todayPostDetail', postId],
+                queryKey: ['todayComment', postId],
             });
         },
         onError: () => {

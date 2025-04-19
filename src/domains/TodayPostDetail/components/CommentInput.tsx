@@ -33,14 +33,14 @@ export default function CommentInput({
         if (replyCommentId) {
             mutate({
                 content: commentContent,
-                isAnonymous: commentIsAnonymous,
+                anonymous: commentIsAnonymous,
                 postId: postId,
                 parentCommentId: replyCommentId,
             });
         } else {
             mutate({
                 content: commentContent,
-                isAnonymous: commentIsAnonymous,
+                anonymous: commentIsAnonymous,
                 postId: postId,
             });
         }
@@ -51,14 +51,14 @@ export default function CommentInput({
         <KeyboardAvoidingView behavior="padding">
             <View style={styles.addComment}>
                 <TouchableOpacity
-                    onPress={() => setCommentIsAnonymous(!commentIsAnonymous)}
+                    onPress={() => setCommentIsAnonymous((prev) => !prev)}
                 >
                     <View style={styles.commentAnonymousContainer}>
                         <Image
                             source={
                                 commentIsAnonymous
-                                    ? require('@/public/assets/checkbox-icon.png')
-                                    : require('@/public/assets/check-icon.png')
+                                    ? require('@/public/assets/check-icon.png')
+                                    : require('@/public/assets/checkbox-icon.png')
                             }
                             style={styles.anonymousIcon}
                         />
@@ -75,6 +75,7 @@ export default function CommentInput({
                 </TouchableOpacity>
                 <TextInput
                     style={[text.commentBoxText, styles.commentBox]}
+                    multiline
                     onChangeText={(text) => setCommentContent(text)}
                     placeholder={
                         replyCommentId
@@ -82,6 +83,7 @@ export default function CommentInput({
                             : t('post-give-comment')
                     }
                     placeholderTextColor="#949494"
+                    value={commentContent}
                 />
                 <TouchableOpacity
                     style={styles.commentButton}
@@ -118,9 +120,10 @@ const styles = StyleSheet.create({
     },
     commentBox: {
         justifyContent: 'flex-start',
+        flex: 1,
+        paddingRight: 20,
     },
     commentButton: {
-        position: 'absolute',
         right: 7,
         width: 28,
         height: 28,

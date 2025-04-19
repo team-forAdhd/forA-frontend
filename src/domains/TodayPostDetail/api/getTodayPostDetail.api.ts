@@ -1,6 +1,6 @@
 import { API_URL } from '@env';
 import { apiClient } from '@/api/login/loginApi';
-import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
+import { PostDetail } from '@/domains/TodayPostDetail/types/today.types';
 import { useQuery } from '@tanstack/react-query';
 import { notification } from '@/domains/TodayPostDetail/utils/notifications';
 import { useNavigation } from '@react-navigation/native';
@@ -13,11 +13,8 @@ const categoryMap: { [key: string]: string } = {
     PARENTS: '학부모',
     THIRTIES_AND_ABOVE: '30대↑',
 };
-const convertCategory = (category: string): string => {
-    return categoryMap[category] || category;
-};
 
-export async function getTodayPostDetail(postId: number): Promise<Post> {
+export async function getTodayPostDetail(postId: number): Promise<PostDetail> {
     if (postId === -1) return notification;
     const { data } = await apiClient.get(`${API_URL}/api/v1/posts/${postId}`);
     return { ...data, category: categoryMap[data.category] };
@@ -29,5 +26,6 @@ export function useTodayPostDetail(postId: number) {
     return useQuery({
         queryKey: ['todayPostDetail', postId],
         queryFn: () => getTodayPostDetail(postId),
+        staleTime: 1000 * 60 * 5,
     });
 }

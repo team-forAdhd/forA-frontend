@@ -42,7 +42,7 @@ export default function Header<T extends ParamListBase = ParamListBase>({
 }: {
     backIconType: keyof typeof leftIconsType;
     headerText: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     navigation: StackNavigationProp<T>;
 }) {
     const handleBackButton = () => {
@@ -53,11 +53,7 @@ export default function Header<T extends ParamListBase = ParamListBase>({
             <TouchableOpacity onPress={handleBackButton}>
                 {leftIconsType[backIconType]}
             </TouchableOpacity>
-            <Text
-                style={[text.headerText, { position: 'absolute', left: '50%' }]}
-            >
-                {headerText}
-            </Text>
+            <Text style={[text.headerText]}>{headerText}</Text>
             <View style={styles.rightOptionsContainer}>{children}</View>
         </View>
     );
@@ -68,7 +64,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 52,
         width: '100%',
-        height: 36,
+        height: 50,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
@@ -79,6 +75,7 @@ const styles = StyleSheet.create({
     },
     rightOptionsContainer: {
         flexDirection: 'row',
+        width: 50,
         gap: 10,
     },
 });

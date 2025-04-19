@@ -1,145 +1,81 @@
-import React from 'react';
-import {
-    TextStyle,
-    StyleProp,
-    StyleSheet,
-    FlatList,
-    ActivityIndicator,
-    View,
-    Text,
-} from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { StackScreenProps } from '@react-navigation/stack';
-import { TodayStackParams } from '@/navigation/stacks/TodayStack';
-import {
-    useTodayPostsByCategory,
-    useTodayTopPostOnce,
-} from '@/domains/Today/api/TodayPostList';
-import PostItem from '@/domains/Today/components/PostItem';
 import {
     Post,
     PostCategory,
 } from '@/domains/TodayPostDetail/types/today.types';
+import { TodayStackParams } from '@/navigation/stacks/TodayStack';
+import {
+    CategoryIcon,
+    ThumbsUpIcon,
+    ViewIcon,
+} from '@/public/assets/SvgComponents';
+import { imagePathMerge } from '@/utils/imagePathMerge';
+import { useNavigation } from '@react-navigation/native';
+import {
+    Image,
+    StyleProp,
+    StyleSheet,
+    Text,
+    TextStyle,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
-interface Props {
-    category: PostCategory | 'RANKING';
-}
-
-const notification: Post = {
-    id: -1,
-    userId: 'admin',
-    title: '오늘탭 작성가이드 (필독!)',
-    category: 'NOTICE',
-    content: '오늘탭 작성가이드 (필독!)',
-    createdAt: 123456789,
-    lastModifiedAt: 123456789,
-    nickname: '관리자',
-    profileImage: '',
-    viewCount: 0,
-    likeCount: 0,
-    images: [],
-    anonymous: false,
-    commentCount: 0,
-    scrapCount: 0,
-};
-
-export function TodayPostList({
-    category,
-    navigation,
-}: Props & Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) {
-    if (category === 'RANKING') {
-        return <TodayTopPost navigation={navigation} />;
-    } else {
-        return (
-            <TodayPostsByCategory category={category} navigation={navigation} />
-        );
+const categoryMap: Record<PostCategory, string> = {
+    TEENS: '10대',
+    TWENTIES: '20대',
+    PARENTS: '학부모',
+    THIRTIES_AND_ABOVE: '30대↑',
+    NOTICE: '공지',
+} as const;
+const MAX_TITLE_LENGTH = 15;
+export default function MyPostItem({ post }: { post: Post }) {
+    const navigation = useNavigation<TodayStackParams>();
+    function handlePostItemClick() {
+        navigation.navigate('PostDetail', { postId: post.id });
     }
-}
+    const displayedTitle =
+        post.title.length > MAX_TITLE_LENGTH
+            ? `${post.title.slice(0, MAX_TITLE_LENGTH)}...`
+            : post.title;
 
-function TodayTopPost({
-    navigation,
-}: Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) {
-    const { data, isPending, isError, refetch } = useTodayTopPostOnce();
-    const posts = data?.postList;
-
-    if (isPending)
-        return <ActivityIndicator size={'large'} color={'#52A55D'} />;
-    if (isError) return null;
-
-    const slicedPosts = posts?.slice(0, 9);
     return (
-        <FlatList
-            contentContainerStyle={styles.postListContainer}
-            data={[notification, ...(slicedPosts ?? [])]}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => (
-                <PostItem
-                    key={item.id}
-                    post={item}
-                    index={index}
-                    navigation={navigation}
-                    order={true}
+        <TouchableOpacity
+            onPress={handlePostItemClick}
+            style={styles.postItemContainer}
+        >
+            <View style={styles.postContentContainer}>
+                <Text style={text.postListTitleText}>{displayedTitle}</Text>
+                <View style={styles.postInfo}>
+                    <View style={styles.iconContainer}>
+                        <CategoryIcon />
+                        <Text style={text.postListCategoryText}>
+                            {categoryMap[post.category]}
+                        </Text>
+                    </View>
+                    <View style={{ width: 8 }} />
+                    <View style={styles.iconContainer}>
+                        <ViewIcon />
+                        <Text style={text.postListOthersText}>
+                            {post.viewCount}
+                        </Text>
+                    </View>
+                    <View style={styles.iconContainer}>
+                        <ThumbsUpIcon />
+                        <Text style={text.postListOthersText}>
+                            {post.likeCount}
+                        </Text>
+                    </View>
+                </View>
+                <Text style={text.postListDateText}>{post.createdAt}</Text>
+            </View>
+            {post.images && (
+                <Image
+                    source={{ uri: imagePathMerge(post.images[0]) }}
+                    style={styles.thumbnailImage}
                 />
             )}
-            //onEndReached={() => fetchNextPage()}
-            ListHeaderComponent={() => (
-                <View style={{ padding: 10, flexDirection: 'row', gap: 5 }}>
-                    <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-                        랭킹
-                    </Text>
-                    <MaterialIcons
-                        name="refresh"
-                        size={25}
-                        onPress={() => refetch()}
-                    />
-                </View>
-            )}
-        />
+        </TouchableOpacity>
     );
-}
-
-function TodayPostsByCategory({
-    category,
-    navigation,
-}: { category: PostCategory } & Pick<
-    StackScreenProps<TodayStackParams, 'Home'>,
-    'navigation'
->) {
-    const { data, isPending, isError, fetchNextPage } = useTodayPostsByCategory(
-        { category },
-    );
-    const posts = data?.pages.map((page) => page.postList).flat();
-
-    if (isPending)
-        return (
-            <ActivityIndicator
-                style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                color={'green'}
-                size={'large'}
-            />
-        );
-    if (isError) return null;
-    if (posts)
-        return (
-            <FlatList
-                contentContainerStyle={styles.postListContainer}
-                data={posts}
-                renderItem={(post) => (
-                    <PostItem
-                        key={post.item.id}
-                        post={post.item}
-                        index={post.index}
-                        navigation={navigation}
-                        order={false}
-                    />
-                )}
-                onEndReached={() => fetchNextPage()}
-            />
-        );
 }
 
 const styles = StyleSheet.create({
@@ -169,7 +105,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingRight: 16,
         paddingLeft: 16,
-        zIndex: 2,
+        zIndex: 2, //ZIndex를 조정해서 터치 이벤트 문제 해소 , 캐러셀 컴포넌트가 터치이벤트를 가로채서 헤더에 있는 아이콘의 터치가 안먹고 있었음
     },
     Flex: {
         flex: 1,
@@ -257,6 +193,8 @@ const styles = StyleSheet.create({
         width: 360,
         height: 92,
         marginBottom: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         borderRadius: 20,
         backgroundColor: '#FFF',
         shadowColor: '#000',
@@ -265,23 +203,25 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 2,
     },
+    iconContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     postNumberContainer: {
-        width: 30,
+        width: 50,
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
     postContentContainer: {
         flex: 1,
-        width: 1,
-        // width: 340,
         flexDirection: 'column',
+        gap: 3,
         paddingHorizontal: 11,
     },
     postInfo: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginTop: 7,
         marginBottom: 3,
     },
     loadButtonConatiner: {
@@ -354,15 +294,12 @@ const text = {
         color: '#232323',
         lineHeight: 25.2,
         letterSpacing: -0.9,
-        marginTop: 10,
-        marginLeft: 12,
     },
     postListTitleText: {
         fontSize: 18,
         fontWeight: '600',
         color: '#232323',
         lineHeight: 22.4,
-        marginTop: 11,
     },
     postListCategoryText: {
         fontSize: 14,
@@ -383,9 +320,6 @@ const text = {
         fontSize: 12,
         fontWeight: '400',
         color: '#949494',
-        lineHeight: 16.8,
-        marginTop: 3,
-        marginBottom: 11,
     },
     loadMoreText: {
         fontSize: 16,

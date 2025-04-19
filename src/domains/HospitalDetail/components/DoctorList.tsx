@@ -27,8 +27,10 @@ export function DoctorList({
         'HospitalDetail'
     >['navigation'];
 }) {
+
     // const { doctorList } = hospital;
     const doctorList = hospital?.doctorList ?? [];
+
     const { t } = useTranslation('hospitalDetail');
     const { displayModal, informText, modalVisible, switchModal } = useModal();
 

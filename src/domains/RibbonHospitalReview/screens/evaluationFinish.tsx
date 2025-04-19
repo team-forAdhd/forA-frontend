@@ -91,6 +91,7 @@ export default function EvaluationFinish({
                                 <Text style={text.questionText}>{t('to')}</Text>
                                 <Text style={text.hospitalText}>
                                     {hospitalInfo.totalEvaluationReviewCount +
+                                        1 +
                                         t('ribbon-count')}
                                 </Text>
                                 <Text style={text.questionText}>
