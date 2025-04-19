@@ -182,21 +182,33 @@ export default function HospitalDetail({
                                     },
                                 ]}
                             >
-                                {/* TODO: 여기에 리본 넣기 */}
-                                {/* <HospitalRibbon count={}/> */}
-                                {hospital &&
-                                    hospital.totalEvaluationReviewCount > 0 && ( //포에이 리본 리뷰가 0이상인 경우 표시
-                                        // 포에이 리본인 경우에 표시되는 부분
-                                        <View style={styles.flex}>
+                                {hospital?.totalEvaluationReviewCount > 0 && (
+                                    <View
+                                        style={[
+                                            styles.flex,
+                                            { marginBottom: 10 },
+                                        ]}
+                                    >
+                                        {[...Array(3)].map((_, index) => (
                                             <Image
-                                                source={require('@/public/assets/ribbon.png')}
-                                                style={styles.ribbonImage}
+                                                key={index}
+                                                source={
+                                                    index <
+                                                    hospital.totalEvaluationReviewCount
+                                                        ? require('@/public/assets/hospitalRibbon_active.png')
+                                                        : require('@/public/assets/hospitalRibbon_disabled.png')
+                                                }
+                                                style={[
+                                                    styles.ribbonImage,
+                                                    {
+                                                        marginRight:
+                                                            index < 2 ? 5 : 0,
+                                                    },
+                                                ]}
                                             />
-                                            <Text style={text.ribbonText}>
-                                                {t('forA-ribbon')}
-                                            </Text>
-                                        </View>
-                                    )}
+                                        ))}
+                                    </View>
+                                )}
                                 <View style={[styles.flex]}>
                                     <Text style={text.hospitalText}>
                                         {hospital && hospital.name}
@@ -224,18 +236,37 @@ export default function HospitalDetail({
                                         : '진료종료'}
                                 </Text>
                                 <Text style={text.timeText}>
-                                    {(hospital &&
-                                        hospital.operationStartHour) ||
-                                        0}
+                                    {(
+                                        (hospital &&
+                                            hospital.operationStartHour) ||
+                                        0
+                                    )
+                                        .toString()
+                                        .padStart(2, '0')}
                                     :
-                                    {(hospital && hospital.operationStartMin) ||
-                                        0}{' '}
+                                    {(
+                                        (hospital &&
+                                            hospital.operationStartMin) ||
+                                        0
+                                    )
+                                        .toString()
+                                        .padStart(2, '0')}{' '}
                                     -{' '}
-                                    {(hospital && hospital.operationEndHour) ||
-                                        0}
+                                    {(
+                                        (hospital &&
+                                            hospital.operationEndHour) ||
+                                        0
+                                    )
+                                        .toString()
+                                        .padStart(2, '0')}
                                     :
-                                    {(hospital && hospital.operationEndMin) ||
-                                        0}
+                                    {(
+                                        (hospital &&
+                                            hospital.operationEndMin) ||
+                                        0
+                                    )
+                                        .toString()
+                                        .padStart(2, '0')}
                                 </Text>
                             </View>
                             <View
@@ -266,16 +297,186 @@ export default function HospitalDetail({
                                     )}
                                 </View>
                                 {/*의사가 있으면 의사 선생님 목록이 뜨도록 */}
-                                {hospital.doctorList.length ? (
-                                    <DoctorList
-                                        hospital={hospital}
-                                        navigation={navigation}
-                                    />
+                                {hospital?.doctorList &&
+                                hospital.doctorList.length > 0 ? (
+                                    <View
+                                        style={[
+                                            styles.columnContainer,
+                                            {
+                                                borderTopWidth: 23,
+                                                borderTopColor: '#EDEDEA',
+                                                paddingTop: 18,
+                                                marginTop: 24,
+                                                paddingHorizontal: 16,
+                                            },
+                                        ]}
+                                    >
+                                        <View
+                                            style={{
+                                                width: '100%',
+                                                flexDirection: 'row',
+                                                justifyContent: 'flex-start',
+                                                marginBottom: 14,
+                                            }}
+                                        >
+                                            <Text>
+                                                <Text style={text.semiboldText}>
+                                                    {t('doctor-count')}
+                                                </Text>
+                                                <Text
+                                                    style={text.primaryboldText}
+                                                >
+                                                    {hospital?.doctorList &&
+                                                        hospital.doctorList
+                                                            .length}
+                                                </Text>
+                                            </Text>
+                                        </View>
+                                        {hospital?.doctorList &&
+                                            hospital.doctorList.map(
+                                                (data: Doctor) => (
+                                                    <View
+                                                        style={
+                                                            styles.doctorProfileContainer
+                                                        }
+                                                    >
+                                                        <Image
+                                                            source={
+                                                                data.image
+                                                                    ? {
+                                                                          uri: data.image,
+                                                                      }
+                                                                    : require('@/public/assets/defaultDoctor.png')
+                                                            }
+                                                            style={
+                                                                styles.doctorImage
+                                                            }
+                                                        />
+                                                        <View>
+                                                            <Text>
+                                                                <Text
+                                                                    style={
+                                                                        text.doctorText
+                                                                    }
+                                                                >
+                                                                    {data.name}
+                                                                </Text>
+                                                                <Text
+                                                                    style={
+                                                                        text.titleText
+                                                                    }
+                                                                >
+                                                                    {t('title')}
+                                                                </Text>
+                                                            </Text>
+                                                            {data.profile && ( //약력이 있는 경우에만 뜨게끔
+                                                                <TouchableOpacity
+                                                                    onPress={() => {
+                                                                        data.profile &&
+                                                                            setDoctorProfile(
+                                                                                data.profile,
+                                                                            );
+                                                                    }}
+                                                                    style={
+                                                                        styles.profileContainer
+                                                                    }
+                                                                >
+                                                                    <Text
+                                                                        style={
+                                                                            text.profiletitleText
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            'profile',
+                                                                        )}
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            )}
+                                                        </View>
+                                                        {data.totalReviewCount && ( //리뷰가 있는 경우에만 뜨게끔
+                                                            <TouchableOpacity
+                                                                onPress={() => {
+                                                                    console.log(
+                                                                        '리뷰 보여줘',
+                                                                    );
+                                                                }}
+                                                                style={
+                                                                    styles.showReviewContainer
+                                                                }
+                                                            >
+                                                                <Text
+                                                                    style={
+                                                                        text.showReviewText
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'show-review',
+                                                                    ) +
+                                                                        '(' +
+                                                                        data.totalReviewCount +
+                                                                        ')'}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        )}
+                                                    </View>
+                                                ),
+                                            )}
+
+                                        {/*리뷰 쓰기 버튼 */}
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                if (hospital) {
+                                                    navigation.navigate(
+                                                        'CameraScreen',
+                                                        {
+                                                            hospitalInfo:
+                                                                hospital,
+                                                            ribbonEvaluation:
+                                                                true,
+                                                        },
+                                                    ) as never;
+                                                }
+                                            }}
+                                            style={styles.writeReviewContainer}
+                                        >
+                                            <Text style={text.activeText}>
+                                                {t('write-review')}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <View style={{ height: 33 }} />
+                                    </View>
                                 ) : (
-                                    <NoDoctorContent
-                                        hospital={hospital}
-                                        navigation={navigation}
-                                    />
+                                    //의사 선생님 정보가 준비되지 않은 경우
+                                    <View style={styles.notReadyContainer}>
+                                        <Image
+                                            source={require('@/public/assets/notReady.png')}
+                                            style={styles.notReadyImage}
+                                        />
+                                        <Text style={text.faintText}>
+                                            {t('not-ready')}
+                                        </Text>
+                                        {/*리뷰 쓰기 버튼 */}
+                                        <TouchableOpacity
+                                            style={styles.writeReviewContainer}
+                                            onPress={() => {
+                                                if (hospital) {
+                                                    navigation.navigate(
+                                                        'CameraScreen',
+                                                        {
+                                                            hospitalInfo:
+                                                                hospital,
+                                                            ribbonEvaluation:
+                                                                false,
+                                                        },
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            <Text style={text.activeText}>
+                                                {t('write-review')}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 )}
                             </View>
                         </React.Fragment>
@@ -455,8 +656,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     ribbonImage: {
-        width: 14,
-        height: 11,
+        width: 18,
+        height: 18,
         objectFit: 'contain',
         marginRight: 5,
     },

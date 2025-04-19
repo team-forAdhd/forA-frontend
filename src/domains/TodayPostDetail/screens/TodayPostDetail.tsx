@@ -11,7 +11,7 @@ import {
     FlatList,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
 
@@ -28,7 +28,21 @@ import { NotFound } from '@/components/common/NotFound';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/common/ui/header';
 import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
+
+import { getUserProfileApi } from '@/api/getUserProfileApi';
+import { useAuthStore } from '@/store/authStore';
 import TodayPostBody from '@/domains/TodayPostDetail/components/TodayPostBody';
+import AdminActionModal from '@/domains/TodayPostDetail/components/AdminActionModal';
+import { getCommentsApi } from '@/api/home/getCommentApi.ts';
+import { useQuery } from '@tanstack/react-query';
+
+// const reportList = [
+//     '특정인에 대한 욕설 및 비하',
+//     '잘못된 정보',
+//     '개인정보 유출',
+//     '상업적 광고 및 판매글',
+//     '타인에게 혐오감을 주는 게시글',
+// ];
 
 export default function TodayPostDetail({
     route,
@@ -37,27 +51,60 @@ export default function TodayPostDetail({
     const { t } = useTranslation('board');
     const { postId } = route.params;
 
-    const postNavigation =
-        useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
+    const userId = useAuthStore((state) => state.email);
+    const user = useAuthStore((state) => state.user);
+    const [userRole, setUserRole] = useState<string | undefined>();
+    // const postNavigation =
+    //     useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
 
     const handleEdit = async () => {
-        postNavigation.navigate('EditPost', { postId });
+        navigation.navigate('EditPost', { postId });
     };
+
+    const postLikeMutation = usePostLikeMutation();
+    const postScrapMutation = useTodayPostScrapMutation();
+    const deletePostMutation = useDeletePostMutation({ navigation });
+
     const {
         data: postDetail,
         isPending,
         isError,
         error,
     } = useTodayPostDetail(postId);
+
+    const { data: commentData, isLoading: isCommentsLoading } = useQuery({
+        queryKey: ['comments', postId],
+        queryFn: () => getCommentsApi(postId),
+    });
+    console.log('commentData:', commentData);
+    const comments = commentData?.commentList ?? [];
+
+    useEffect(() => {
+        if (postDetail) {
+            console.log(
+                'postDetail 전체:',
+                JSON.stringify(postDetail, null, 2),
+            );
+        }
+    }, [postDetail]);
+
+    const shouldShowOptions = !!postDetail;
+
     const [showSharedAlert, setShowSharedAlert] = useState(false);
 
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [replyCommentId, setReplyCommentId] = useState();
 
-    const { mutate: postLike } = usePostLikeMutation(postDetail as Post);
-    const { mutate: postScrap } = useTodayPostScrapMutation(postId);
-    const { mutate: deletePost } = useDeletePostMutation({ navigation });
+    const postLike = () => {
+        if (postDetail) {
+            postLikeMutation.mutate(postDetail);
+        }
+    };
+
+    const postScrap = () => {
+        postScrapMutation.mutate(postId);
+    };
 
     const handleSelectReply = async (commentId: any) => {
         setReplyCommentId(commentId);
@@ -83,9 +130,30 @@ export default function TodayPostDetail({
           }, 0)
         : 0;
 
-    if (isPending) return <LoadingScreen />;
-    if (!postDetail || isError)
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const userProfile = await getUserProfileApi();
+                setUserRole(userProfile.userRole);
+            } catch (e) {
+                console.log('유저 역할 조회 실패', e);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
+    useEffect(() => {
+        console.log(' 상세조회 postId:', postId);
+    }, []);
+
+    if (isPending) {
+        return <LoadingScreen />;
+    }
+
+    if (isError || !postDetail) {
         return <NotFound informText="게시물을 찾을 수 없습니다." />;
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -115,9 +183,10 @@ export default function TodayPostDetail({
                         </View>
                     )}
                     <TodayPostOptions
-                        userId={postDetail.userId}
+                        userId={postDetail?.userId ?? ''}
                         navigation={navigation}
                         postId={postId}
+                        userRole={userRole}
                     />
                 </View>
             </Header>
@@ -125,10 +194,12 @@ export default function TodayPostDetail({
                 data={[postDetail]}
                 renderItem={({ item }) => (
                     <TodayPostBody
-                        post={item}
+                        //post={item}
+                        post={postDetail}
                         postLike={postLike}
                         postScrap={postScrap}
                         onReply={handleSelectReply}
+                        comments={comments}
                     />
                 )}
             />

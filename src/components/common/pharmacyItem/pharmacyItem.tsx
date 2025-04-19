@@ -3,6 +3,10 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { styles, text } from './pharmacyItemStyles';
 import { medBookmarkApi } from '@/api/medicine/medBookmarkApi';
 
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { MypageStackParams } from '@/navigation/stacks/MypageStack';
+
 type Pharmacy = {
     id: number;
     name: string;
@@ -21,6 +25,9 @@ export default function PharmacyItem({
     pharmacies,
     setSavedPharmacies,
 }: PharmacyItemProps) {
+
+    const navigation = useNavigation<StackNavigationProp<MypageStackParams>>();
+
     const handleBookmarkToggle = async (medId: number) => {
         try {
             const response = await medBookmarkApi(medId);
@@ -40,7 +47,20 @@ export default function PharmacyItem({
         <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
             {pharmacies.length > 0 ? (
                 pharmacies.map((pharmacy) => (
-                    <View key={pharmacy.id} style={styles.pharmacyContainer}>
+                    <TouchableOpacity
+                        key={pharmacy.id}
+                        style={styles.pharmacyContainer}
+                        onPress={() =>
+                            navigation.navigate('MedDetail', {
+                                itemName: pharmacy.name,
+                                itemEngName: pharmacy.engName,
+                                entpName: pharmacy.manufacturer,
+                                itemImage: pharmacy.images,
+                                medicineId: pharmacy.id,
+                                favorite: pharmacy.favorite,
+                            })
+                        }
+                    >
                         <Image
                             source={{ uri: pharmacy.images }}
                             style={styles.image}
@@ -65,7 +85,7 @@ export default function PharmacyItem({
                                 style={styles.bookmarkIcon}
                             />
                         </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
                 ))
             ) : (
                 <Text style={text.emptyText}>저장된 약이 없습니다.</Text>

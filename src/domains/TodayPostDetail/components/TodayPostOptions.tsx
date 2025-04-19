@@ -15,8 +15,8 @@ import BlockModal from '@/domains/TodayPostDetail/components/BlockUserModal';
 import { StackScreenProps } from '@react-navigation/stack';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 import ReportPostModal from '@/domains/TodayPostDetail/components/ReportPostModal';
+import AdminActionModal from '@/domains/TodayPostDetail/components/AdminActionModal';
 
-const options = ['차단하기', '신고하기'];
 const INFORM_TEXT = {
     차단하기: {
         title: '해당 회원을 차단하시겠습니까?',
@@ -42,49 +42,48 @@ export default function TodayPostOptions({
     navigation,
     userId,
     postId,
-}: { userId: string; postId: number } & Pick<
+    userRole,
+}: { userId: string; postId: number; userRole?: string } & Pick<
     StackScreenProps<TodayStackParams, 'PostDetail'>,
     'navigation'
 >) {
-    const {
-        modalVisible: optionBottomSheet,
-        switchModal: switchOptionBottomSheet,
-    } = useModal();
-    const { modalVisible: blockModal, switchModal: switchBlockModal } =
-        useModal();
-    const { modalVisible: reportModal, switchModal: switchReportModal } =
-        useModal();
-    const {
-        informText,
-        displayModal,
-        modalVisible: resultModal,
-        switchModal,
-    } = useModal();
+    const adminModalHook = useModal();
+    const optionBottomSheetHook = useModal();
+    const blockModalHook = useModal();
+    const reportModalHook = useModal();
 
-    function handleOptionModal(item: PostOptions) {
+    const isAdmin = userRole === 'ADMIN';
+
+    const options = isAdmin
+        ? ['차단하기', '신고하기', '신고 처리하기']
+        : ['차단하기', '신고하기'];
+
+    function handleOptionModal(item: PostOptions | '신고 처리하기') {
         switch (item) {
             case '차단하기':
-                switchBlockModal();
+                blockModalHook.switchModal();
                 break;
             case '신고하기':
-                switchReportModal();
+                reportModalHook.switchModal();
+                break;
+            case '신고 처리하기':
+                adminModalHook.switchModal();
                 break;
         }
-        switchOptionBottomSheet();
+        optionBottomSheetHook.switchModal();
     }
-    return (
+
+    return postId === -1 ? null : (
         <>
-            {postId === -1 ? null : (
-                <TouchableOpacity onPress={switchOptionBottomSheet}>
-                    <Image
-                        source={require('@/public/assets/more.png')}
-                        style={{ width: 24, height: 26 }}
-                    />
-                </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={optionBottomSheetHook.switchModal}>
+                <Image
+                    source={require('@/public/assets/more.png')}
+                    style={{ width: 24, height: 26 }}
+                />
+            </TouchableOpacity>
             <BottomSheet
-                visible={optionBottomSheet}
-                onClose={switchOptionBottomSheet}
+                visible={optionBottomSheetHook.modalVisible}
+                onClose={optionBottomSheetHook.switchModal}
             >
                 <View style={styles.titleContainer}>
                     <Text style={text.titleText}>게시글 관리</Text>
@@ -107,15 +106,20 @@ export default function TodayPostOptions({
                 </View>
             </BottomSheet>
             <BlockModal
-                modalVisible={blockModal}
+                modalVisible={blockModalHook.modalVisible}
                 navigation={navigation}
-                switchModal={switchBlockModal}
+                switchModal={blockModalHook.switchModal}
                 userId={userId}
             />
             <ReportPostModal
-                modalVisible={reportModal}
+                modalVisible={reportModalHook.modalVisible}
                 navigation={navigation}
-                switchModal={switchReportModal}
+                switchModal={reportModalHook.switchModal}
+                postId={postId}
+            />
+            <AdminActionModal
+                modalVisible={adminModalHook.modalVisible}
+                switchModal={adminModalHook.switchModal}
                 postId={postId}
             />
         </>
@@ -138,8 +142,6 @@ const styles = StyleSheet.create({
         left: 8,
         paddingVertical: 15,
         flexDirection: 'row',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#eee',
     },
     titleContainer: {
         justifyContent: 'center',

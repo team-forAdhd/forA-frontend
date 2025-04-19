@@ -8,35 +8,26 @@ import {
     InfiniteData,
     useInfiniteQuery,
     UseInfiniteQueryResult,
+    useQuery,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
 type PostList = {
     postList: Post[];
     paging: Paging;
 };
-export async function getTodayTopPosts({
-    page = 0,
-}: {
-    page: number;
-}): Promise<PostList> {
-    const { data } = await apiClient.get<PostList>(
-        `/posts/main/top?sortOption=NEWEST_FIRST&page=${page}`,
+
+export async function getTodayTopPosts(): Promise<PostList> {
+    const res = await apiClient.get<PostList>(
+        `/posts/main/top?sortOption=NEWEST_FIRST&page=0&size=10`,
     );
-    return data;
+    return res.data;
 }
 
-export function useTodayTopPosts(): UseInfiniteQueryResult<
-    InfiniteData<PostList, number>
-> {
-    return useInfiniteQuery({
+export function useTodayTopPostOnce(): UseQueryResult<PostList> {
+    return useQuery({
         queryKey: ['todayTopPosts'],
-        queryFn: async ({ pageParam = 0 }) =>
-            getTodayTopPosts({ page: pageParam }),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.paging.isLast) return undefined;
-            return allPages.length;
-        },
+        queryFn: getTodayTopPosts,
         staleTime: 1000 * 60 * 5,
     });
 }

@@ -13,7 +13,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 import {
     useTodayPostsByCategory,
-    useTodayTopPosts,
+    useTodayTopPostOnce,
 } from '@/domains/Today/api/TodayPostList';
 import PostItem from '@/domains/Today/components/PostItem';
 import {
@@ -59,42 +59,43 @@ export function TodayPostList({
 function TodayTopPost({
     navigation,
 }: Pick<StackScreenProps<TodayStackParams, 'Home'>, 'navigation'>) {
-    const { data, fetchNextPage, isPending, isError, refetch } =
-        useTodayTopPosts();
-    const posts = data?.pages.map((page) => page.postList).flat();
+    const { data, isPending, isError, refetch } = useTodayTopPostOnce();
+    const posts = data?.postList;
 
     if (isPending)
         return <ActivityIndicator size={'large'} color={'#52A55D'} />;
     if (isError) return null;
-    if (posts)
-        return (
-            <FlatList
-                contentContainerStyle={styles.postListContainer}
-                data={[notification, ...posts]}
-                renderItem={(post) => (
-                    <PostItem
-                        key={post.item.id}
-                        post={post.item}
-                        index={post.index}
-                        navigation={navigation}
-                        order={true}
+
+    const slicedPosts = posts?.slice(0, 9);
+    return (
+        <FlatList
+            contentContainerStyle={styles.postListContainer}
+            data={[notification, ...(slicedPosts ?? [])]}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+                <PostItem
+                    key={item.id}
+                    post={item}
+                    index={index}
+                    navigation={navigation}
+                    order={true}
+                />
+            )}
+            //onEndReached={() => fetchNextPage()}
+            ListHeaderComponent={() => (
+                <View style={{ padding: 10, flexDirection: 'row', gap: 5 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
+                        랭킹
+                    </Text>
+                    <MaterialIcons
+                        name="refresh"
+                        size={25}
+                        onPress={() => refetch()}
                     />
-                )}
-                onEndReached={() => fetchNextPage()}
-                ListHeaderComponent={() => (
-                    <View style={{ padding: 10, flexDirection: 'row', gap: 5 }}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-                            랭킹
-                        </Text>
-                        <MaterialIcons
-                            name="refresh"
-                            size={25}
-                            onPress={() => refetch()}
-                        />
-                    </View>
-                )}
-            />
-        );
+                </View>
+            )}
+        />
+    );
 }
 
 function TodayPostsByCategory({

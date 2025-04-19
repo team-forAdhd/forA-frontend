@@ -105,6 +105,44 @@ export const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 8,
     },
+    modalDeleteContainer: {
+        width: 300,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        overflow: 'hidden',
+    },
+    modalDeleteButton: {
+        flexDirection: 'row',
+        borderTopWidth: 1,
+        borderColor: '#ddd',
+    },
+    modalDeleteConfirmButton: {
+        flex: 1,
+        paddingVertical: 15,
+        alignItems: 'center',
+        borderRightWidth: 1,
+        borderColor: '#ddd',
+        backgroundColor: '#f0f0f0',
+        borderBottomLeftRadius: 12,
+    },
+    modalDeleteCancelButton: {
+        flex: 1,
+        paddingVertical: 15,
+        alignItems: 'center',
+        backgroundColor: '#52A55D',
+        borderBottomRightRadius: 12,
+    },
+    modalDeleteCommentContainer: {
+        minWidth: 300,
+        minHeight: 65,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
 });
 
 export const text = {
@@ -166,6 +204,29 @@ export const text = {
         fontWeight: '400',
         lineHeight: 24,
         letterSpacing: -0.8,
+    },
+    modalDelete: {
+        padding: 20,
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    modalDeleteConfirm: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    modalDeleteCancel: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: 'white',
+    },
+    modalDeleteComment: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#000',
+        width: '100%',
+        flexWrap: 'wrap',
+        fontWeight: '500',
     },
 } as {
     [key: string]: StyleProp<TextStyle>;

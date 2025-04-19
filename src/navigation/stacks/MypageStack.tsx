@@ -4,6 +4,7 @@ import MyPage from '@/components/myPage/myPage';
 import MyPost from '@/components/myPage/myPost';
 import { createStackNavigator } from '@react-navigation/stack';
 import AdminReport from '@/components/myPage/adminReport';
+import MedDetail from '@/components/medicine/medetails/MedDetail';
 
 export type MypageStackParams = {
     MyPage: undefined;
@@ -15,6 +16,7 @@ export type MypageStackParams = {
     SavedPosts: { postType: 'savedPosts' };
     SavedPharmacies: { postType: 'savedPharmacies' };
     AdminReport: undefined;
+    MedDetail: { medId: number };
 };
 const Mypage = createStackNavigator<MypageStackParams>();
 export default function MypageStack() {
@@ -54,6 +56,15 @@ export default function MypageStack() {
                 initialParams={{ postType: 'savedPharmacies' }}
             />
             <Mypage.Screen name="AdminReport" component={AdminReport} />
+            <Mypage.Screen name="MedDetail">
+                {(props) => {
+                    const medId =
+                        props.route?.params?.medId !== undefined
+                            ? props.route.params.medId
+                            : 1; // medId 기본값 설정
+                    return <MedDetail {...props} medId={medId} />;
+                }}
+            </Mypage.Screen>
         </Mypage.Navigator>
     );
 }

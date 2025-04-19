@@ -1,4 +1,4 @@
-import { apiClient } from '../login/loginApi'
+import { apiClient } from '../login/loginApi';
 import { API_URL } from '@env';
 import userStore from '@/store/userStore/userStore';
 
@@ -7,37 +7,31 @@ export const getReport = async () => {
         const response = await apiClient.get(`${API_URL}/api/v1/posts/report`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching reported posts:', error);
         throw error;
     }
-}
+};
 
-export const postHandleReport = async (email, postId, handleReportType) => {
+export const postHandleReport = async (
+    postId: number,
+    handleReportType: 'CLEAN' | 'DAY_2_PAUSE' | 'DAY_ALL_PAUSE' | 'POST_DELETE',
+) => {
     try {
-        const payload = {
-            email: email,
-            postId: postId,
-            handleReportType: handleReportType
-        };
-        console.log("API 요청 데이터:", JSON.stringify(payload, null, 2));
-        const response = await apiClient.post(`${API_URL}/api/v1/posts/handleReport`,
-            payload,
-            // {
-            //     email: email,
-            //     postId: postId,
-            //     handleReportType: handleReportType
-            // }, 
+        const url = `${API_URL}/api/v1/posts/handleReport`;
+        const response = await apiClient.post(
+            url,
+            {
+                postId,
+                handleReportType,
+            },
             {
                 headers: {
-                    'Authorization': `Bearer ${userStore.accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            }
+                    Authorization: `Bearer ${userStore.accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            },
         );
-        console.log("성공 응답:", response.data);
-        return response.data
+        return response.data;
     } catch (error) {
-        console.error('Error handling report:', error.response?.data || error);
-        throw error
+        throw error;
     }
-}
+};
