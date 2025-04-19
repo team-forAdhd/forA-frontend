@@ -10,33 +10,40 @@ import {
     TextStyle,
     SafeAreaView,
     Alert,
+    FlatList,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useState, Key } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { formatDate } from '@/common/formatDate';
 import SimpleModal from '@/components/common/simpleModal/SimpleModal';
-import TodayPostComment from '../components/TodayPostComment';
-import { ScrollView } from 'react-native-gesture-handler';
-import {
-    ClikedLikedIcon,
-    LikedIcon,
-    ScrapIcon,
-} from '@/public/assets/SvgComponents';
+
 import { useDeletePostMutation } from '@/domains/TodayPostDetail/api/deletePost.api';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import { imagePathMerge } from '@/utils/imagePathMerge';
 import { TodayStackParams } from '@/navigation/stacks/TodayStack';
 import { useTodayPostDetail } from '@/domains/TodayPostDetail/api/getTodayPostDetail.api';
 import CommentInput from '@/domains/TodayPostDetail/components/CommentInput';
 import { usePostLikeMutation } from '@/domains/TodayPostDetail/api/todayPostLike.api';
-import { Post } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
+import { Post } from '@/domains/TodayPostDetail/types/today.types';
 import { useTodayPostScrapMutation } from '@/domains/TodayPostDetail/api/todayPostScrap.api';
 import { LoadingScreen } from '@/components/common/Loading';
 import { NotFound } from '@/components/common/NotFound';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/common/ui/header';
 import TodayPostOptions from '@/domains/TodayPostDetail/components/TodayPostOptions';
+import { getUserProfileApi } from '@/api/getUserProfileApi';
+import { useAuthStore } from '@/store/authStore';
+import TodayPostBody from '@/domains/TodayPostDetail/components/TodayPostBody';
+import AdminActionModal from '@/domains/TodayPostDetail/components/AdminActionModal';
+import { getCommentsApi } from '@/api/home/getCommentApi.ts';
+import { useQuery } from '@tanstack/react-query';
+
+// const reportList = [
+//     '특정인에 대한 욕설 및 비하',
+//     '잘못된 정보',
+//     '개인정보 유출',
+//     '상업적 광고 및 판매글',
+//     '타인에게 혐오감을 주는 게시글',
+// ];
 
 export default function TodayPostDetail({
     route,
@@ -45,29 +52,62 @@ export default function TodayPostDetail({
     const { t } = useTranslation('board');
     const { postId } = route.params;
 
-    const postNavigation =
-        useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
+    const userId = useAuthStore((state) => state.email);
+    const user = useAuthStore((state) => state.user);
+    const [userRole, setUserRole] = useState<string | undefined>();
+    // const postNavigation =
+    //     useNavigation<StackNavigationProp<TodayStackParams, 'PostDetail'>>();
 
     const handleEdit = async () => {
-        postNavigation.navigate('EditPost', { postId });
+        navigation.navigate('EditPost', { postId });
     };
+
+    const postLikeMutation = usePostLikeMutation();
+    const postScrapMutation = useTodayPostScrapMutation();
+    const deletePostMutation = useDeletePostMutation({ navigation });
+
     const {
         data: postDetail,
         isPending,
         isError,
         error,
     } = useTodayPostDetail(postId);
+
+    const { data: commentData, isLoading: isCommentsLoading } = useQuery({
+        queryKey: ['comments', postId],
+        queryFn: () => getCommentsApi(postId),
+    });
+    console.log('commentData:', commentData);
+    const comments = commentData?.commentList ?? [];
+
+    useEffect(() => {
+        if (postDetail) {
+            console.log(
+                'postDetail 전체:',
+                JSON.stringify(postDetail, null, 2),
+            );
+        }
+    }, [postDetail]);
+
+    const shouldShowOptions = !!postDetail;
+
     const [showSharedAlert, setShowSharedAlert] = useState(false);
 
     const [rangeBottomSheet, setRangeBottomSheet] = useState<boolean>(false);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [replyCommentId, setReplyCommentId] = useState();
 
-    const { mutate: postLike } = usePostLikeMutation(postDetail as Post);
-    const { mutate: postScrap } = useTodayPostScrapMutation(postId);
-    const { mutate: deletePost } = useDeletePostMutation({ navigation });
+    const postLike = () => {
+        if (postDetail) {
+            postLikeMutation.mutate(postDetail);
+        }
+    };
 
-    const handleSendReply = async (commentId: any) => {
+    const postScrap = () => {
+        postScrapMutation.mutate(postId);
+    };
+
+    const handleSelectReply = async (commentId: any) => {
         setReplyCommentId(commentId);
     };
 
@@ -82,19 +122,39 @@ export default function TodayPostDetail({
         ]);
     };
 
-    const commentLength = postDetail?.comments.reduce(
-        (acc: number, cur: any) => {
-            if (cur.children.length) {
-                return acc + cur.children.length + 1;
-            }
-            return acc + 1;
-        },
-        0,
-    );
+    const commentLength = postDetail?.comments
+        ? postDetail?.comments.reduce((acc: number, cur: any) => {
+              if (cur.children.length) {
+                  return acc + cur.children.length + 1;
+              }
+              return acc + 1;
+          }, 0)
+        : 0;
 
-    if (isPending) return <LoadingScreen />;
-    if (!postDetail || isError)
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const userProfile = await getUserProfileApi();
+                setUserRole(userProfile.userRole);
+            } catch (e) {
+                console.log('유저 역할 조회 실패', e);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
+    useEffect(() => {
+        console.log(' 상세조회 postId:', postId);
+    }, []);
+
+    if (isPending) {
+        return <LoadingScreen />;
+    }
+
+    if (isError || !postDetail) {
         return <NotFound informText="게시물을 찾을 수 없습니다." />;
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -124,153 +184,26 @@ export default function TodayPostDetail({
                         </View>
                     )}
                     <TodayPostOptions
-                        userId={postDetail.userId}
+                        userId={postDetail?.userId ?? ''}
                         navigation={navigation}
                         postId={postId}
+                        userRole={userRole}
                     />
                 </View>
             </Header>
-            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                <View style={styles.bodyConatiner}>
-                    {/* 작성자 정보 */}
-                    <View style={styles.userInfoContainer}>
-                        {postDetail && postDetail.profileImage ? (
-                            <Image
-                                source={{
-                                    uri: imagePathMerge(
-                                        postDetail.profileImage,
-                                    ),
-                                }}
-                                style={styles.icon}
-                            />
-                        ) : (
-                            <Image
-                                source={require('@/public/assets/defaultProfile.png')}
-                                style={styles.icon}
-                            />
-                        )}
-                        <View style={styles.userInfoTextContainer}>
-                            <Text style={text.userText}>
-                                {postDetail.anonymous
-                                    ? '익명'
-                                    : postDetail.nickname}
-                            </Text>
-                            {/* 작성 날짜 및 시간 */}
-                            <Text style={text.createdAt}>
-                                {formatDate(postDetail.createdAt)}
-                            </Text>
-                        </View>
-                        {postDetail.id !== -1 && (
-                            <View style={styles.actionButtonContainer}>
-                                {/* 좋아요 버튼 */}
-                                <TouchableOpacity
-                                    style={styles.actionButton}
-                                    onPress={() => postLike()}
-                                >
-                                    <View style={styles.marginBox}>
-                                        {postDetail.isLiked ? (
-                                            <ClikedLikedIcon />
-                                        ) : (
-                                            <LikedIcon />
-                                        )}
-                                        <Text
-                                            style={[
-                                                text.countText,
-                                                postDetail.isLiked && {
-                                                    color: '#52A55D',
-                                                },
-                                            ]}
-                                        >
-                                            {postDetail.likeCount}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                {/* 스크랩 버튼 */}
-                                <TouchableOpacity
-                                    style={styles.actionButton}
-                                    onPress={() => postScrap()}
-                                >
-                                    <View style={styles.marginBox}>
-                                        <ScrapIcon
-                                            fill={postDetail.isScrapped}
-                                        />
-                                        <Text
-                                            style={[
-                                                text.countText,
-                                                postDetail.isScrapped && {
-                                                    color: '#52A55D',
-                                                },
-                                            ]}
-                                        >
-                                            {postDetail.scrapCount}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                {/* 공유 버튼 */}
-                                {/* <TouchableOpacity
-                                    style={styles.actionButton2}
-                                    onPress={handleShare}
-                                >
-                                    <ShareIcon />
-                                </TouchableOpacity> */}
-                            </View>
-                        )}
-                    </View>
-
-                    {/* 본문 */}
-                    <View style={styles.titleContainer}>
-                        <Text style={text.titleText}>{postDetail.title}</Text>
-                        <View style={styles.titleUnderBar} />
-                    </View>
-                    <View style={styles.contentContainer}>
-                        {/* 첨부 사진이 있는 경우 나타나는 첨부사진 view */}
-                        {postDetail.images && postDetail.images.length > 0 && (
-                            <View style={styles.imageContainer}>
-                                {postDetail.images.map(
-                                    (
-                                        img: any,
-                                        index: Key | null | undefined,
-                                    ) => (
-                                        <Image
-                                            key={index}
-                                            source={{
-                                                uri: imagePathMerge(img),
-                                            }}
-                                            style={styles.imageBox}
-                                        />
-                                    ),
-                                )}
-                            </View>
-                        )}
-                        <Text style={text.contentText}>
-                            {postDetail.content}
-                        </Text>
-                    </View>
-                </View>
-                <View style={styles.endOfPostBox} />
-
-                {/* 댓글 */}
-                <View style={styles.commentCountConatiner}>
-                    <Text style={text.commentCountText}>
-                        {t('comment')}{' '}
-                        {Array.isArray(postDetail.comments)
-                            ? postDetail.comments.length
-                            : 0}
-                    </Text>
-                </View>
-                {postDetail &&
-                    (postDetail.comments && Array.isArray(postDetail.comments)
-                        ? postDetail.comments
-                        : []
-                    ).map((comment: any) => (
-                        <TodayPostComment
-                            key={comment.commentId}
-                            comment={comment}
-                            onReply={handleSendReply}
-                        />
-                    ))}
-                <View style={styles.endOfCommentBox} />
-            </ScrollView>
+            <FlatList
+                data={[postDetail]}
+                renderItem={({ item }) => (
+                    <TodayPostBody
+                        //post={item}
+                        post={postDetail}
+                        postLike={postLike}
+                        postScrap={postScrap}
+                        onReply={handleSelectReply}
+                        comments={comments}
+                    />
+                )}
+            />
             {/* 댓글 작성 */}
             <CommentInput
                 postId={postDetail.id}

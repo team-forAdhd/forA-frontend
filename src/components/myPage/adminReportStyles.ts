@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     },
     postInfo: {
         flex: 1,
+        marginBottom: 60,
     },
     postTitle: {
         fontSize: 16,
@@ -88,13 +89,13 @@ export const styles = StyleSheet.create({
     modalOption: {
         marginBottom: 20,
     },
-})
+});
 
 const baseText = {
     fontFamily: 'Pretendard',
     fontStyle: 'normal',
     fontWeight: '400',
-}
+};
 
 export const text = {
     headerText: {
@@ -107,5 +108,5 @@ export const text = {
         textAlign: 'center',
     },
 } as {
-    [key: string]: StyleProp<TextStyle>
-}
+    [key: string]: StyleProp<TextStyle>;
+};
