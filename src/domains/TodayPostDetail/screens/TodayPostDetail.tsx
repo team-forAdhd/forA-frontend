@@ -117,7 +117,10 @@ export default function TodayPostDetail({
     const handleDelete = async () => {
         Alert.alert('게시글 삭제', '게시글을 삭제하시겠습니까?', [
             { text: '아니오', style: 'cancel' },
-            { text: '확인', onPress: () => deletePost({ postId: postId }) },
+            {
+                text: '확인',
+                onPress: () => deletePostMutation.mutate({ postId }),
+            },
         ]);
     };
 

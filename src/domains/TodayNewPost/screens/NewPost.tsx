@@ -9,6 +9,8 @@ import {
     Image,
     Modal,
     Alert,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from 'react-native';
 import {
     LeftArrowIcon,
@@ -142,162 +144,165 @@ export default function NewPost() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.leftArrow}
-                    onPress={handleLeftArrowPress}
-                >
-                    <LeftArrowIcon />
-                </TouchableOpacity>
-                <Text style={text.titleText}>{t('post-new')}</Text>
-                <TouchableOpacity
-                    style={[styles.uploadButton]}
-                    disabled={isUploadButtonDisabled()} // 버튼 비활성 상태 설정
-                    onPress={handleUploadButton}
-                >
-                    <Text
-                        style={[
-                            text.uploadButtonText,
-                            isUploadButtonDisabled()
-                                ? text.disabledButtonText
-                                : null,
-                        ]}
-                    >
-                        {t('post-upload')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.contents}>
-                {/* 사진 첨부 */}
-                <View style={styles.photoUploadContainer}>
-                    {/* 사진 첨부 버튼 */}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View style={styles.header}>
                     <TouchableOpacity
-                        style={styles.photoPreview}
-                        onPress={uploadImage}
+                        style={styles.leftArrow}
+                        onPress={handleLeftArrowPress}
                     >
-                        <DefaultCameraIcon />
+                        <LeftArrowIcon />
+                    </TouchableOpacity>
+                    <Text style={text.titleText}>{t('post-new')}</Text>
+                    <TouchableOpacity
+                        style={[styles.uploadButton]}
+                        disabled={isUploadButtonDisabled()} // 버튼 비활성 상태 설정
+                        onPress={handleUploadButton}
+                    >
                         <Text
                             style={[
-                                text.photoPreviewText,
-                                {
-                                    color:
-                                        attachedPhotos.length > 0
-                                            ? '#52A55D'
-                                            : '#555',
-                                },
+                                text.uploadButtonText,
+                                isUploadButtonDisabled()
+                                    ? text.disabledButtonText
+                                    : null,
                             ]}
                         >
-                            {`${attachedPhotos.length}/10`}
+                            {t('post-upload')}
                         </Text>
                     </TouchableOpacity>
-                    {/* 첨부된 사진 미리보기 */}
-                    {attachedPhotos.map((asset, index) => (
-                        <View key={index} style={styles.photoPreview}>
-                            <Image
-                                source={{ uri: asset.uri }}
-                                style={{
-                                    width: '100%',
-                                    aspectRatio: 1,
-                                    borderRadius: 12,
-                                }}
-                            />
-                            <TouchableOpacity
-                                style={styles.deleteIcon}
-                                onPress={() => handleDeletePhoto(index)}
+                </View>
+
+                <View style={styles.contents}>
+                    {/* 사진 첨부 */}
+                    <View style={styles.photoUploadContainer}>
+                        {/* 사진 첨부 버튼 */}
+                        <TouchableOpacity
+                            style={styles.photoPreview}
+                            onPress={uploadImage}
+                        >
+                            <DefaultCameraIcon />
+                            <Text
+                                style={[
+                                    text.photoPreviewText,
+                                    {
+                                        color:
+                                            attachedPhotos.length > 0
+                                                ? '#52A55D'
+                                                : '#555',
+                                    },
+                                ]}
                             >
-                                <DeleteIcon />
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                </View>
+                                {`${attachedPhotos.length}/10`}
+                            </Text>
+                        </TouchableOpacity>
+                        {/* 첨부된 사진 미리보기 */}
+                        {attachedPhotos.map((asset, index) => (
+                            <View key={index} style={styles.photoPreview}>
+                                <Image
+                                    source={{ uri: asset.uri }}
+                                    style={{
+                                        width: '100%',
+                                        aspectRatio: 1,
+                                        borderRadius: 12,
+                                    }}
+                                />
+                                <TouchableOpacity
+                                    style={styles.deleteIcon}
+                                    onPress={() => handleDeletePhoto(index)}
+                                >
+                                    <DeleteIcon />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
 
-                {/* 카테고리 선택 */}
-                <View style={styles.categoryContainer}>
-                    <CategoryButton
-                        selected={selectedCategory}
-                        category={tabT('10s-tab')}
-                        onSelectCategory={handleCategorySelect}
-                    />
-                    <CategoryButton
-                        selected={selectedCategory}
-                        category={tabT('20s-tab')}
-                        onSelectCategory={handleCategorySelect}
-                    />
-                    <CategoryButton
-                        selected={selectedCategory}
-                        category={tabT('30s-tab')}
-                        onSelectCategory={handleCategorySelect}
-                    />
-                    <CategoryButton
-                        selected={selectedCategory}
-                        category={tabT('parents-tab')}
-                        onSelectCategory={handleCategorySelect}
-                    />
-                </View>
+                    {/* 카테고리 선택 */}
+                    <View style={styles.categoryContainer}>
+                        <CategoryButton
+                            selected={selectedCategory}
+                            category={tabT('10s-tab')}
+                            onSelectCategory={handleCategorySelect}
+                        />
+                        <CategoryButton
+                            selected={selectedCategory}
+                            category={tabT('20s-tab')}
+                            onSelectCategory={handleCategorySelect}
+                        />
+                        <CategoryButton
+                            selected={selectedCategory}
+                            category={tabT('30s-tab')}
+                            onSelectCategory={handleCategorySelect}
+                        />
+                        <CategoryButton
+                            selected={selectedCategory}
+                            category={tabT('parents-tab')}
+                            onSelectCategory={handleCategorySelect}
+                        />
+                    </View>
 
-                {/* 게시글 입력 */}
-                <View style={styles.titleContainer}>
-                    <TextInput
-                        style={text.contentTitleText}
-                        placeholder={t('post-title')}
-                        maxLength={50}
-                        value={title}
-                        onChangeText={setTitle}
-                    />
-                    <View style={styles.titleBar} />
-                </View>
+                    {/* 게시글 입력 */}
+                    <View style={styles.titleContainer}>
+                        <TextInput
+                            style={text.contentTitleText}
+                            placeholder={t('post-title')}
+                            maxLength={50}
+                            value={title}
+                            onChangeText={setTitle}
+                        />
+                        <View style={styles.titleBar} />
+                    </View>
 
-                <View style={styles.contentContainer}>
-                    <TextInput
-                        style={text.contentText}
-                        placeholder={t('post-enter-content')}
-                        multiline
-                        maxLength={2000}
-                        value={content}
-                        onChangeText={setContent}
-                    />
-                </View>
-            </View>
-
-            {/* 익명 체크 */}
-            <View style={styles.anonymousContainer}>
-                <TouchableOpacity
-                    style={styles.anonymousCheckbox}
-                    onPress={handleAnonymousClick}
-                >
-                    <Image
-                        source={
-                            isAnonymous
-                                ? require('@/public/assets/check-icon.png')
-                                : require('@/public/assets/checkbox-icon.png')
-                        }
-                        style={styles.checkboxIcon}
-                    />
-                    <Text
-                        style={[
-                            text.anonymousText,
-                            { color: isAnonymous ? '#52A55D' : '#949494' },
-                        ]}
-                    >
-                        {t('post-anonymous')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            <Modal visible={showAlert} transparent animationType="fade">
-                <View style={styles.overlay}>
-                    <View style={styles.modalContainer}>
-                        <AlertModal
-                            message={t('post-ing')}
-                            leftButtonText={t('post-out')}
-                            rightButtonText={t('post-writing')}
-                            onLeftClicked={handleCancel}
-                            onRightClicked={handleContinue}
+                    <View style={styles.contentContainer}>
+                        <TextInput
+                            style={[text.contentText, { height: 230 }]}
+                            placeholder={t('post-enter-content')}
+                            multiline
+                            maxLength={2000}
+                            value={content}
+                            onChangeText={setContent}
+                            scrollEnabled={true}
                         />
                     </View>
                 </View>
-            </Modal>
-        </View>
+
+                {/* 익명 체크 */}
+                <View style={styles.anonymousContainer}>
+                    <TouchableOpacity
+                        style={styles.anonymousCheckbox}
+                        onPress={handleAnonymousClick}
+                    >
+                        <Image
+                            source={
+                                isAnonymous
+                                    ? require('@/public/assets/check-icon.png')
+                                    : require('@/public/assets/checkbox-icon.png')
+                            }
+                            style={styles.checkboxIcon}
+                        />
+                        <Text
+                            style={[
+                                text.anonymousText,
+                                { color: isAnonymous ? '#52A55D' : '#949494' },
+                            ]}
+                        >
+                            {t('post-anonymous')}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <Modal visible={showAlert} transparent animationType="fade">
+                    <View style={styles.overlay}>
+                        <View style={styles.modalContainer}>
+                            <AlertModal
+                                message={t('post-ing')}
+                                leftButtonText={t('post-out')}
+                                rightButtonText={t('post-writing')}
+                                onLeftClicked={handleCancel}
+                                onRightClicked={handleContinue}
+                            />
+                        </View>
+                    </View>
+                </Modal>
+            </View>
+        </TouchableWithoutFeedback>
     );
 }

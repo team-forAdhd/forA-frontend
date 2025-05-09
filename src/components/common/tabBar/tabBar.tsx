@@ -66,7 +66,15 @@ export default function TabBar({
                                     : styles.TabBarImage
                             }
                         />
-                        <Text style={text.tabBarText}>{t(tab)}</Text>
+                        <Text
+                            style={
+                                isFocused
+                                    ? text.clickTabBarText
+                                    : text.tabBarText
+                            }
+                        >
+                            {t(tab)}
+                        </Text>
                     </TouchableOpacity>
                 );
             })}

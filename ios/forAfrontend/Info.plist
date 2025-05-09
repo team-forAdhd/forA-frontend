@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -28,6 +28,12 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ios.forA</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao4c16ebfb9bd4bb5420dbca88502fe1ed</string>
 			</array>
 		</dict>
 	</array>
@@ -84,5 +90,9 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>KAKAO_APP_KEY</key>
+	<string>4c16ebfb9bd4bb5420dbca88502fe1ed</string>
+	<key>KAKAO_APP_SCHEME</key>
+	<string>kakao4c16ebfb9bd4bb5420dbca88502fe1ed</string>
 </dict>
 </plist>
