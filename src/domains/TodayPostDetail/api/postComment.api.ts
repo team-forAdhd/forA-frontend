@@ -21,7 +21,7 @@ export function useCommentMutation(postId: number) {
         onSuccess: async () => {
             Alert.alert('댓글이 등록되었습니다.');
             await queryClient.invalidateQueries({
-                queryKey: ['todayComment', postId],
+                queryKey: ['todayPostDetail', postId],
             });
         },
         onError: () => {
