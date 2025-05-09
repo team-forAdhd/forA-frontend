@@ -1,5 +1,5 @@
 import { useCommentMutation } from '@/domains/TodayPostDetail/api/postComment.api';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Image,
@@ -30,20 +30,12 @@ export default function CommentInput({
 
     function handlePostComment() {
         if (!commentContent) return;
-        if (replyCommentId) {
-            mutate({
-                content: commentContent,
-                anonymous: commentIsAnonymous,
-                postId: postId,
-                parentCommentId: replyCommentId,
-            });
-        } else {
-            mutate({
-                content: commentContent,
-                anonymous: commentIsAnonymous,
-                postId: postId,
-            });
-        }
+        mutate({
+            content: commentContent,
+            anonymous: commentIsAnonymous,
+            postId: postId,
+            ...(replyCommentId ? { parentCommentId: replyCommentId } : {}),
+        });
         setCommentContent('');
     }
 
@@ -51,7 +43,10 @@ export default function CommentInput({
         <KeyboardAvoidingView behavior="padding">
             <View style={styles.addComment}>
                 <TouchableOpacity
-                    onPress={() => setCommentIsAnonymous((prev) => !prev)}
+                    onPress={() => {
+                        const updated = !commentIsAnonymous;
+                        setCommentIsAnonymous(updated);
+                    }}
                 >
                     <View style={styles.commentAnonymousContainer}>
                         <Image
@@ -59,14 +54,16 @@ export default function CommentInput({
                                 commentIsAnonymous
                                     ? require('@/public/assets/check-icon.png')
                                     : require('@/public/assets/checkbox-icon.png')
+                                      ? require('@/public/assets/check-icon.png')
+                                      : require('@/public/assets/checkbox-icon.png')
                             }
                             style={styles.anonymousIcon}
                         />
                         <Text
                             style={
                                 commentIsAnonymous
-                                    ? text.notAnonymousText
-                                    : text.anonymousText
+                                    ? text.anonymousText // 익명일 때
+                                    : text.notAnonymousText
                             }
                         >
                             {t('post-anonymous')}
@@ -74,6 +71,7 @@ export default function CommentInput({
                     </View>
                 </TouchableOpacity>
                 <TextInput
+                    value={commentContent}
                     style={[text.commentBoxText, styles.commentBox]}
                     multiline
                     onChangeText={(text) => setCommentContent(text)}
@@ -117,11 +115,12 @@ const styles = StyleSheet.create({
         height: 17,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 8,
+        maxHeight: 100,
     },
     commentBox: {
         justifyContent: 'flex-start',
-        flex: 1,
-        paddingRight: 20,
+        width: 270,
     },
     commentButton: {
         right: 7,
