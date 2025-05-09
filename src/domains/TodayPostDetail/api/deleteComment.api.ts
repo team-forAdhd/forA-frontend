@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/login/loginApi';
-import { Comment } from '@/domains/TodayPostDetail/types/today.types';
+import { Comment } from '@/domains/TodayPostDetail/types/todayPostDetail.types';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
@@ -14,7 +14,7 @@ export function useDeleteCommentMutation() {
         mutationFn: deleteComment,
         onSuccess: (_, comment) => {
             queryClient.invalidateQueries({
-                queryKey: ['todayComment', comment.postId],
+                queryKey: ['todayPostDetail', comment.postId],
             });
             Alert.alert('댓글 삭제 완료', '댓글이 삭제되었습니다.', [
                 { text: '확인' },

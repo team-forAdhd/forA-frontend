@@ -54,8 +54,6 @@ export default function CommentInput({
                                 commentIsAnonymous
                                     ? require('@/public/assets/check-icon.png')
                                     : require('@/public/assets/checkbox-icon.png')
-                                      ? require('@/public/assets/check-icon.png')
-                                      : require('@/public/assets/checkbox-icon.png')
                             }
                             style={styles.anonymousIcon}
                         />
@@ -73,7 +71,6 @@ export default function CommentInput({
                 <TextInput
                     value={commentContent}
                     style={[text.commentBoxText, styles.commentBox]}
-                    multiline
                     onChangeText={(text) => setCommentContent(text)}
                     placeholder={
                         replyCommentId
@@ -81,7 +78,6 @@ export default function CommentInput({
                             : t('post-give-comment')
                     }
                     placeholderTextColor="#949494"
-                    value={commentContent}
                 />
                 <TouchableOpacity
                     style={styles.commentButton}
@@ -123,6 +119,7 @@ const styles = StyleSheet.create({
         width: 270,
     },
     commentButton: {
+        position: 'absolute',
         right: 7,
         width: 28,
         height: 28,
