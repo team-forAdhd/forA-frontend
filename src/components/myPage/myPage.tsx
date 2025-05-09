@@ -124,7 +124,9 @@ export default function MyPage() {
 
             <View style={styles.scrollContainer}>
                 <ScrollView
+                    style={{ backgroundColor: 'white' }}
                     contentContainerStyle={{
+                        backgroundColor: '#EDEDEA',
                         paddingTop: 20,
                         paddingBottom: 50,
                     }}
