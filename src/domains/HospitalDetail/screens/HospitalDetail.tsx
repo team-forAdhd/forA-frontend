@@ -73,7 +73,14 @@ export default function HospitalDetail({
                                 />
                             </TouchableOpacity>
                         </View>
-                        <Text style={text.normalText}>{doctorProfile}</Text>
+                        {/* <Text style={text.normalText}>{doctorProfile}</Text> */}
+                        <ScrollView style={{ maxHeight: '80%' }}>
+                            {doctorProfile.split('\n').map((line, idx) => (
+                                <Text key={idx} style={text.normalText}>
+                                    {line}
+                                </Text>
+                            ))}
+                        </ScrollView>
                     </View>
                 </View>
             )}
@@ -189,7 +196,7 @@ export default function HospitalDetail({
                                             { marginBottom: 10 },
                                         ]}
                                     >
-                                        {[...Array(3)].map((_, index) => (
+                                        {/* {[...Array(3)].map((_, index) => (
                                             <Image
                                                 key={index}
                                                 source={
@@ -198,6 +205,26 @@ export default function HospitalDetail({
                                                         ? require('@/public/assets/hospitalRibbon_active.png')
                                                         : require('@/public/assets/hospitalRibbon_disabled.png')
                                                 }
+                                                style={[
+                                                    styles.ribbonImage,
+                                                    {
+                                                        marginRight:
+                                                            index < 2 ? 5 : 0,
+                                                    },
+                                                ]}
+                                            />
+                                        ))} */}
+                                        {[
+                                            ...Array(
+                                                Math.min(
+                                                    3,
+                                                    hospital.totalEvaluationReviewCount,
+                                                ),
+                                            ),
+                                        ].map((_, index) => (
+                                            <Image
+                                                key={index}
+                                                source={require('@/public/assets/hospitalRibbon_active.png')}
                                                 style={[
                                                     styles.ribbonImage,
                                                     {
