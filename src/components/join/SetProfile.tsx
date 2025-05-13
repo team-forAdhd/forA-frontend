@@ -25,8 +25,6 @@ export default function SetProfile() {
     const gotoBeforeScreen = () => {
         navigation.navigate('SetPassword' as never);
     };
-        navigation.navigate('SetPassword' as never);
-    };
     const gotoNextScreen = () => {
         navigation.navigate('JoinLast' as never);
     };
@@ -39,14 +37,11 @@ export default function SetProfile() {
     const profileStore = useContext(ProfileStoreContext);
 
     const [reRendering, setRerendering] = useState<boolean>(false);
-    const [reRendering, setRerendering] = useState<boolean>(false);
     const uploadImage = async () => {
         // 갤러리 접근 권한 - 갤러리 접속을 허락했는지, 승인하지 않았으면 요청 후 승인
         if (!status?.granted) {
             const permission = await requestPermission();
-            const permission = await requestPermission();
             if (!permission.granted) {
-                return null;
                 return null;
             }
         }
@@ -57,9 +52,7 @@ export default function SetProfile() {
             quality: 0.2, //이미지 압축 여부 1이 가장 높은 화질의 이미지
             aspect: [1, 1], //이미지 비율 설정
         });
-        });
         if (result.canceled) {
-            return null; // 이미지 업로드 취소한 경우
             return null; // 이미지 업로드 취소한 경우
         }
         if (
@@ -68,15 +61,8 @@ export default function SetProfile() {
         ) {
             Alert.alert('이미지가 너무 커 업로드할 수 없습니다.');
             return;
-            Alert.alert('이미지가 너무 커 업로드할 수 없습니다.');
-            return;
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
-        console.log(result.assets[0]);
-        profileStore.setImageUrl(result.assets[0]);
-        setSelectedImage(result.assets[0].uri);
-        setRerendering(!reRendering);
-    };
         console.log(result.assets[0]);
         profileStore.setImageUrl(result.assets[0]);
         setSelectedImage(result.assets[0].uri);
