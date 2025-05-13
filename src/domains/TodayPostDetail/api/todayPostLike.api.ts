@@ -27,8 +27,8 @@ export const todayPostLike = async (post: Post) => {
 export function usePostLikeMutation(post: Post) {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: () => todayPostLike(post),
-        onMutate: async () => {
+        mutationFn: (post: Post) => todayPostLike(post),
+        onMutate: async (post) => {
             await queryClient.cancelQueries({
                 queryKey: ['todayPostDetail', post.id],
             });
@@ -54,7 +54,7 @@ export function usePostLikeMutation(post: Post) {
             );
             if (context?.previousPost) {
                 queryClient.setQueryData(
-                    ['todayPostDetail', post.id],
+                    ['todayPostDetail', context.previousPost.id],
                     context.previousPost,
                 );
             }
